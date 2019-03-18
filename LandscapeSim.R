@@ -21,7 +21,7 @@ land <- setValues(land, runif(raster.size*raster.size, 0, 1))
 plot(land) #randomly distributed values, as expected
 
 #"Smooth" the raster using focal()
-land <- focal(x = land, w = matrix(1, nrow = 19, ncol = 15), fun = mean) #need a different function; I want to retain the full range of cell values
+land <- focal(x = land, w = matrix(1, nrow = 19, ncol = 15), fun = mean)
 plot(land)
 
 #Create a binary raster to represent coffee ----------------------------------
@@ -35,3 +35,12 @@ coffee <- setValues(coffee, ifelse(getValues(land) <= 0.47, 1, 0))
 #plot the new binary raster
 plot(coffee) 
 
+#Merge coffee and landscape rasters ------------------------------------
+#Change lanscape so coffee areas = NA
+land[which(getValues(coffee)==1)] <- NA
+
+#Merge rasters
+landscape <- merge(land, coffee)
+
+#Plot the new raster
+plot(landscape)
