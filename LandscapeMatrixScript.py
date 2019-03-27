@@ -9,50 +9,67 @@ import matplotlib.pyplot as plt
 #Specify matrix size, patch size, and number of patches
 matrix_size = 50
 n_patches = 2
-patch_size = 10
+n_draws = 20
 
 #Create blank landscape
-landscape = numpy.zeros(shape = (matrix_size, matrix_size), dtype = dict)
+coffee = numpy.empty(shape = (matrix_size, matrix_size))
+coffee[:] = numpy.nan
 
-#Create dictionary for coffee
-coffee_clean = {'coffee':0}
-
-#Seed two random locations in the landscape with uninfected coffee
+#Seed two random locations in the landscape with coffee
 randoms = [None]*n_patches
 for cells in range(0, n_patches):
     randoms[cells] = (random.randint(1, matrix_size-1), random.randint(1, matrix_size-1))
 
 for coords in randoms:
-    landscape[coords] = coffee_clean
+    coffee[coords] = 0
 
-#"Grow" coffee patches to desired size by filling in spiral
-N, S, W, E = (0, -1), (0, 1), (-1, 0), (1, 0) # directions
-turn_right = {N: E, E: S, S: W, W: N} # old -> new direction
+#Draw from beta dists centered around coords
+betavals = numpy.empty((len(randoms), n_draws, 2))
 
-def spiral(npatches, ncells):
-    for patch in range(0,npatches):
-        for step in range(0,ncells):
-            x, y = randoms[patch] # start at the patch seed
-            dx, dy = N # initial direction
-            count = coffee_clean
-            while True:
-                landscape[x,y] = coffee_clean #change cell value
-                # try to turn right
-                new_dx, new_dy = turn_right[dx,dy]
-                new_x, new_y = x + new_dx, y + new_dy
-                if landscape[new_x, new_y] is 0: #can turn right
-                    x, y = new_x, new_y
-                    dx, dy = new_dx, new_dy
-                else: # try to move straight
-                    x, y = x + dx, y + dy
-                    if not (0 <= x < matrix_size and 0 <= y < matrix_size):
-                        return(landscape)
+for patch in range(0, n_patches):
+    coords = numpy.array(randoms[patch])
+    mu = coords/50
+    stdev = 0.003
+    alpha = ((1-mu)/stdev)-(1/mu)*numpy.square(mu)
+    beta = alpha * (1 / mu - 1)
+    x = numpy.random.beta(alpha[0], beta[0], n_draws)
+    y = numpy.random.beta(alpha[1], beta[1], n_draws)
+    betavals[patch,:,0] = x
+    betavals[patch,:,1] = y
+
+#Convert beta values to new coords
+betavals = betavals*50
+betavals = betavals.round()
+
+#Grow patches from coords
+for patch in range(0, n_patches):
+    coords = betavals[patch,:,:]
+    for cell in range(0, len(coords)):
+        i,j = coords[cell,:]
+        coffee[int(i), int(j)] = 0
+
+plt.matshow(coffee)
+
+#Use neighbors function to remove solitary points
 
 
-patchy_landscape = spiral(npatches = n_patches, ncells = patch_size)
 
-plt.imshow(patchy_landscape)
 
-#Change zeroes to dictionaries with key "matrix" and blank values
 
-#Fill matrix values with friction values
+
+
+###################################################################
+##############    Cellular Automata    ############################
+###################################################################
+
+###################################################################
+##############    Propagule Release    ############################
+###################################################################
+
+###################################################################
+#################    Random Walk    ###############################
+###################################################################
+
+###################################################################
+##############    Propagule infections    #########################
+###################################################################
