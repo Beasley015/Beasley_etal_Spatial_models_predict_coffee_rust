@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 #Specify matrix size, patch size, and number of patches
 matrix_size = 50
 n_patches = 2
-n_draws = 20
+n_draws = 30
 
 #Create blank landscape
 coffee = numpy.empty(shape = (matrix_size, matrix_size))
@@ -51,10 +51,29 @@ for patch in range(0, n_patches):
 plt.matshow(coffee)
 
 #Use neighbors function to remove solitary points
+def neighbors(mat, row, col, radius=1):
+    # neighbors: finds nearest neighbors in a matrix
+    # inputs: mat = matrix to look at, row and col = indices, radius=number of cells around
+    # output: a list of the contents of cells around the index (out of bounds returned as 0)
+    rows, cols = len(mat), len(mat[0])
+    out = []
+    for i in range(row - radius - 1, row + radius):
+        row = []
+        for j in range(col - radius - 1, col + radius):
 
+            if 0 <= i < rows and 0 <= j < cols:
+                row.append(mat[i][j])
+            else:
+                row.append(None)
+        out.append(row)
 
+    # make into a flat list
+    flat_list = []
+    for sublist in out:
+        for item in sublist:
+            flat_list.append(item)
 
-
+    return flat_list
 
 
 
