@@ -78,21 +78,25 @@ for patch in range(0, n_patches):
 plt.matshow(coffee)
 
 #Use neighbors function to remove solitary points
-neighbor_array = numpy.empty(shape=(1,11))
+neighbor_array = numpy.empty(shape=(1,11), dtype = "float")
+neighbor_array[:] = numpy.nan
 for i in range(0, matrix_size):
     for j in range(0, matrix_size):
         if coffee[i,j] == 0:
             neighbor_out = neighbors_base(mat=coffee, row=i, col=j, radius=1)
             neighbor_out.append(i)
             neighbor_out.append(j)
-            numpy.vstack([neighbor_array, neighbor_out])
+            neighbor_array = numpy.vstack([neighbor_array, neighbor_out])
 
 
-for row in range(0, len(neighbor_array[1])):
+for row in range(1, numpy.size(neighbor_array, 0)):
     if numpy.any(neighbor_array[row,0:8] == 0):
+        coffee[int(neighbor_array[row,9]),int(neighbor_array[row,10])] = 0
+    else:
         coffee[int(neighbor_array[row,9]),int(neighbor_array[row,10])] = None
 
 plt.matshow(coffee)
+
 
 ###################################################################
 ##############    Cellular Automata    ############################
