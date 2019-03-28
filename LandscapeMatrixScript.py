@@ -3,13 +3,40 @@ import random
 import matplotlib.pyplot as plt
 
 ##############################################################################
+################        Neighbors Function             #######################
+##############################################################################
+
+def neighbors_base(mat, row, col, radius=1):
+    # neighbors: finds nearest neighbors in a matrix
+    # inputs: mat = matrix to look at, row and col = indexes, radius=number of cells around
+    # output: a list of the contents of cells around the index (out of bounds returned as 0)
+    rows, cols = len(mat), len(mat[0])
+    out = [] #out is a list of the neighbors
+    for i in range(row - radius - 1, row + radius):
+        row = []
+        for j in range(col - radius - 1, col + radius):
+            if 0 <= i < rows and 0 <= j < cols:
+                row.append(mat[i][j])
+            else:
+                row.append(None)
+        out.append(row)
+
+    # make into a flat list
+    flat_list = []
+    for sublist in out:
+        for item in sublist:
+            flat_list.append(item)
+
+    return flat_list
+
+##############################################################################
 ################          Construct Landscape          #######################
 ##############################################################################
 
 #Specify matrix size, patch size, and number of patches
 matrix_size = 50
 n_patches = 2
-n_draws = 30
+n_draws = 40
 
 #Create blank landscape
 coffee = numpy.empty(shape = (matrix_size, matrix_size))
@@ -51,31 +78,21 @@ for patch in range(0, n_patches):
 plt.matshow(coffee)
 
 #Use neighbors function to remove solitary points
-def neighbors(mat, row, col, radius=1):
-    # neighbors: finds nearest neighbors in a matrix
-    # inputs: mat = matrix to look at, row and col = indices, radius=number of cells around
-    # output: a list of the contents of cells around the index (out of bounds returned as 0)
-    rows, cols = len(mat), len(mat[0])
-    out = []
-    for i in range(row - radius - 1, row + radius):
-        row = []
-        for j in range(col - radius - 1, col + radius):
-
-            if 0 <= i < rows and 0 <= j < cols:
-                row.append(mat[i][j])
-            else:
-                row.append(None)
-        out.append(row)
-
-    # make into a flat list
-    flat_list = []
-    for sublist in out:
-        for item in sublist:
-            flat_list.append(item)
-
-    return flat_list
+neighbor_array = numpy.empty(shape=(1,11))
+for i in range(0, matrix_size):
+    for j in range(0, matrix_size):
+        if coffee[i,j] == 0:
+            neighbor_out = neighbors_base(mat=coffee, row=i, col=j, radius=1)
+            neighbor_out.append(i)
+            neighbor_out.append(j)
+            numpy.vstack([neighbor_array, neighbor_out])
 
 
+for row in range(0, len(neighbor_array[1])):
+    if numpy.any(neighbor_array[row,0:8] == 0):
+        coffee[int(neighbor_array[row,9]),int(neighbor_array[row,10])] = None
+
+plt.matshow(coffee)
 
 ###################################################################
 ##############    Cellular Automata    ############################
