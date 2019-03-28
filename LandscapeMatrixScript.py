@@ -97,6 +97,16 @@ for row in range(1, numpy.size(neighbor_array, 0)):
 
 plt.matshow(coffee)
 
+indices = numpy.argwhere(coffee)
+landscape = numpy.empty(shape=(matrix_size,matrix_size))
+landscape[coffee == 0] = numpy.nan
+
+for i in range(0, len(indices)):
+    landscape[indices[i][0], indices[i][1]] = numpy.random.uniform(0.65, 0.95, 1)
+
+plt.matshow(landscape, vmin=0, vmax=1)
+
+#"Deforestation" function would go here. Would be similar to how coffee patches were drawn
 
 ###################################################################
 ##############    Cellular Automata    ############################
