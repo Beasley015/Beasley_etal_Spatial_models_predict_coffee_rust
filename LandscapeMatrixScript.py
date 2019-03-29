@@ -111,6 +111,31 @@ def MakeLandscape(size, patches, draws):
 ##############    Cellular Automata    ############################
 ###################################################################
 
+# Pull index of all coffee cells with value 0
+coffee_zeros = numpy.where(coffee == 0)
+
+# Get neighborhood of that cell
+neighbors_clean = numpy.empty(shape=(1,9))
+neighbors_clean[:] = numpy.nan
+
+for i in range(0, len(coffee_zeros[0])):
+    clean_row = neighbors_base(mat=coffee, row=coffee_zeros[0][i], col=coffee_zeros[1][i], radius=1)
+    neighbors_clean = numpy.vstack([neighbors_clean, clean_row])
+
+neighbors_clean = neighbors_clean[1:,:]
+
+# Sum the values of the neighborhood to get number of infected neighbors
+rowsums = []
+for i in range(0,len(neighbors_clean[0])):
+    row = neighbors_clean[i,:]
+    row = row[~numpy.isnan(row)]
+    addrow = row.sum()
+    rowsums.append(addrow)
+
+# Use number of infected neighbors to get success probability in a bernoulli trial
+
+# If bern trial is a success, change focal cell to infected
+
 ###################################################################
 ##############    Propagule Release    ############################
 ###################################################################
