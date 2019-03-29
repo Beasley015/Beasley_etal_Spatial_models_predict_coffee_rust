@@ -19,6 +19,7 @@ def neighbors_base(mat, row, col, radius=1):
                 row.append(mat[i][j])
             else:
                 row.append(None)
+        #Remove focal cell here
         out.append(row)
 
     # make into a flat list
@@ -87,9 +88,10 @@ def MakeLandscape(size, patches, draws):
                 neighbor_out.append(j)
                 neighbor_array = numpy.vstack([neighbor_array, neighbor_out])
 
+    neighbor_array = neighbor_array[1:,:]
 
     for row in range(1, numpy.size(neighbor_array, 0)):
-        if numpy.any(neighbor_array[row,0:8] == 0):
+        if numpy.any(neighbor_array[row,0:9] == 0) == True:
             coffee[int(neighbor_array[row,9]),int(neighbor_array[row,10])] = 0
         else:
             coffee[int(neighbor_array[row,9]),int(neighbor_array[row,10])] = None
