@@ -12,14 +12,13 @@ def neighbors_base(mat, row, col, radius=1):
     # output: a list of the contents of cells around the index (out of bounds returned as 0)
     rows, cols = len(mat), len(mat[0])
     out = [] #out is a list of the neighbors
-    for i in range(row - radius - 1, row + radius):
+    for i in range(row - radius, row + radius + 1):
         row = []
-        for j in range(col - radius - 1, col + radius):
+        for j in range(col - radius, col + radius + 1):
             if 0 <= i < rows and 0 <= j < cols:
                 row.append(mat[i][j])
             else:
                 row.append(None)
-        #Remove focal cell here
         out.append(row)
 
     # make into a flat list
@@ -28,6 +27,7 @@ def neighbors_base(mat, row, col, radius=1):
         for item in sublist:
             flat_list.append(item)
 
+    del flat_list[4]
     return flat_list
 
 ##############################################################################
@@ -37,7 +37,7 @@ def neighbors_base(mat, row, col, radius=1):
 #Specify matrix size, patch size, and number of patches
 matrix_size = 50
 n_patches = 2
-n_draws = 40
+n_draws = 50
 
 def MakeLandscape(size, patches, draws):
     #Create blank landscape
@@ -57,7 +57,7 @@ def MakeLandscape(size, patches, draws):
 
     for patch in range(0, n_patches):
         coords = numpy.array(randoms[patch])
-        mu = coords/50
+        mu = coords/49
         stdev = 0.003
         alpha = ((1-mu)/stdev)-(1/mu)*numpy.square(mu)
         beta = alpha * (1 / mu - 1)
@@ -67,7 +67,7 @@ def MakeLandscape(size, patches, draws):
         betavals[patch,:,1] = y
 
     #Convert beta values to new coords
-    betavals = betavals*50
+    betavals = betavals*49
     betavals = betavals.round()
 
     #Grow patches from coords
@@ -78,10 +78,10 @@ def MakeLandscape(size, patches, draws):
             coffee[int(i), int(j)] = 0
 
     #Use neighbors function to remove solitary points
-    neighbor_array = numpy.empty(shape=(1,11), dtype = "float")
+    neighbor_array = numpy.empty(shape=(1,10), dtype = "float")
     neighbor_array[:] = numpy.nan
-    for i in range(0, matrix_size):
-        for j in range(0, matrix_size):
+    for i in range(matrix_size):
+        for j in range(matrix_size):
             if coffee[i,j] == 0:
                 neighbor_out = neighbors_base(mat=coffee, row=i, col=j, radius=1)
                 neighbor_out.append(i)
@@ -90,11 +90,10 @@ def MakeLandscape(size, patches, draws):
 
     neighbor_array = neighbor_array[1:,:]
 
-    for row in range(1, numpy.size(neighbor_array, 0)):
-        if numpy.any(neighbor_array[row,0:9] == 0) == True:
-            coffee[int(neighbor_array[row,9]),int(neighbor_array[row,10])] = 0
-        else:
-            coffee[int(neighbor_array[row,9]),int(neighbor_array[row,10])] = None
+    coffeenew = coffee
+    for row in range(0, numpy.size(neighbor_array, 0)):
+        if numpy.any(neighbor_array[row,0:8] == 0) == False:
+            coffeenew[int(neighbor_array[row,8]),int(neighbor_array[row,9])] = numpy.nan
 
     indices = numpy.argwhere(coffee)
     landscape = numpy.empty(shape=(matrix_size,matrix_size))
@@ -108,6 +107,8 @@ def MakeLandscape(size, patches, draws):
     return coffee, landscape
 
 (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws)
+plt.matshow(coffee)
+plt.matshow(landscape, vmin=0, vmax=1)
 
 ###################################################################
 ##############    Cellular Automata    ############################
