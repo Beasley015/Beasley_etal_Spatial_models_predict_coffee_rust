@@ -110,35 +110,53 @@ def MakeLandscape(size, patches, draws):
 plt.matshow(coffee)
 plt.matshow(landscape, vmin=0, vmax=1)
 
+#Pick one coffee cell to initialize infection
+coffee_zeros = numpy.where(coffee == 0)
+randrow = random.randint(0, numpy.size(coffee_zeros,1))
+
+coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
+
+plt.matshow(coffee)
+
 ###################################################################
 ##############    Cellular Automata    ############################
 ###################################################################
+def cellaut():
+    # Pull index of all coffee cells with value 0
+    coffee_zeros = numpy.where(coffee == 0)
 
-# Pull index of all coffee cells with value 0
-coffee_zeros = numpy.where(coffee == 0)
+    # Get neighborhood of that cell
+    neighbors_clean = numpy.empty(shape=(1,8))
+    neighbors_clean[:] = numpy.nan
 
-# Get neighborhood of that cell
-neighbors_clean = numpy.empty(shape=(1,9))
-neighbors_clean[:] = numpy.nan
+    for i in range(0, numpy.size(coffee_zeros, 1)):
+        clean_row = neighbors_base(mat=coffee, row=coffee_zeros[0][i], col=coffee_zeros[1][i], radius=1)
+        neighbors_clean = numpy.vstack([neighbors_clean, clean_row])
 
-for i in range(0, len(coffee_zeros[0])):
-    clean_row = neighbors_base(mat=coffee, row=coffee_zeros[0][i], col=coffee_zeros[1][i], radius=1)
-    neighbors_clean = numpy.vstack([neighbors_clean, clean_row])
+    neighbors_clean = neighbors_clean[1:,:]
 
-neighbors_clean = neighbors_clean[1:,:]
+    # Sum the values of the neighborhood to get number of infected neighbors
+    rowsums = []
+    for i in range(0, numpy.size(neighbors_clean, 0)):
+        row = neighbors_clean[i,:]
+        row = row[~numpy.isnan(row)]
+        add_row = row.sum()
+        rowsums.append(add_row)
 
-# Sum the values of the neighborhood to get number of infected neighbors
-rowsums = []
-for i in range(0,len(neighbors_clean[0])):
-    row = neighbors_clean[i,:]
-    row = row[~numpy.isnan(row)]
-    addrow = row.sum()
-    rowsums.append(addrow)
+    # Use number of infected neighbors to get success probability in a bernoulli trial
+    bern_out = []
+    for i in range(0,len(rowsums)):
+        out = numpy.random.binomial(n = 1, p = (0.2*rowsums[i]))
+        bern_out.append(out)
 
-# Use number of infected neighbors to get success probability in a bernoulli trial
+    # If bern trial is a success, change focal cell to infected
+    for i in range(0, len(coffee_zeros[1])):
+        coffee[coffee_zeros[0][i], coffee_zeros[1][i]] = bern_out[i]
 
-# If bern trial is a success, change focal cell to infected
+    return(coffee)
 
+coffee2 = cellaut()
+plt.matshow(coffee2)
 ###################################################################
 ##############    Propagule Release    ############################
 ###################################################################
