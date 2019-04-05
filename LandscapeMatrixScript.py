@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 ##############################################################################
 ################        Neighbors Function             #######################
 ##############################################################################
-
 def neighbors_base(mat, row, col, radius=1):
     # neighbors: finds nearest neighbors in a matrix
     # inputs: mat = matrix to look at, row and col = indexes, radius=number of cells around
@@ -126,7 +125,7 @@ def cellaut():
     coffee_zeros = numpy.where(coffee == 0)
 
     # Get neighborhood of that cell
-    neighbors_clean = numpy.empty(shape=(1,8))
+    neighbors_clean = numpy.empty(shape=(1,8), dtype = numpy.float64)
     neighbors_clean[:] = numpy.nan
 
     for i in range(0, numpy.size(coffee_zeros, 1)):
@@ -134,6 +133,7 @@ def cellaut():
         neighbors_clean = numpy.vstack([neighbors_clean, clean_row])
 
     neighbors_clean = neighbors_clean[1:,:]
+    neighbors_clean = neighbors_clean.astype(numpy.float64)
 
     # Sum the values of the neighborhood to get number of infected neighbors
     rowsums = []
@@ -146,7 +146,7 @@ def cellaut():
     # Use number of infected neighbors to get success probability in a bernoulli trial
     bern_out = []
     for i in range(0,len(rowsums)):
-        out = numpy.random.binomial(n = 1, p = (0.2*rowsums[i]))
+        out = numpy.random.binomial(n = 1, p = (0.1*rowsums[i]))
         bern_out.append(out)
 
     # If bern trial is a success, change focal cell to infected
@@ -155,11 +155,21 @@ def cellaut():
 
     return(coffee)
 
-coffee2 = cellaut()
-plt.matshow(coffee2)
+coffee = cellaut()
+plt.matshow(coffee)
+
 ###################################################################
 ##############    Propagule Release    ############################
 ###################################################################
+
+#Get neighbors for each infected cell
+coffee_inf = numpy.where(coffee == 1)
+
+#Filter infected cells that are next to landscape cells
+
+#Choose one random coordinate per infected cell per release
+
+#Create sparse matrix of propagules
 
 ###################################################################
 #################    Random Walk    ###############################
