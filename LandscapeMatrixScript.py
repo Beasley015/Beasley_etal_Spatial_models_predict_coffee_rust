@@ -125,7 +125,7 @@ def cellaut():
     coffee_zeros = numpy.where(coffee == 0)
 
     # Get neighborhood of that cell
-    neighbors_clean = numpy.empty(shape=(1,8), dtype = numpy.float64)
+    neighbors_clean = numpy.empty(shape=(1,8))
     neighbors_clean[:] = numpy.nan
 
     for i in range(0, numpy.size(coffee_zeros, 1)):
@@ -162,14 +162,49 @@ plt.matshow(coffee)
 ##############    Propagule Release    ############################
 ###################################################################
 
-#Get neighbors for each infected cell
-coffee_inf = numpy.where(coffee == 1)
+#Create list of tuples for changing coords
+coord_change = [(-1,-1), (-1,0), (-1, 1),
+                (0,-1), (0, 1),
+                (1, -1), (1,0),(1,1)]
 
-#Filter infected cells that are next to landscape cells
+def new_spore():
+    #Get neighbors for each infected cell
+    coffee_inf = numpy.where(coffee == 1)
 
-#Choose one random coordinate per infected cell per release
+    #Get neighbors of infected cells
+    land_neighbors = numpy.empty(shape = (1, 8))
+    land_neighbors[:] = numpy.nan
 
-#Create sparse matrix of propagules
+    for i in range(0, numpy.size(coffee_inf, 1)):
+        land_row = neighbors_base(mat=coffee, row=coffee_inf[0][i], col=coffee_inf[1][i], radius=1)
+        land_neighbors = numpy.vstack([land_neighbors, land_row])
+
+    land_neighbors = land_neighbors[1:,:]
+
+    #Get col numbers of landscape cells
+    land_pos = []
+    for i in range(0, numpy.size(land_neighbors,0)):
+        row = land_neighbors[i,:]
+        if numpy.isnan(row).any: #There's an issue here
+            nans = numpy.isnan(row)
+            pos = numpy.where(nans == True)
+            pos = pos[0].tolist()
+            land_pos.append(pos)
+        else:
+            land_pos.append([None])
+
+    #Create sparse matrix of propagules
+    spores = {}
+
+    for i in range(0, len(land_pos)):
+        place = random.choice(land_pos[i])
+        release = coord_change[place]
+        new_coord = (coffee_inf[0][i]+release[0], coffee_inf[1][i]+release[1])
+        spores.update({new_coord:1})
+
+    return spores
+
+walkers = new_spore()
 
 ###################################################################
 #################    Random Walk    ###############################
