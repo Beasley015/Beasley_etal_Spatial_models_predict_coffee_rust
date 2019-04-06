@@ -210,6 +210,21 @@ walkers = new_spore()
 #################    Random Walk    ###############################
 ###################################################################
 
-###################################################################
-##############    Propagule infections    #########################
-###################################################################
+for i in range(0, len(walkers)):
+    #Propagules walk through landscape
+    old_coords = list(walkers)[i]
+    land_neighbors = numpy.array(neighbors_base(mat = landscape, row = old_coords[0], col = old_coords[1]))
+    land_sansna = land_neighbors[~numpy.isnan(land_neighbors)]
+    add = sum(land_sansna)
+    land_probs = land_neighbors/add
+    land_probs[numpy.isnan(land_probs)] = 0
+    movement = random.choices(population=coord_change, weights=land_probs, k=1)
+    new_coords = (old_coords[0]+movement[0][0], old_coords[1]+movement[0][1])
+    del walkers[old_coords]
+    walkers.update({new_coords:1})
+
+    #Infect new coffee cells
+    new_neighbors = neighbors_base(mat = coffee, row = new_coords[0], col = new_coords[1])
+    if numpy.any(new_neighbors, 0):
+        infec_prob = numpy.random.binomial(n = 1, p = 75)
+
