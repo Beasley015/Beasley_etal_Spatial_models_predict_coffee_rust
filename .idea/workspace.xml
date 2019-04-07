@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="QuestCoffeeRustLandscape" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="276">
+              <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+                <element signature="e#346#1128#0" />
+                <element signature="e#1514#3879#0" />
+                <element signature="e#4480#5737#0" />
+                <element signature="e#6161#7332#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/LandscapeMatrixScript.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="10" />
+    <option name="y" value="20" />
+    <option name="width" value="1346" />
+    <option name="height" value="688" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="QuestCoffeeRustLandscape" type="b2602c69:ProjectViewProjectNode" />
+              <item name="QuestCoffeeRustLandscape" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="pyconsole" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myIpythonEnabled" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Beasley\Documents\QuestCoffeeRustLandscape" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="" />
+      <created>1553106152547</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1553106152547</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Add python script">
+      <created>1553108872351</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1553108872351</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add code to grow patches from seed">
+      <created>1553555062035</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1553555062035</updated>
+    </task>
+    <task id="LOCAL-00003" summary="create patches using beta distributions">
+      <created>1553712728729</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1553712728729</updated>
+    </task>
+    <task id="LOCAL-00004" summary="add neighbors function">
+      <created>1553719237697</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1553719237697</updated>
+    </task>
+    <task id="LOCAL-00005" summary="add neighbors function">
+      <created>1553799786866</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1553799786866</updated>
+    </task>
+    <task id="LOCAL-00006" summary="finish coffee matrix">
+      <created>1553805227543</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1553805227543</updated>
+    </task>
+    <task id="LOCAL-00007" summary="finish landscape matrix">
+      <created>1553806544203</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1553806544203</updated>
+    </task>
+    <task id="LOCAL-00008" summary="finish landscape function">
+      <created>1553878936021</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1553878936021</updated>
+    </task>
+    <task id="LOCAL-00009" summary="start cellular automata function">
+      <created>1553883026536</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1553883026536</updated>
+    </task>
+    <task id="LOCAL-00010" summary="start fixing neighbors function">
+      <created>1553884486052</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1553884486052</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fixed neighbors function">
+      <created>1554239018166</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1554239018166</updated>
+    </task>
+    <task id="LOCAL-00012" summary="finish CA function">
+      <created>1554322544131</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1554322544131</updated>
+    </task>
+    <task id="LOCAL-00013" summary="package and test CA function">
+      <created>1554471147143</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1554471147143</updated>
+    </task>
+    <task id="LOCAL-00014" summary="finish and test propagule release function">
+      <created>1554586102247</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1554586102247</updated>
+    </task>
+    <task id="LOCAL-00015" summary="start random walk/spore infections function">
+      <created>1554594502348</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1554594502348</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.24330357" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" sideWeight="0.502439" side_tool="true" weight="0.24330357" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.29787233" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.3289689" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add python script" />
+    <MESSAGE value="add code to grow patches from seed" />
+    <MESSAGE value="create patches using beta distributions" />
+    <MESSAGE value="add neighbors function" />
+    <MESSAGE value="finish coffee matrix" />
+    <MESSAGE value="finish landscape matrix" />
+    <MESSAGE value="finish landscape function" />
+    <MESSAGE value="start cellular automata function" />
+    <MESSAGE value="start fixing neighbors function" />
+    <MESSAGE value="fixed neighbors function" />
+    <MESSAGE value="finish CA function" />
+    <MESSAGE value="package and test CA function" />
+    <MESSAGE value="finish and test propagule release function" />
+    <MESSAGE value="start random walk/spore infections function" />
+    <option name="LAST_COMMIT_MESSAGE" value="start random walk/spore infections function" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+            <element signature="e#346#1128#0" />
+            <element signature="e#1514#3879#0" />
+            <element signature="e#4480#5737#0" />
+            <element signature="e#6161#7332#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
