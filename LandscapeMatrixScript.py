@@ -1,6 +1,7 @@
 import numpy
 import random
 import matplotlib.pyplot as plt
+import scipy.stats as stats
 
 ##############################################################################
 ################        Neighbors Function             #######################
@@ -37,8 +38,11 @@ def neighbors_base(mat, row, col, radius=1):
 matrix_size = 50
 n_patches = 2
 n_draws = 50
+deforest = 0.2
+deforest_disp = 5
+deforest_draws = 5
 
-def MakeLandscape(size, patches, draws):
+def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
     #Create blank landscape
     coffee = numpy.empty(shape = (matrix_size, matrix_size))
     coffee[:] = numpy.nan
@@ -52,21 +56,19 @@ def MakeLandscape(size, patches, draws):
         coffee[coords] = 0
 
     #Draw from beta dists centered around coords
-    betavals = numpy.empty((len(randoms), n_draws, 2))
+    betavals = numpy.empty((len(randoms), n_draws, n_patches))
 
     for patch in range(0, n_patches):
         coords = numpy.array(randoms[patch])
-        mu = coords/49
-        stdev = 0.003
-        alpha = ((1-mu)/stdev)-(1/mu)*numpy.square(mu)
-        beta = alpha * (1 / mu - 1)
-        x = numpy.random.beta(alpha[0], beta[0], n_draws)
-        y = numpy.random.beta(alpha[1], beta[1], n_draws)
+        mu = coords
+        stdev = 2
+        a1, b1 = (0-mu[0])/stdev, ((matrix_size-1)-mu[0])/stdev
+        a2, b2 = (0 - mu[1]) / stdev, ((matrix_size-1) - mu[1]) / stdev
+        x = stats.truncnorm.rvs(a1, b1, size=n_draws, loc = mu[0], scale = stdev)
+        y = stats.truncnorm.rvs(a2, b2, size=n_draws, loc = mu[1], scale = stdev)
         betavals[patch,:,0] = x
         betavals[patch,:,1] = y
 
-    #Convert beta values to new coords
-    betavals = betavals*49
     betavals = betavals.round()
 
     #Grow patches from coords
@@ -89,11 +91,11 @@ def MakeLandscape(size, patches, draws):
 
     neighbor_array = neighbor_array[1:,:]
 
-    coffeenew = coffee
     for row in range(0, numpy.size(neighbor_array, 0)):
         if numpy.any(neighbor_array[row,0:8] == 0) == False:
-            coffeenew[int(neighbor_array[row,8]),int(neighbor_array[row,9])] = numpy.nan
+            coffee[int(neighbor_array[row,8]),int(neighbor_array[row,9])] = numpy.nan
 
+    #Create fully forested landscape
     indices = numpy.argwhere(coffee)
     landscape = numpy.empty(shape=(matrix_size,matrix_size))
     landscape[coffee == 0] = numpy.nan
@@ -101,11 +103,27 @@ def MakeLandscape(size, patches, draws):
     for i in range(0, len(indices)):
         landscape[indices[i][0], indices[i][1]] = numpy.random.uniform(0.65, 0.95, 1)
 
-    # "Deforestation" bit would go here. Would be similar to how coffee patches were drawn
+    # Simulate deforestation
+    while (landscape < 0.65).sum()/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest:
+        def_seed = random.choice(indices)
+        mu = def_seed
+        stdev = disp
+        a1, b1 = (0 - mu[0]) / stdev, ((matrix_size-1) - mu[0]) / stdev
+        a2, b2 = (0 - mu[1]) / stdev, ((matrix_size-1) - mu[1]) / stdev
+        x = stats.truncnorm.rvs(a1, b1, size=ddraws, loc=mu[0], scale=stdev)
+        y = stats.truncnorm.rvs(a2, b2, size=ddraws, loc=mu[1], scale=stdev)
+
+        clear_coords = numpy.column_stack((x,y))
+        clear_coords = clear_coords.round().astype("int")
+
+        for i in range(0, len(clear_coords[:,0])):
+            if coffee[clear_coords[i,0],clear_coords[i,1]] != 0:
+                landscape[clear_coords[i,0],clear_coords[i,1]] = numpy.random.uniform(0.05, 0.35, 1)
 
     return coffee, landscape
 
-(coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws)
+(coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest = deforest,
+                                    disp = deforest_disp, ddraws = deforest_draws)
 
 #Pick one coffee cell to initialize infection
 coffee_zeros = numpy.where(coffee == 0)

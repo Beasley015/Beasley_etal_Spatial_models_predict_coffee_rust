@@ -4,6 +4,7 @@
     <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LandscapeMatrixScript.py" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeMatrixScript.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/pip-selfcheck.json" beforeDir="false" afterPath="$PROJECT_DIR$/venv/pip-selfcheck.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,16 +20,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="233" selection-start-line="233" selection-end-line="233" />
+            <state relative-caret-position="138">
+              <caret line="36" column="55" lean-forward="true" selection-start-line="36" selection-start-column="55" selection-end-line="36" selection-end-column="55" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
-                <element signature="e#346#1128#0" />
-                <element signature="e#1514#3879#0" />
-                <element signature="e#4421#5678#0" />
-                <element signature="e#5983#6079#0" />
-                <element signature="e#6102#7273#0" />
-                <element signature="e#7525#8768#0" />
+                <element signature="e#374#1156#0" />
+                <element signature="e#1575#4447#0" />
+                <element signature="e#4968#6225#0" />
+                <element signature="e#6629#7802#0" />
+                <element signature="e#8054#9297#0" />
               </folding>
             </state>
           </provider>
@@ -79,7 +79,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="pyconsole" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myIpythonEnabled" value="false" />
@@ -217,11 +217,19 @@
       <option name="project" value="LOCAL" />
       <updated>1554594502348</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="finish walk/new infections function">
+      <created>1554836770261</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1554836770261</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.24330357" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -257,21 +265,21 @@
     <MESSAGE value="package and test CA function" />
     <MESSAGE value="finish and test propagule release function" />
     <MESSAGE value="start random walk/spore infections function" />
-    <option name="LAST_COMMIT_MESSAGE" value="start random walk/spore infections function" />
+    <MESSAGE value="finish walk/new infections function" />
+    <option name="LAST_COMMIT_MESSAGE" value="finish walk/new infections function" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="233" selection-start-line="233" selection-end-line="233" />
+        <state relative-caret-position="138">
+          <caret line="36" column="55" lean-forward="true" selection-start-line="36" selection-start-column="55" selection-end-line="36" selection-end-column="55" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-            <element signature="e#346#1128#0" />
-            <element signature="e#1514#3879#0" />
-            <element signature="e#4421#5678#0" />
-            <element signature="e#5983#6079#0" />
-            <element signature="e#6102#7273#0" />
-            <element signature="e#7525#8768#0" />
+            <element signature="e#374#1156#0" />
+            <element signature="e#1575#4447#0" />
+            <element signature="e#4968#6225#0" />
+            <element signature="e#6629#7802#0" />
+            <element signature="e#8054#9297#0" />
           </folding>
         </state>
       </provider>
