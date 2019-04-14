@@ -33,15 +33,6 @@ def neighbors_base(mat, row, col, radius=1):
 ##############################################################################
 ################          Construct Landscape          #######################
 ##############################################################################
-
-#Specify matrix size, patch size, and number of patches
-matrix_size = 50
-n_patches = 2
-n_draws = 50
-deforest = 0.2
-deforest_disp = 5
-deforest_draws = 5
-
 def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
     #Create blank landscape
     coffee = numpy.empty(shape = (matrix_size, matrix_size))
@@ -120,16 +111,13 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
             if coffee[clear_coords[i,0],clear_coords[i,1]] != 0:
                 landscape[clear_coords[i,0],clear_coords[i,1]] = numpy.random.uniform(0.05, 0.35, 1)
 
+    # Pick one coffee cell to initialize infection
+    coffee_zeros = numpy.where(coffee == 0)
+    randrow = random.randint(0, numpy.size(coffee_zeros, 1))
+
+    coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
+
     return coffee, landscape
-
-(coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest = deforest,
-                                    disp = deforest_disp, ddraws = deforest_draws)
-
-#Pick one coffee cell to initialize infection
-coffee_zeros = numpy.where(coffee == 0)
-randrow = random.randint(0, numpy.size(coffee_zeros,1))
-
-coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -174,12 +162,6 @@ coffee = cellaut()
 ###################################################################
 ##############    Propagule Release    ############################
 ###################################################################
-
-#Create list of tuples for changing coords
-coord_change = [(-1,-1), (-1,0), (-1, 1),
-                (0,-1), (0, 1),
-                (1, -1), (1,0),(1,1)]
-
 def new_spore():
     #Get neighbors for each infected cell
     coffee_inf = numpy.where(coffee == 1)
@@ -198,22 +180,23 @@ def new_spore():
     land_pos = []
     for i in range(0, numpy.size(land_neighbors,0)):
         row = land_neighbors[i,:]
-        if numpy.isnan(row).any(): #There's an issue here
+        if numpy.isnan(row).any():
             nans = numpy.isnan(row)
             pos = numpy.where(nans == True)
             pos = pos[0].tolist()
             land_pos.append(pos)
         else:
-            land_pos.append([None])
+            land_pos.append(None)
 
     #Create sparse matrix of propagules
     spores = {}
 
     for i in range(0, len(land_pos)):
-        place = random.choice(land_pos[i])
-        release = coord_change[place]
-        new_coord = (coffee_inf[0][i]+release[0], coffee_inf[1][i]+release[1])
-        spores.update({new_coord:1})
+        if land_pos[i] != None:
+            place = random.choice(land_pos[i])
+            release = coord_change[place]
+            new_coord = (coffee_inf[0][i]+release[0], coffee_inf[1][i]+release[1])
+            spores.update({new_coord:1})
 
     return spores
 
@@ -222,22 +205,28 @@ walkers = new_spore()
 ###################################################################
 #################    Random Walk    ###############################
 ###################################################################
-
 def spore_walk():
     for i in range(0, len(walkers)):
-        #Propagules walk through landscape
+        # Propagules walk through landscape
         old_coords = list(walkers)[i]
-        land_neighbors = numpy.array(neighbors_base(mat = landscape, row = old_coords[0], col = old_coords[1]))
-        land_neighbors[numpy.isnan(land_neighbors)] = 0
-        add = sum(land_neighbors)
-        land_probs = (1-land_neighbors)/add
+        land_neighbors = numpy.array(neighbors_base(mat=landscape, row=old_coords[0], col=old_coords[1]))
+
+        if numpy.isnan(land_neighbors).any():
+            land_neighbors[numpy.isnan(land_neighbors)] = 0
+
+        land_probs = (1-land_neighbors)/sum(land_neighbors)
         movement = random.choices(population=coord_change, weights=land_probs, k=1)
         new_coords = (old_coords[0]+movement[0][0], old_coords[1]+movement[0][1])
-        del walkers[old_coords]
+        walkers.update({old_coords:None})
         walkers.update({new_coords:1})
 
-        #Infect new coffee cells
-        new_neighbors = neighbors_base(mat = coffee, row = new_coords[0], col = new_coords[1])
+    new_walkers = {k: v for k, v in walkers.items() if v is not None}
+    walkers.clear()
+    walkers.update(new_walkers)
+
+    #Infect new coffee cells
+    for i in range(0, len(walkers)):
+        new_neighbors = neighbors_base(mat = coffee, row = list(walkers)[i][0], col = list(walkers)[i][1])
         new_neighbors = numpy.array(new_neighbors)
         if numpy.any(new_neighbors == 0):
             infec_newcoord = random.choice([ coord_change[i] for i in numpy.where(new_neighbors == 0)[0]])
@@ -245,7 +234,12 @@ def spore_walk():
             infec_prob = numpy.random.binomial(n = 1, p = 0.75)
             if infec_prob == 1:
                 coffee[infec_target[0], infec_target[1]] = 1
-                del walkers[new_coords]
+                walkers.update({new_coords:None})
+
+    new_walkers = {k: v for k, v in walkers.items() if v is not None}
+    walkers.clear()
+    walkers.update(new_walkers)
+
     return coffee, walkers
 
 (coffee, walkers) = spore_walk()
@@ -253,3 +247,29 @@ def spore_walk():
 ###################################################################
 ################ Put it all together ##############################
 ###################################################################
+
+#Specify landscape parameters
+matrix_size = 50
+n_patches = 2
+n_draws = 50
+deforest = 0.2
+deforest_disp = 5
+deforest_draws = 5
+
+#Specify number of landscapes and time steps
+t = 10
+
+#Create landscapes
+(coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest = deforest,
+                                    disp = deforest_disp, ddraws = deforest_draws)
+
+# Create list of tuples for changing coords
+coord_change = [(-1, -1), (-1, 0), (-1, 1),
+                (0, -1), (0, 1),
+                (1, -1), (1, 0), (1, 1)]
+
+for j in range(0,t):
+    coffee = cellaut()
+    walkers = new_spore()
+    (coffee, walkers) = spore_walk()
+    print(j)
