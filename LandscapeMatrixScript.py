@@ -157,8 +157,6 @@ def cellaut():
 
     return(coffee)
 
-coffee = cellaut()
-
 ###################################################################
 ##############    Propagule Release    ############################
 ###################################################################
@@ -180,6 +178,7 @@ def new_spore():
     land_pos = []
     for i in range(0, numpy.size(land_neighbors,0)):
         row = land_neighbors[i,:]
+        row = numpy.array(row, dtype = numpy.float64)
         if numpy.isnan(row).any():
             nans = numpy.isnan(row)
             pos = numpy.where(nans == True)
@@ -200,8 +199,6 @@ def new_spore():
 
     return spores
 
-walkers = new_spore()
-
 ###################################################################
 #################    Random Walk    ###############################
 ###################################################################
@@ -209,10 +206,11 @@ def spore_walk():
     for i in range(0, len(walkers)):
         # Propagules walk through landscape
         old_coords = list(walkers)[i]
-        land_neighbors = numpy.array(neighbors_base(mat=landscape, row=old_coords[0], col=old_coords[1]))
+        land_neighbors = numpy.array(neighbors_base(mat=landscape, row=old_coords[0], col=old_coords[1]), dtype = numpy.float64)
 
         if numpy.isnan(land_neighbors).any():
             land_neighbors[numpy.isnan(land_neighbors)] = 0
+            land_neighbors[land_neighbors == None] = 0
 
         land_probs = (1-land_neighbors)/sum(land_neighbors)
         movement = random.choices(population=coord_change, weights=land_probs, k=1)
@@ -231,18 +229,17 @@ def spore_walk():
         if numpy.any(new_neighbors == 0):
             infec_newcoord = random.choice([ coord_change[i] for i in numpy.where(new_neighbors == 0)[0]])
             infec_target = [new_coords[0]+infec_newcoord[0], new_coords[1]+infec_newcoord[1]]
-            infec_prob = numpy.random.binomial(n = 1, p = 0.75)
-            if infec_prob == 1:
-                coffee[infec_target[0], infec_target[1]] = 1
-                walkers.update({new_coords:None})
+            if all(v < 50 for v in infec_target):
+                infec_prob = numpy.random.binomial(n = 1, p = 0.75)
+                if infec_prob == 1 and coffee[infec_target[0], infec_target[1]] == 0:
+                    coffee[infec_target[0], infec_target[1]] = 1
+                    walkers.update({new_coords:None})
 
     new_walkers = {k: v for k, v in walkers.items() if v is not None}
     walkers.clear()
     walkers.update(new_walkers)
 
     return coffee, walkers
-
-(coffee, walkers) = spore_walk()
 
 ###################################################################
 ################ Put it all together ##############################
@@ -257,7 +254,7 @@ deforest_disp = 5
 deforest_draws = 5
 
 #Specify number of landscapes and time steps
-t = 10
+t = 500
 
 #Create landscapes
 (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest = deforest,
