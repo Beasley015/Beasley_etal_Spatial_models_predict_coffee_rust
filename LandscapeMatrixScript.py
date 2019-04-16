@@ -47,24 +47,24 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
         coffee[coords] = 0
 
     #Draw from beta dists centered around coords
-    betavals = numpy.empty((len(randoms), n_draws, n_patches))
+    betavals = numpy.empty((n_draws, 2, n_patches))
 
     for patch in range(0, n_patches):
         coords = numpy.array(randoms[patch])
         mu = coords
-        stdev = 2
+        stdev = 1.5
         a1, b1 = (0-mu[0])/stdev, ((matrix_size-1)-mu[0])/stdev
         a2, b2 = (0 - mu[1]) / stdev, ((matrix_size-1) - mu[1]) / stdev
         x = stats.truncnorm.rvs(a1, b1, size=n_draws, loc = mu[0], scale = stdev)
         y = stats.truncnorm.rvs(a2, b2, size=n_draws, loc = mu[1], scale = stdev)
-        betavals[patch,:,0] = x
-        betavals[patch,:,1] = y
+        betavals[:,0,patch] = x
+        betavals[:,1,patch] = y
 
     betavals = betavals.round()
 
     #Grow patches from coords
     for patch in range(0, n_patches):
-        coords = betavals[patch,:,:]
+        coords = betavals[:, :, patch]
         for cell in range(0, len(coords)):
             i,j = coords[cell,:]
             coffee[int(i), int(j)] = 0
@@ -247,26 +247,40 @@ def spore_walk():
 
 #Specify landscape parameters
 matrix_size = 50
-n_patches = 2
+n_patches = 3
 n_draws = 50
-deforest = 0.2
+deforest = 0.8
 deforest_disp = 5
 deforest_draws = 5
 
 #Specify number of landscapes and time steps
+n = 3
 t = 500
 
-#Create landscapes
-(coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest = deforest,
-                                    disp = deforest_disp, ddraws = deforest_draws)
+def THE_FUNCTION(nlandscape = n):
+    for i in range(0,n):
+        # Create blank array to store results
+        perc_inf = numpy.empty((t, 2, n))
 
-# Create list of tuples for changing coords
-coord_change = [(-1, -1), (-1, 0), (-1, 1),
-                (0, -1), (0, 1),
-                (1, -1), (1, 0), (1, 1)]
+        # Create landscapes
+        (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest,
+                                            disp=deforest_disp, ddraws=deforest_draws)
 
-for j in range(0,t):
-    coffee = cellaut()
-    walkers = new_spore()
-    (coffee, walkers) = spore_walk()
-    print(j)
+        # Create list of tuples for changing coords
+        coord_change = [(-1, -1), (-1, 0), (-1, 1),
+                        (0, -1), (0, 1),
+                        (1, -1), (1, 0), (1, 1)]
+
+        for j in range(0,t):
+            coffee = cellaut()
+            walkers = new_spore()
+            (coffee, walkers) = spore_walk()
+            print("j = " + str(j))
+            perc_inf[j,0,n] = j
+            perc_inf[j,1,n] = numpy.count_nonzero(coffee == 0) / (numpy.count_nonzero(coffee == 1)+numpy.count_nonzero(coffee == 0))
+
+        print("i = " + str(i))
+
+    return perc_inf
+
+perc_inf = THE_FUNCTION(nlandscape=n)

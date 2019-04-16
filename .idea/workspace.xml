@@ -19,15 +19,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-218">
-              <caret line="204" column="17" selection-start-line="204" selection-start-column="17" selection-end-line="204" selection-end-column="17" />
+            <state relative-caret-position="325">
+              <caret line="286" lean-forward="true" selection-start-line="286" selection-end-line="286" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
                 <element signature="e#1464#4832#0" />
                 <element signature="e#5057#6314#0" />
-                <element signature="e#6561#7757#0" />
-                <element signature="e#8008#9592#0" />
+                <element signature="e#6541#7791#0" />
+                <element signature="e#8019#9797#0" />
               </folding>
             </state>
           </provider>
@@ -237,11 +237,19 @@
       <option name="project" value="LOCAL" />
       <updated>1555257290157</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="fixed other problem in random walk function">
+      <created>1555362163470</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1555362163486</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.24330357" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -280,20 +288,21 @@
     <MESSAGE value="finish walk/new infections function" />
     <MESSAGE value="add deforestation to landscape function" />
     <MESSAGE value="fixed problem in random walk function" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed problem in random walk function" />
+    <MESSAGE value="fixed other problem in random walk function" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed other problem in random walk function" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-218">
-          <caret line="204" column="17" selection-start-line="204" selection-start-column="17" selection-end-line="204" selection-end-column="17" />
+        <state relative-caret-position="325">
+          <caret line="286" lean-forward="true" selection-start-line="286" selection-end-line="286" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
             <element signature="e#1464#4832#0" />
             <element signature="e#5057#6314#0" />
-            <element signature="e#6561#7757#0" />
-            <element signature="e#8008#9592#0" />
+            <element signature="e#6541#7791#0" />
+            <element signature="e#8019#9797#0" />
           </folding>
         </state>
       </provider>
