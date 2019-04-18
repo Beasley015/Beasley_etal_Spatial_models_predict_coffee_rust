@@ -117,21 +117,21 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 
     coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
 
-    return coffee, landscape
+    return (coffee, landscape)
 
 ###################################################################
 ##############    Cellular Automata    ############################
 ###################################################################
-def cellaut():
+def cellaut(mat, land):
     # Pull index of all coffee cells with value 0
-    coffee_zeros = numpy.where(coffee == 0)
+    coffee_zeros = numpy.where(mat == 0)
 
     # Get neighborhood of that cell
     neighbors_clean = numpy.empty(shape=(1,8))
     neighbors_clean[:] = numpy.nan
 
     for i in range(0, numpy.size(coffee_zeros, 1)):
-        clean_row = neighbors_base(mat=coffee, row=coffee_zeros[0][i], col=coffee_zeros[1][i], radius=1)
+        clean_row = neighbors_base(mat=mat, row=coffee_zeros[0][i], col=coffee_zeros[1][i], radius=1)
         neighbors_clean = numpy.vstack([neighbors_clean, clean_row])
 
     neighbors_clean = neighbors_clean[1:,:]
@@ -153,23 +153,23 @@ def cellaut():
 
     # If bern trial is a success, change focal cell to infected
     for i in range(0, len(coffee_zeros[1])):
-        coffee[coffee_zeros[0][i], coffee_zeros[1][i]] = bern_out[i]
+        mat[coffee_zeros[0][i], coffee_zeros[1][i]] = bern_out[i]
 
-    return(coffee)
+    return(mat)
 
 ###################################################################
 ##############    Propagule Release    ############################
 ###################################################################
-def new_spore():
+def new_spore(mat, coord):
     #Get neighbors for each infected cell
-    coffee_inf = numpy.where(coffee == 1)
+    coffee_inf = numpy.where(mat == 1)
 
     #Get neighbors of infected cells
     land_neighbors = numpy.empty(shape = (1, 8))
     land_neighbors[:] = numpy.nan
 
     for i in range(0, numpy.size(coffee_inf, 1)):
-        land_row = neighbors_base(mat=coffee, row=coffee_inf[0][i], col=coffee_inf[1][i], radius=1)
+        land_row = neighbors_base(mat=mat, row=coffee_inf[0][i], col=coffee_inf[1][i], radius=1)
         land_neighbors = numpy.vstack([land_neighbors, land_row])
 
     land_neighbors = land_neighbors[1:,:]
@@ -193,7 +193,7 @@ def new_spore():
     for i in range(0, len(land_pos)):
         if land_pos[i] != None:
             place = random.choice(land_pos[i])
-            release = coord_change[place]
+            release = coord[place]
             new_coord = (coffee_inf[0][i]+release[0], coffee_inf[1][i]+release[1])
             spores.update({new_coord:1})
 
@@ -202,44 +202,44 @@ def new_spore():
 ###################################################################
 #################    Random Walk    ###############################
 ###################################################################
-def spore_walk():
-    for i in range(0, len(walkers)):
+def spore_walk(spores, land, mat, coord):
+    for i in range(0, len(spores)):
         # Propagules walk through landscape
-        old_coords = list(walkers)[i]
-        land_neighbors = numpy.array(neighbors_base(mat=landscape, row=old_coords[0], col=old_coords[1]), dtype = numpy.float64)
+        old_coords = list(spores)[i]
+        land_neighbors = numpy.array(neighbors_base(mat=land, row=old_coords[0], col=old_coords[1]), dtype = numpy.float64)
 
         if numpy.isnan(land_neighbors).any():
             land_neighbors[numpy.isnan(land_neighbors)] = 0
             land_neighbors[land_neighbors == None] = 0
 
         land_probs = (1-land_neighbors)/sum(land_neighbors)
-        movement = random.choices(population=coord_change, weights=land_probs, k=1)
+        movement = random.choices(population=coord, weights=land_probs, k=1)
         new_coords = (old_coords[0]+movement[0][0], old_coords[1]+movement[0][1])
-        walkers.update({old_coords:None})
-        walkers.update({new_coords:1})
+        spores.update({old_coords:None})
+        spores.update({new_coords:1})
 
-    new_walkers = {k: v for k, v in walkers.items() if v is not None}
-    walkers.clear()
-    walkers.update(new_walkers)
+    new_walkers = {k: v for k, v in spores.items() if v is not None}
+    spores.clear()
+    spores.update(new_walkers)
 
     #Infect new coffee cells
-    for i in range(0, len(walkers)):
-        new_neighbors = neighbors_base(mat = coffee, row = list(walkers)[i][0], col = list(walkers)[i][1])
+    for i in range(0, len(spores)):
+        new_neighbors = neighbors_base(mat = mat, row = list(spores)[i][0], col = list(spores)[i][1])
         new_neighbors = numpy.array(new_neighbors)
         if numpy.any(new_neighbors == 0):
-            infec_newcoord = random.choice([ coord_change[i] for i in numpy.where(new_neighbors == 0)[0]])
+            infec_newcoord = random.choice([ coord[i] for i in numpy.where(new_neighbors == 0)[0]])
             infec_target = [new_coords[0]+infec_newcoord[0], new_coords[1]+infec_newcoord[1]]
             if all(v < 50 for v in infec_target):
                 infec_prob = numpy.random.binomial(n = 1, p = 0.75)
-                if infec_prob == 1 and coffee[infec_target[0], infec_target[1]] == 0:
-                    coffee[infec_target[0], infec_target[1]] = 1
-                    walkers.update({new_coords:None})
+                if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
+                    mat[infec_target[0], infec_target[1]] = 1
+                    spores.update({new_coords:None})
 
-    new_walkers = {k: v for k, v in walkers.items() if v is not None}
-    walkers.clear()
-    walkers.update(new_walkers)
+    new_walkers = {k: v for k, v in spores.items() if v is not None}
+    spores.clear()
+    spores.update(new_walkers)
 
-    return coffee, walkers
+    return mat, spores
 
 ###################################################################
 ################ Put it all together ##############################
@@ -272,12 +272,12 @@ def THE_FUNCTION(nlandscape = n):
                         (1, -1), (1, 0), (1, 1)]
 
         for j in range(0,t):
-            coffee = cellaut()
-            walkers = new_spore()
-            (coffee, walkers) = spore_walk()
+            coffee = cellaut(mat=coffee, land=landscape)
+            walkers = new_spore(mat=coffee, coord=coord_change)
+            (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
             print("j = " + str(j))
-            perc_inf[j,0,n] = j
-            perc_inf[j,1,n] = numpy.count_nonzero(coffee == 0) / (numpy.count_nonzero(coffee == 1)+numpy.count_nonzero(coffee == 0))
+            perc_inf[j,0,i] = j
+            perc_inf[j,1,i] = numpy.count_nonzero(coffee == 0) / (numpy.count_nonzero(coffee == 1)+numpy.count_nonzero(coffee == 0))
 
         print("i = " + str(i))
 
