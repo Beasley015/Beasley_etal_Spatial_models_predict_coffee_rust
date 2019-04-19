@@ -254,13 +254,13 @@ deforest_disp = 5
 deforest_draws = 5
 
 #Specify number of landscapes and time steps
-n = 3
+n = 1
 t = 500
 
 def THE_FUNCTION(nlandscape = n):
     for i in range(0,n):
         # Create blank array to store results
-        perc_inf = numpy.empty((t, 2, n))
+        perc_inf = numpy.empty((t,2,n))
 
         # Create landscapes
         (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest,
@@ -275,9 +275,9 @@ def THE_FUNCTION(nlandscape = n):
             coffee = cellaut(mat=coffee, land=landscape)
             walkers = new_spore(mat=coffee, coord=coord_change)
             (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
-            print("j = " + str(j))
             perc_inf[j,0,i] = j
-            perc_inf[j,1,i] = numpy.count_nonzero(coffee == 0) / (numpy.count_nonzero(coffee == 1)+numpy.count_nonzero(coffee == 0))
+            perc_inf[j,1,i] = numpy.count_nonzero(coffee == 1) / (numpy.count_nonzero(coffee == 1)+numpy.count_nonzero(coffee == 0))
+            print("j = " + str(j))
 
         print("i = " + str(i))
 
