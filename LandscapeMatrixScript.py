@@ -92,10 +92,10 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
     landscape[coffee == 0] = numpy.nan
 
     for i in range(0, len(indices)):
-        landscape[indices[i][0], indices[i][1]] = numpy.random.uniform(0.65, 0.95, 1)
+        landscape[indices[i][0], indices[i][1]] = numpy.random.uniform(0.3, 0.95, 1)
 
     # Simulate deforestation
-    while (landscape < 0.65).sum()/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest:
+    while (landscape < 0.3).sum()/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest:
         def_seed = random.choice(indices)
         mu = def_seed
         stdev = disp
@@ -109,7 +109,7 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 
         for i in range(0, len(clear_coords[:,0])):
             if coffee[clear_coords[i,0],clear_coords[i,1]] != 0:
-                landscape[clear_coords[i,0],clear_coords[i,1]] = numpy.random.uniform(0.05, 0.35, 1)
+                landscape[clear_coords[i,0],clear_coords[i,1]] = numpy.random.uniform(0.05, 0.3, 1)
 
     # Pick one coffee cell to initialize infection
     coffee_zeros = numpy.where(coffee == 0)
