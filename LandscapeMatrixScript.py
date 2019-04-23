@@ -260,7 +260,7 @@ t = 1000
 def THE_FUNCTION(nlandscape = n):
     for i in range(0,n):
         # Create blank array to store results
-        perc_inf = numpy.empty((t,2,n))
+        perc_inf = numpy.zeros((t,2,n))
 
         # Create landscapes
         (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest,
