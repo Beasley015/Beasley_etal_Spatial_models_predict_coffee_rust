@@ -246,16 +246,16 @@ def spore_walk(spores, land, mat, coord):
 ###################################################################
 
 #Specify landscape parameters
-matrix_size = 50
-n_patches = 3
+matrix_size = 500
+n_patches = 50
 n_draws = 50
-deforest = 0.8
+deforest = 0.9
 deforest_disp = 5
 deforest_draws = 5
 
 #Specify number of landscapes and time steps
 n = 1
-t = 500
+t = 1000
 
 def THE_FUNCTION(nlandscape = n):
     for i in range(0,n):
@@ -284,3 +284,5 @@ def THE_FUNCTION(nlandscape = n):
     return perc_inf
 
 perc_inf = THE_FUNCTION(nlandscape=n)
+
+numpy.savetxt("def90disp5.csv", perc_inf, delimiter=",")
