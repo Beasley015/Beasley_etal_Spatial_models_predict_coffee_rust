@@ -19,8 +19,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
-              <caret line="287" column="6" selection-start-line="287" selection-start-column="6" selection-end-line="287" selection-end-column="6" />
+            <state relative-caret-position="189">
+              <caret line="286" column="66" selection-start-line="286" selection-start-column="66" selection-end-line="286" selection-end-column="66" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
@@ -28,7 +28,7 @@
                 <element signature="e#5058#6303#0" />
                 <element signature="e#6540#7777#0" />
                 <element signature="e#8029#9761#0" />
-                <element signature="e#10193#11236#0" />
+                <element signature="e#10201#11153#0" />
               </folding>
             </state>
           </provider>
@@ -100,6 +100,34 @@
         </RuleState>
       </list>
     </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="LandscapeMatrixScript" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="QuestCoffeeRustLandscape" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LandscapeMatrixScript.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.LandscapeMatrixScript" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -273,7 +301,21 @@
       <option name="project" value="LOCAL" />
       <updated>1555977357287</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Prepare script for actual simulation">
+      <created>1556049005914</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1556049005914</updated>
+    </task>
+    <task id="LOCAL-00025" summary="forgot something">
+      <created>1556049040479</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1556049040479</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -285,7 +327,7 @@
       <window_info id="Favorites" order="2" sideWeight="0.502439" side_tool="true" weight="0.24330357" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3289689" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -322,13 +364,15 @@
     <MESSAGE value="fixed bug where locally defined variables weren't passed to nested functions" />
     <MESSAGE value="I'm a dumbass" />
     <MESSAGE value="Change landscape parameters" />
-    <option name="LAST_COMMIT_MESSAGE" value="Change landscape parameters" />
+    <MESSAGE value="Prepare script for actual simulation" />
+    <MESSAGE value="forgot something" />
+    <option name="LAST_COMMIT_MESSAGE" value="forgot something" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="287" column="6" selection-start-line="287" selection-start-column="6" selection-end-line="287" selection-end-column="6" />
+        <state relative-caret-position="189">
+          <caret line="286" column="66" selection-start-line="286" selection-start-column="66" selection-end-line="286" selection-end-column="66" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
@@ -336,7 +380,7 @@
             <element signature="e#5058#6303#0" />
             <element signature="e#6540#7777#0" />
             <element signature="e#8029#9761#0" />
-            <element signature="e#10193#11236#0" />
+            <element signature="e#10201#11153#0" />
           </folding>
         </state>
       </provider>

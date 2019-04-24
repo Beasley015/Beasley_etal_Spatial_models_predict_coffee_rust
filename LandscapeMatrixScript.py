@@ -95,7 +95,7 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
         landscape[indices[i][0], indices[i][1]] = numpy.random.uniform(0.3, 0.95, 1)
 
     # Simulate deforestation
-    while (landscape < 0.3).sum()/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest:
+    while ((landscape < 0.3).sum()/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest):
         def_seed = random.choice(indices)
         mu = def_seed
         stdev = disp
@@ -246,22 +246,21 @@ def spore_walk(spores, land, mat, coord):
 ###################################################################
 
 #Specify landscape parameters
-matrix_size = 500
-n_patches = 50
+matrix_size = 100
+n_patches = 30
 n_draws = 50
 deforest = 0.9
 deforest_disp = 5
 deforest_draws = 5
 
 #Specify number of landscapes and time steps
-n = 1
+n = 50
 t = 1000
 
 def THE_FUNCTION(nlandscape = n):
-    for i in range(0,n):
-        # Create blank array to store results
-        perc_inf = numpy.zeros((t,2,n))
-
+    # Create blank array to store results
+    perc_inf = numpy.empty((t, 2, n))
+    for i in range(n):
         # Create landscapes
         (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest,
                                             disp=deforest_disp, ddraws=deforest_draws)
@@ -271,7 +270,7 @@ def THE_FUNCTION(nlandscape = n):
                         (0, -1), (0, 1),
                         (1, -1), (1, 0), (1, 1)]
 
-        for j in range(0,t):
+        for j in range(t):
             coffee = cellaut(mat=coffee, land=landscape)
             walkers = new_spore(mat=coffee, coord=coord_change)
             (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
@@ -285,4 +284,7 @@ def THE_FUNCTION(nlandscape = n):
 
 perc_inf = THE_FUNCTION(nlandscape=n)
 
-numpy.savetxt("def90disp5.csv", perc_inf, delimiter=",")
+perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
+
+numpy.savetxt("def90disp5.csv", perc_inf2, delimiter=",")
+
