@@ -4,6 +4,7 @@
     <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LandscapeMatrixScript.py" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeMatrixScript.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LandscapeSim.R" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,16 +20,16 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="286" column="66" selection-start-line="286" selection-start-column="66" selection-end-line="286" selection-end-column="66" />
+            <state relative-caret-position="323">
+              <caret line="289" selection-start-line="289" selection-end-line="289" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
-                <element signature="e#1464#4824#0" />
-                <element signature="e#5058#6303#0" />
-                <element signature="e#6540#7777#0" />
-                <element signature="e#8029#9761#0" />
-                <element signature="e#10201#11153#0" />
+                <element signature="e#1464#4826#0" />
+                <element signature="e#5060#6305#0" />
+                <element signature="e#6542#7779#0" />
+                <element signature="e#8031#9763#0" />
+                <element signature="e#10200#11232#0" />
               </folding>
             </state>
           </provider>
@@ -315,12 +316,18 @@
       <option name="project" value="LOCAL" />
       <updated>1556049040479</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="added line coercing 3d array to 2d">
+      <created>1556068683333</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1556068683333</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.24330357" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -366,21 +373,22 @@
     <MESSAGE value="Change landscape parameters" />
     <MESSAGE value="Prepare script for actual simulation" />
     <MESSAGE value="forgot something" />
-    <option name="LAST_COMMIT_MESSAGE" value="forgot something" />
+    <MESSAGE value="added line coercing 3d array to 2d" />
+    <option name="LAST_COMMIT_MESSAGE" value="added line coercing 3d array to 2d" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="286" column="66" selection-start-line="286" selection-start-column="66" selection-end-line="286" selection-end-column="66" />
+        <state relative-caret-position="323">
+          <caret line="289" selection-start-line="289" selection-end-line="289" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
-            <element signature="e#1464#4824#0" />
-            <element signature="e#5058#6303#0" />
-            <element signature="e#6540#7777#0" />
-            <element signature="e#8029#9761#0" />
-            <element signature="e#10201#11153#0" />
+            <element signature="e#1464#4826#0" />
+            <element signature="e#5060#6305#0" />
+            <element signature="e#6542#7779#0" />
+            <element signature="e#8031#9763#0" />
+            <element signature="e#10200#11232#0" />
           </folding>
         </state>
       </provider>

@@ -249,8 +249,8 @@ def spore_walk(spores, land, mat, coord):
 matrix_size = 100
 n_patches = 30
 n_draws = 50
-deforest = 0.9
-deforest_disp = 5
+deforest = 0.35
+deforest_disp = 2
 deforest_draws = 5
 
 #Specify number of landscapes and time steps
@@ -286,5 +286,5 @@ perc_inf = THE_FUNCTION(nlandscape=n)
 
 perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
 
-numpy.savetxt("def90disp5.csv", perc_inf2, delimiter=",")
+numpy.savetxt("def35disp2.csv", perc_inf2, delimiter=",")
 
