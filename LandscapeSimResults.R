@@ -7,6 +7,7 @@
 # Read in model outputs --------------------------------------
 # Read all csv's into a list
 filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
+shortnames <- list.files("Outputs", pattern = "*.csv")
 output.list <- lapply(filenames, read.csv, header = F)
 
 # Rename columns of each dataframe
