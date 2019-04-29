@@ -4,10 +4,6 @@
 # Spring 2019                                       #
 #####################################################
 
-#Libraries
-library(tidyverse)
-library(ggplot2)
-
 # Read in model outputs --------------------------------------
 # Read all csv's into a list
 filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
@@ -17,7 +13,6 @@ output.list <- lapply(filenames, read.csv, header = F)
 # Rename columns of each dataframe
 newnames <- c("Time", "PercInf")
 output.list <- lapply(output.list, setNames, newnames)
-head(output.list[[1]])
 
 # Set up data -----------------------------------------------
 # Add column to denote replicates
@@ -54,5 +49,3 @@ head(output.list[[1]])
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
 
-# checking variation among replicates by plotting replicates ~ PercInf
-ggplot(aes(x = obs))
