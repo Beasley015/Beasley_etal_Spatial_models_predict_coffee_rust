@@ -1,0 +1,37 @@
+---
+title: "Ayuda Natalia"
+output: html_notebook
+---
+
+```{r}
+library(stringr)
+```
+
+```{r}
+# Read in model outputs --------------------------------------
+# Read all csv's into a list
+filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
+the_names <- list.files("Outputs", pattern = "*.csv", full.names = F)
+
+token_name <- function(x){
+   a <- gsub('.csv','',x)
+   a
+}
+
+the_names <- c("Time") %>% append(lapply(the_names,token_name))
+
+i = 0
+for (name in filenames){
+  if (i == 0){
+    df <- read.csv(name,header = F)
+    i = i+1
+  }else{
+    df_temp <- read.csv(name,header = F)
+    df <- cbind(df,df_temp$V2)
+  }
+  df
+}
+colnames(df)<-the_names
+
+df
+``` 
