@@ -63,3 +63,7 @@ ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate), alph
   facet_grid(vars(deforest), vars(dispersion)) +
   theme_classic()
   legend
+  
+# heat map
+ggplot(output.mat, aes(deforest, dispersion, fill = PercInf)) + geom_raster(hjust = 0, vjust = 0)
+  
