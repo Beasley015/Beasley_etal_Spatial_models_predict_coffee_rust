@@ -20,7 +20,7 @@ output.list <- lapply(output.list, setNames, newnames)
 head(output.list[[1]])
 
 # Set up data -----------------------------------------------
-#Add column to denote replicates
+# Add column to denote replicates
 replicate <- logical()
 for(i in 1:50){
   new <- rep(i, 1000)
@@ -29,7 +29,7 @@ for(i in 1:50){
   
 output.list <- lapply(output.list, cbind, replicate)  
 
-#Pull deforestation and dispersion from file names
+# Pull deforestation and dispersion from file names
 mid <- function(text, start_num, num_char){
   substr(text, start_num, start_num + num_char - 1)
 }
@@ -51,5 +51,8 @@ for(i in 1:length(output.list)){
 }
 head(output.list[[1]])
 
-#Turn list into big-ass data frame
+# Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
+
+# checking variation among replicates by plotting replicates ~ PercInf
+ggplot(aes(x = obs))
