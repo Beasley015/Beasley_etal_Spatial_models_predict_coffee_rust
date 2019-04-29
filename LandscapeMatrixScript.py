@@ -204,36 +204,40 @@ def new_spore(mat, coord):
 ###################################################################
 def spore_walk(spores, land, mat, coord):
     for i in range(0, len(spores)):
-        # Propagules walk through landscape
+        step_credit = 5
         old_coords = list(spores)[i]
-        land_neighbors = numpy.array(neighbors_base(mat=land, row=old_coords[0], col=old_coords[1]), dtype = numpy.float64)
 
-        if numpy.isnan(land_neighbors).any():
-            land_neighbors[numpy.isnan(land_neighbors)] = 0
-            land_neighbors[land_neighbors == None] = 0
+        while step_credit > 0:
+            land_neighbors = numpy.array(neighbors_base(mat=land, row=old_coords[0], col=old_coords[1]),
+                                         dtype=numpy.float64)
 
-        land_probs = (1-land_neighbors)/sum(land_neighbors)
-        movement = random.choices(population=coord, weights=land_probs, k=1)
-        new_coords = (old_coords[0]+movement[0][0], old_coords[1]+movement[0][1])
-        spores.update({old_coords:None})
-        spores.update({new_coords:1})
+            if numpy.isnan(land_neighbors).any():
+                land_neighbors[numpy.isnan(land_neighbors)] = 0
+                land_neighbors[land_neighbors == None] = 0
 
-    new_walkers = {k: v for k, v in spores.items() if v is not None}
-    spores.clear()
-    spores.update(new_walkers)
+            land_neighbors[land_neighbors > 0] == 1
+            movement = random.choices(population = coord, weights=land_neighbors, k = 1)
+            new_coords = (old_coords[0] + movement[0][0], old_coords[1] + movement[0][1])
 
-    #Infect new coffee cells
-    for i in range(0, len(spores)):
-        new_neighbors = neighbors_base(mat = mat, row = list(spores)[i][0], col = list(spores)[i][1])
-        new_neighbors = numpy.array(new_neighbors)
-        if numpy.any(new_neighbors == 0):
-            infec_newcoord = random.choice([ coord[i] for i in numpy.where(new_neighbors == 0)[0]])
-            infec_target = [new_coords[0]+infec_newcoord[0], new_coords[1]+infec_newcoord[1]]
-            if all(v < 50 for v in infec_target):
-                infec_prob = numpy.random.binomial(n = 1, p = 0.75)
-                if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
-                    mat[infec_target[0], infec_target[1]] = 1
-                    spores.update({new_coords:None})
+            spores.update({old_coords: None})
+            spores.update({new_coords: 1})
+
+            old_coords = new_coords
+
+            step_credit = step_credit-land[new_coords[0], new_coords[1]]
+
+            new_neighbors = neighbors_base(mat=mat, row=new_coords[0], col=new_coords[1])
+            new_neighbors = numpy.array(new_neighbors)
+
+            if numpy.any(new_neighbors == 0):
+                infec_newcoord = random.choice([coord[i] for i in numpy.where(new_neighbors == 0)[0]])
+                infec_target = [new_coords[0] + infec_newcoord[0], new_coords[1] + infec_newcoord[1]]
+                if all(v < 50 for v in infec_target):
+                    infec_prob = numpy.random.binomial(n=1, p=0.75)
+                    if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
+                        mat[infec_target[0], infec_target[1]] = 1
+                        spores.update({new_coords: None})
+                        break
 
     new_walkers = {k: v for k, v in spores.items() if v is not None}
     spores.clear()
@@ -249,12 +253,12 @@ def spore_walk(spores, land, mat, coord):
 matrix_size = 100
 n_patches = 30
 n_draws = 50
-deforest = 0.10
-deforest_disp = 2
+deforest = 0.90
+deforest_disp = 5
 deforest_draws = 5
 
 #Specify number of landscapes and time steps
-n = 50
+n = 1
 t = 1000
 
 def THE_FUNCTION(nlandscape = n):
@@ -286,5 +290,5 @@ perc_inf = THE_FUNCTION(nlandscape=n)
 
 perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
 
-numpy.savetxt("def10disp2.csv", perc_inf2, delimiter=",")
+numpy.savetxt("def90disp5.csv", perc_inf2, delimiter=",")
 
