@@ -57,6 +57,8 @@ ggplot(output.mat, aes(x = deforest, y= PercInf)) +
 ggplot(output.mat, aes(x = dispersion, y= PercInf)) +
   geom_boxplot(aes(fill=factor(dispersion)))
 
+library(ggplot2)
+
 # percent infestation through time steps
 ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate), alpha = 0.3)) + 
   geom_line() +
