@@ -50,3 +50,6 @@ for(i in 1:length(output.list)){
   output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion)
 }
 head(output.list[[1]])
+
+#Turn list into big-ass data frame
+output.mat <- do.call(rbind, output.list)
