@@ -49,3 +49,24 @@ head(output.list[[1]])
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
 
+# plot variation in Percentage Infestation among replicates
+ggplot(output.mat, aes(x = deforest, y= PercInf)) +
+  geom_boxplot(aes(fill=factor(deforest)))
+
+# individual percent infestation ~ deforestation
+ggplot(output.mat, aes(x = dispersion, y= PercInf)) +
+  geom_boxplot(aes(fill=factor(dispersion)))
+
+# percent infestation through time steps
+output <- output.mat %>%
+  as_tibble() %>%
+  group_by(deforest, dispersion) 
+
+ggplot(output, aes(x = Time, y = PercInf, group = as.factor(replicate), alpha = 0.3)) + 
+  geom_line() +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic()
+  legend
+
+ggplot(output.mat, aes(x = Time, y= PercInf), fill = deforest) +
+  geom_line()
