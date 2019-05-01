@@ -3,6 +3,11 @@
 # N. Aristizabal, E. Beasley, & E. Bueno            #
 # Spring 2019                                       #
 #####################################################
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(viridisLite)
+library(viridis)
 
 # Read in model outputs --------------------------------------
 # Read all csv's into a list
@@ -49,23 +54,62 @@ head(output.list[[1]])
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
 
-# plot variation in Percentage Infestation among replicates
-ggplot(output.mat, aes(x = deforest, y= PercInf)) +
-  geom_boxplot(aes(fill=factor(deforest)))
-
-# individual percent infestation ~ deforestation
-ggplot(output.mat, aes(x = dispersion, y= PercInf)) +
-  geom_boxplot(aes(fill=factor(dispersion)))
-
-library(ggplot2)
-
-# percent infestation through time steps
-ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate), alpha = 0.3)) + 
-  geom_line() +
-  facet_grid(vars(deforest), vars(dispersion)) +
+# plot variation in Percentage Infestation 
+deforestation <- ggplot(output.mat, aes(x = deforest, y= PercInf)) +
+  geom_boxplot(fill = "forestgreen") +
+  labs(x="Deforestation (%)",
+       y="Leaf rust infection (%)") + 
   theme_classic()
-  legend
-  
+
+# individual percent infestation ~ dispersion
+dispersion <- ggplot(output.mat, aes(x = dispersion, y= PercInf)) +
+  geom_boxplot(fill = "deepskyblue3") +
+  labs(x="Degree of dispersion",
+       y="Leaf rust infection (%)") + 
+  theme_classic()
+
+# individual percent infestation ~ deforestation among replicates
+# ggplot(output.mat, aes(x = deforest, y= PercInf)) +
+  #geom_boxplot(aes(fill=factor(deforest)))
+
 # heat map
 ggplot(output.mat, aes(deforest, dispersion, fill = PercInf)) + geom_raster(hjust = 0, vjust = 0)
+
+# percent infestation through time steps
+infection.all <- ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate), alpha = 0.3)) + 
+  geom_line() +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic() +
+  labs(x="Time",
+     y="Leaf rust infection (%)") +
+  theme_classic() +
+  theme(legend.position = "none")
+  
+ 
+# ploting % infestation through time steps averaging replicates
+data <- as.tibble(output.mat) %>%
+  group_by(Time, deforest, dispersion) %>%
+  summarise(m = mean(PercInf), sd = sd(PercInf)) 
+
+# check that it worked
+glimpse(data)
+
+infection <- ggplot(data) +
+  geom_ribbon(aes(x = Time, ymin = (m-sd), ymax = (m+sd)), fill = "grey70", alpha = 0.6) +
+  geom_line(aes(x = Time, y = m)) +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic() +
+  labs(x="Time",
+       y="Leaf rust infection (%)") +
+  theme_classic() +
+  theme(legend.position = "none")
+                
+# saving plots
+ggsave("rust_infection_all.png", infection.all)
+ggsave("rust_infection.png", infection)
+ggsave("rust_dispersion.png", dispersion)
+ggsave("rust_deforestation.png", deforestation)
+
+  
+  
   
