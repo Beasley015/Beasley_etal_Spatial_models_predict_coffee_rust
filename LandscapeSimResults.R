@@ -54,15 +54,19 @@ head(output.list[[1]])
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
 
+# Plots ---------------------------------------------------
+
+data1000 <- subset(output.mat, output.mat$Time == 999)
+  
 # plot variation in Percentage Infestation 
-deforestation <- ggplot(output.mat, aes(x = deforest, y= PercInf)) +
+deforestation <- ggplot(data1000, aes(x = deforest, y= PercInf)) +
   geom_boxplot(fill = "forestgreen") +
   labs(x="Deforestation (%)",
        y="Leaf rust infection (%)") + 
   theme_classic()
 
 # individual percent infestation ~ dispersion
-dispersion <- ggplot(output.mat, aes(x = dispersion, y= PercInf)) +
+dispersion <- ggplot(data1000, aes(x = dispersion, y= PercInf)) +
   geom_boxplot(fill = "deepskyblue3") +
   labs(x="Degree of dispersion",
        y="Leaf rust infection (%)") + 
@@ -72,8 +76,25 @@ dispersion <- ggplot(output.mat, aes(x = dispersion, y= PercInf)) +
 # ggplot(output.mat, aes(x = deforest, y= PercInf)) +
   #geom_boxplot(aes(fill=factor(deforest)))
 
+data1000 %>%
+  group_by(deforest, dispersion) %>%
+  summarise(mean = mean(PercInf), median = median(PercInf)) %>%
+  {. ->> datameans}
+
 # heat map
-ggplot(output.mat, aes(deforest, dispersion, fill = PercInf)) + geom_raster(hjust = 0, vjust = 0)
+heatplotmean <- ggplot(datameans, aes(deforest, dispersion, fill = mean)) + 
+  geom_raster(hjust = 0, vjust = 0)+
+  scale_fill_viridis(name = "Leaf Rust Infection (%)")+
+  labs(x = "Deforestation (%)", y = "Degree of Dispersion")+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))
+
+heatplotmedian <- ggplot(datameans, aes(deforest, dispersion, fill = median)) + 
+  geom_raster(hjust = 0, vjust = 0)+
+  scale_fill_viridis(name = "Leaf Rust Infection (%)")+
+  labs(x = "Deforestation (%)", y = "Degree of Dispersion")+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))
 
 # percent infestation through time steps
 infection.all <- ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate), alpha = 0.3)) + 
@@ -87,14 +108,14 @@ infection.all <- ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor
   
  
 # ploting % infestation through time steps averaging replicates
-data <- as.tibble(output.mat) %>%
+data1 <- as.tibble(output.mat) %>%
   group_by(Time, deforest, dispersion) %>%
   summarise(m = mean(PercInf), sd = sd(PercInf)) 
 
 # check that it worked
 glimpse(data)
 
-infection <- ggplot(data) +
+infection <- ggplot(data = data1) +
   geom_ribbon(aes(x = Time, ymin = (m-sd), ymax = (m+sd)), fill = "grey70", alpha = 0.6) +
   geom_line(aes(x = Time, y = m)) +
   facet_grid(vars(deforest), vars(dispersion)) +
@@ -109,6 +130,9 @@ ggsave("rust_infection_all.png", infection.all)
 ggsave("rust_infection.png", infection)
 ggsave("rust_dispersion.png", dispersion)
 ggsave("rust_deforestation.png", deforestation)
+
+ggsave("heatplotmean.jpeg", heatplotmean)
+ggsave("heatplotmedian.jpeg", heatplotmedian)
 
   
   
