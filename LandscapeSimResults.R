@@ -134,6 +134,14 @@ infection <- ggplot(data = data1) +
   theme_classic() +
   theme(legend.position = "none")
                 
+# histograms time steps
+hist.rust <- ggplot(data = output.mat, aes(PercInf)) +
+  geom_histogram(binwidth = 0.15, fill = "darkgrey") +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic() +
+  labs(x="Leaf rust infection (%)",
+       y="")
+
 # saving plots
 ggsave("rust_infection_all.png", infection.all)
 ggsave("rust_infection.png", infection)
@@ -143,6 +151,7 @@ ggsave("rust_deforestation.png", deforestation)
 ggsave("heatplotmean.jpeg", heatplotmean)
 ggsave("heatplotmedian.jpeg", heatplotmedian)
 
+ggsave("hist.rust.jpeg", hist.rust)
   
   
   
