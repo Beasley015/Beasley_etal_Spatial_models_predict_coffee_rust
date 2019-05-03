@@ -1,7 +1,7 @@
 import numpy
 import random
 import matplotlib.pyplot as plt
-import scipy.stats as stats
+import scipy as stats
 
 ##############################################################################
 ################        Neighbors Function             #######################

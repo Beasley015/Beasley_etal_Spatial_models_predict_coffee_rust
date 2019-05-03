@@ -6,7 +6,7 @@
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
-library(viridisLite)
+library(rcompanion)
 library(viridis)
 
 # Read in model outputs --------------------------------------
@@ -72,6 +72,15 @@ dispersion <- ggplot(data1000, aes(x = dispersion, y= PercInf)) +
        y="Leaf rust infection (%)") + 
   theme_classic()
 
+#Try an anova
+anov <- aov(data = data1000, PercInf ~ deforest + dispersion + deforest*dispersion)
+summary(anov)
+#deforestation is significant, nothing else is.
+
+#Nonparametric test
+nonpar <- scheirerRayHare(PercInf ~ deforest + dispersion, data = data1000)
+#same as anova
+
 # individual percent infestation ~ deforestation among replicates
 # ggplot(output.mat, aes(x = deforest, y= PercInf)) +
   #geom_boxplot(aes(fill=factor(deforest)))
@@ -110,7 +119,7 @@ infection.all <- ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor
 # ploting % infestation through time steps averaging replicates
 data1 <- as.tibble(output.mat) %>%
   group_by(Time, deforest, dispersion) %>%
-  summarise(m = mean(PercInf), sd = sd(PercInf)) 
+  summarise(m = median(PercInf), sd = sd(PercInf)) 
 
 # check that it worked
 glimpse(data)
