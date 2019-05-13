@@ -1,7 +1,7 @@
 import numpy
 import random
 import matplotlib.pyplot as plt
-import scipy as stats
+import scipy.stats as stats
 
 ##############################################################################
 ################        Neighbors Function             #######################
@@ -258,8 +258,8 @@ def spore_walk(spores, land, mat, coord):
 matrix_size = 100
 n_patches = 30
 n_draws = 50
-deforest = 0.1
-deforest_disp = 2
+deforest = 0.35
+deforest_disp = 5
 deforest_draws = 5
 
 #Specify number of landscapes and time steps

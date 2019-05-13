@@ -7,6 +7,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyverse)
 library(rcompanion)
+library(dunn.test)
 library(viridis)
 
 # Read in model outputs --------------------------------------
@@ -80,6 +81,8 @@ summary(anov)
 #Nonparametric test
 nonpar <- scheirerRayHare(PercInf ~ deforest + dispersion, data = data1000)
 #same as anova
+
+dunn <- dunn.test(x = data1000$PercInf, g = data1000$deforest)
 
 # individual percent infestation ~ deforestation among replicates
 # ggplot(output.mat, aes(x = deforest, y= PercInf)) +
