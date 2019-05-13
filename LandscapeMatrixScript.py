@@ -122,6 +122,11 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 ###################################################################
 ##############    Cellular Automata    ############################
 ###################################################################
+
+#Edit this function: for each time step, create a new coffee array
+#Make changes only to the new array (so there's no order effect)
+#Replace old coffee array with new one
+
 def cellaut(mat, land):
     # Pull index of all coffee cells with value 0
     coffee_zeros = numpy.where(mat == 0)
@@ -203,6 +208,13 @@ def new_spore(mat, coord):
 ###################################################################
 #################    Random Walk    ###############################
 ###################################################################
+
+#Wind effects: new array that affects probability of movement, but not
+#cost? Or both prob and cost?
+
+#Humidity effects: Change infection prob based on neighborhood of
+#target coffee cell
+
 def spore_walk(spores, land, mat, coord):
     for i in range(0, len(spores)):
         step_credit = 15
@@ -260,7 +272,7 @@ n_patches = 30
 n_draws = 50
 deforest = 0.35
 deforest_disp = 5
-deforest_draws = 5
+deforest_draws = 5 #Increase this number
 
 #Specify number of landscapes and time steps
 n = 50
