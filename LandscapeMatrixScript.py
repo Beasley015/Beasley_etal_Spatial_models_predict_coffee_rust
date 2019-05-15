@@ -215,6 +215,7 @@ def new_spore(mat, coord):
 #Humidity effects: Change infection prob based on neighborhood of
 #target coffee cell
 
+#Clean up this function
 def spore_walk(spores, land, mat, coord):
     for i in range(0, len(spores)):
         step_credit = 15
