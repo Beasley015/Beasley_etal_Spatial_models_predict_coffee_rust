@@ -266,6 +266,8 @@ def spore_walk(spores, land, mat, coord):
 ################ Put it all together ##############################
 ###################################################################
 
+# Need to increase number of scenarios
+
 #Specify landscape parameters
 matrix_size = 100
 n_patches = 30

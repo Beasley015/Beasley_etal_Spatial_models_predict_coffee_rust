@@ -19,15 +19,16 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="291">
-              <caret line="276" column="51" lean-forward="true" selection-start-line="276" selection-start-column="51" selection-end-line="276" selection-end-column="51" />
+            <state relative-caret-position="38">
+              <caret line="268" column="38" selection-start-line="268" selection-start-column="38" selection-end-line="268" selection-end-column="38" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
                 <element signature="e#1464#4826#0" />
-                <element signature="e#5060#6305#0" />
-                <element signature="e#6542#7836#0" />
-                <element signature="e#8088#10037#0" />
+                <element signature="e#5233#6478#0" />
+                <element signature="e#6715#8009#0" />
+                <element signature="e#8451#10400#0" />
+                <element signature="e#10859#11897#0" />
               </folding>
             </state>
           </provider>
@@ -63,7 +64,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -75,6 +75,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -329,7 +330,14 @@
       <option name="project" value="LOCAL" />
       <updated>1556572314079</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="added notes for future work">
+      <created>1557774219333</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1557774219333</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TodoView">
@@ -343,6 +351,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.24330357" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -355,16 +364,15 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3289689" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3289689" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.29787233" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.29787233" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5014881" side_tool="true" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="10" sideWeight="0.4985119" visible="true" weight="0.3289689" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4985119" weight="0.3289689" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add code to grow patches from seed" />
     <MESSAGE value="create patches using beta distributions" />
     <MESSAGE value="add neighbors function" />
     <MESSAGE value="finish coffee matrix" />
@@ -389,20 +397,22 @@
     <MESSAGE value="forgot something" />
     <MESSAGE value="added line coercing 3d array to 2d" />
     <MESSAGE value="modified random walk function" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified random walk function" />
+    <MESSAGE value="added notes for future work" />
+    <option name="LAST_COMMIT_MESSAGE" value="added notes for future work" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="276" column="51" lean-forward="true" selection-start-line="276" selection-start-column="51" selection-end-line="276" selection-end-column="51" />
+        <state relative-caret-position="38">
+          <caret line="268" column="38" selection-start-line="268" selection-start-column="38" selection-end-line="268" selection-end-column="38" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
             <element signature="e#1464#4826#0" />
-            <element signature="e#5060#6305#0" />
-            <element signature="e#6542#7836#0" />
-            <element signature="e#8088#10037#0" />
+            <element signature="e#5233#6478#0" />
+            <element signature="e#6715#8009#0" />
+            <element signature="e#8451#10400#0" />
+            <element signature="e#10859#11897#0" />
           </folding>
         </state>
       </provider>
