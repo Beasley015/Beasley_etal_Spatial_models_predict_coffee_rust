@@ -123,11 +123,10 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 ##############    Cellular Automata    ############################
 ###################################################################
 
-#Edit this function: for each time step, create a new coffee array
-#Make changes only to the new array (so there's no order effect)
-#Replace old coffee array with new one
-
 def cellaut(mat, land):
+    #Create new array to store next time step
+    coffee_new = mat
+
     # Pull index of all coffee cells with value 0
     coffee_zeros = numpy.where(mat == 0)
 
@@ -158,7 +157,10 @@ def cellaut(mat, land):
 
     # If bern trial is a success, change focal cell to infected
     for i in range(0, len(coffee_zeros[1])):
-        mat[coffee_zeros[0][i], coffee_zeros[1][i]] = bern_out[i]
+        coffee_new[coffee_zeros[0][i], coffee_zeros[1][i]] = bern_out[i]
+
+    #Replace old array with new one
+    mat = coffee_new
 
     return(mat)
 
@@ -267,20 +269,19 @@ def spore_walk(spores, land, mat, coord):
 ################ Put it all together ##############################
 ###################################################################
 
-# Need to increase number of scenarios
-
 #Specify landscape parameters
 matrix_size = 100
 n_patches = 30
 n_draws = 50
-deforest = 0.35
-deforest_disp = 5
-deforest_draws = 5 #Increase this number
+deforest = [10, 35, 50, 65, 80, 95]
+deforest_disp = [2, 2.5, 3, 3.5, 4, 4.5]
+deforest_draws = 30
 
 #Specify number of landscapes and time steps
 n = 50
 t = 1000
 
+#Automate this function so it loops through all scenarios
 def THE_FUNCTION(nlandscape = n):
     # Create blank array to store results
     perc_inf = numpy.empty((t, 2, n))
