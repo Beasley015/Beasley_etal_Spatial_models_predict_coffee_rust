@@ -195,15 +195,15 @@ def new_spore(mat, coord):
             land_pos.append(None)
 
     #Create sparse matrix of propagules
-    spores = {}
+    spores = []
 
     for i in range(0, len(land_pos)):
         if land_pos[i] != None:
             place = random.choice(land_pos[i])
             release = coord[place]
             new_coord = (coffee_inf[0][i]+release[0], coffee_inf[1][i]+release[1])
-            if new_coord[0] < 100 & new_coord[1] < 100:
-                spores.update({new_coord:1})
+            if new_coord[0] < matrix_size & new_coord[1] < matrix_size:
+                spores.update(new_coord)
 
     return spores
 
@@ -218,6 +218,8 @@ def new_spore(mat, coord):
 #target coffee cell
 
 #Clean up this function
+#Change walkers object into list of tuples
+#so multiple spores can occupy a cell
 def spore_walk(spores, land, mat, coord):
     for i in range(0, len(spores)):
         step_credit = 15
