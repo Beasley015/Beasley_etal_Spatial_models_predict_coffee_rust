@@ -33,6 +33,7 @@ def neighbors_base(mat, row, col, radius=1):
 ##############################################################################
 ################          Construct Landscape          #######################
 ##############################################################################
+
 def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
     #Create blank landscape
     coffee = numpy.empty(shape = (matrix_size, matrix_size))
@@ -167,6 +168,7 @@ def cellaut(mat, land):
 ###################################################################
 ##############    Propagule Release    ############################
 ###################################################################
+
 def new_spore(mat, coord):
     #Get coords for each infected cell
     coffee_inf = numpy.where(mat == 1)
@@ -220,6 +222,7 @@ def new_spore(mat, coord):
 #Clean up this function
 #Change walkers object into list of tuples
 #so multiple spores can occupy a cell
+
 def spore_walk(spores, land, mat, coord):
     for i in range(0, len(spores)):
         step_credit = 15

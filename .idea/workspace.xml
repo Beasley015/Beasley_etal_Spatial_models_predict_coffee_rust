@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LandscapeMatrixScript.py" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeMatrixScript.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,14 +19,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1088">
-              <caret line="247" selection-start-line="247" selection-end-line="247" />
+            <state relative-caret-position="53">
+              <caret line="294" selection-start-line="294" selection-end-line="300" selection-end-column="48" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
                 <element signature="e#1464#4826#0" />
                 <element signature="e#5061#6439#0" />
-                <element signature="e#6676#7970#0" />
+                <element signature="e#6676#7982#0" />
               </folding>
             </state>
           </provider>
@@ -61,8 +62,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -345,7 +346,14 @@
       <option name="project" value="LOCAL" />
       <updated>1558025369594</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="updated new_spore function">
+      <created>1558807255895</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1558807255895</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TodoView">
@@ -380,7 +388,6 @@
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add neighbors function" />
     <MESSAGE value="finish coffee matrix" />
     <MESSAGE value="finish landscape matrix" />
     <MESSAGE value="finish landscape function" />
@@ -405,19 +412,20 @@
     <MESSAGE value="modified random walk function" />
     <MESSAGE value="added notes for future work" />
     <MESSAGE value="fixed issue deforested patches were too small&#10;deforest and dispersion parameters are now lists&#10;fixed CA model to eliminate order effects" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed issue deforested patches were too small&#10;deforest and dispersion parameters are now lists&#10;fixed CA model to eliminate order effects" />
+    <MESSAGE value="updated new_spore function" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated new_spore function" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1088">
-          <caret line="247" selection-start-line="247" selection-end-line="247" />
+        <state relative-caret-position="53">
+          <caret line="294" selection-start-line="294" selection-end-line="300" selection-end-column="48" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
             <element signature="e#1464#4826#0" />
             <element signature="e#5061#6439#0" />
-            <element signature="e#6676#7970#0" />
+            <element signature="e#6676#7982#0" />
           </folding>
         </state>
       </provider>
