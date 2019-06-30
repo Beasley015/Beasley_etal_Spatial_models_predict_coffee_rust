@@ -36,35 +36,35 @@ def neighbors_base(mat, row, col, radius=1):
 
 def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
     #Create blank landscape
-    coffee = numpy.empty(shape = (matrix_size, matrix_size))
+    coffee = numpy.empty(shape = (size, size))
     coffee[:] = numpy.nan
 
     #Seed two random locations in the landscape with coffee
-    randoms = [None]*n_patches
-    for cells in range(0, n_patches):
-        randoms[cells] = (random.randint(1, matrix_size-1), random.randint(1, matrix_size-1))
+    randoms = [None]*patches
+    for cells in range(0, patches):
+        randoms[cells] = (random.randint(1, size-1), random.randint(1, size-1))
 
     for coords in randoms:
         coffee[coords] = 0
 
     #Draw from beta dists centered around coords
-    betavals = numpy.empty((n_draws, 2, n_patches))
+    betavals = numpy.empty((draws, 2, patches))
 
-    for patch in range(0, n_patches):
+    for patch in range(0, patches):
         coords = numpy.array(randoms[patch])
         mu = coords
         stdev = 1.5
-        a1, b1 = (0-mu[0])/stdev, ((matrix_size-1)-mu[0])/stdev
-        a2, b2 = (0 - mu[1]) / stdev, ((matrix_size-1) - mu[1]) / stdev
-        x = stats.truncnorm.rvs(a1, b1, size=n_draws, loc = mu[0], scale = stdev)
-        y = stats.truncnorm.rvs(a2, b2, size=n_draws, loc = mu[1], scale = stdev)
+        a1, b1 = (0-mu[0])/stdev, ((size-1)-mu[0])/stdev
+        a2, b2 = (0 - mu[1]) / stdev, ((size-1) - mu[1]) / stdev
+        x = stats.truncnorm.rvs(a1, b1, size=draws, loc = mu[0], scale = stdev)
+        y = stats.truncnorm.rvs(a2, b2, size=draws, loc = mu[1], scale = stdev)
         betavals[:,0,patch] = x
         betavals[:,1,patch] = y
 
     betavals = betavals.round()
 
     #Grow patches from coords
-    for patch in range(0, n_patches):
+    for patch in range(0, patches):
         coords = betavals[:, :, patch]
         for cell in range(0, len(coords)):
             i,j = coords[cell,:]
@@ -73,8 +73,8 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
     #Use neighbors function to remove solitary points
     neighbor_array = numpy.empty(shape=(1,10), dtype = "float")
     neighbor_array[:] = numpy.nan
-    for i in range(matrix_size):
-        for j in range(matrix_size):
+    for i in range(size):
+        for j in range(size):
             if coffee[i,j] == 0:
                 neighbor_out = neighbors_base(mat=coffee, row=i, col=j, radius=1)
                 neighbor_out.append(i)
@@ -89,19 +89,19 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 
     #Create fully forested landscape
     indices = numpy.argwhere(coffee)
-    landscape = numpy.empty(shape=(matrix_size,matrix_size))
+    landscape = numpy.empty(shape=(size,size))
     landscape[coffee == 0] = numpy.nan
 
     for i in range(0, len(indices)):
         landscape[indices[i][0], indices[i][1]] = numpy.random.uniform(0.3, 0.95, 1)
 
     # Simulate deforestation
-    while ((landscape < 0.3).sum()/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest):
+    while (len(numpy.where(landscape < 0.3)[0])/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest):
         def_seed = random.choice(indices)
         mu = def_seed
         stdev = disp
-        a1, b1 = (0 - mu[0]) / stdev, ((matrix_size-1) - mu[0]) / stdev
-        a2, b2 = (0 - mu[1]) / stdev, ((matrix_size-1) - mu[1]) / stdev
+        a1, b1 = (0 - mu[0]) / stdev, ((size-1) - mu[0]) / stdev
+        a2, b2 = (0 - mu[1]) / stdev, ((size-1) - mu[1]) / stdev
         x = stats.truncnorm.rvs(a1, b1, size=ddraws, loc=mu[0], scale=stdev)
         y = stats.truncnorm.rvs(a2, b2, size=ddraws, loc=mu[1], scale=stdev)
 
@@ -292,8 +292,8 @@ def THE_FUNCTION(nlandscape = n):
     perc_inf = numpy.empty((t, 2, n))
     for i in range(n):
         # Create landscapes
-        (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest,
-                                            disp=deforest_disp, ddraws=deforest_draws)
+        (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest[0],
+                                            disp=[0], ddraws=deforest_draws)
 
         # Create list of tuples for changing coords
         coord_change = [(-1, -1), (-1, 0), (-1, 1),
