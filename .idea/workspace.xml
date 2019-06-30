@@ -19,14 +19,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="53">
-              <caret line="294" selection-start-line="294" selection-end-line="300" selection-end-column="48" />
+            <state relative-caret-position="104">
+              <caret line="302" column="106" lean-forward="true" selection-start-line="289" selection-end-line="302" selection-end-column="106" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
-                <element signature="e#1464#4826#0" />
-                <element signature="e#5061#6439#0" />
-                <element signature="e#6676#7982#0" />
+                <element signature="e#1465#4740#0" />
+                <element signature="e#4975#6353#0" />
+                <element signature="e#6591#7897#0" />
+                <element signature="e#8445#10368#0" />
               </folding>
             </state>
           </provider>
@@ -62,8 +63,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
       <pane id="Scope" />
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -353,7 +354,14 @@
       <option name="project" value="LOCAL" />
       <updated>1558807255895</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="cleaning up MakeLandscape function">
+      <created>1561911617768</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1561911617768</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TodoView">
@@ -380,15 +388,14 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3289689" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3289689" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.29787233" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5014881" side_tool="true" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="10" sideWeight="0.4985119" visible="true" weight="0.3289689" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50223213" side_tool="true" weight="0.3289689" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="10" sideWeight="0.49776787" visible="true" weight="0.3289689" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="finish coffee matrix" />
     <MESSAGE value="finish landscape matrix" />
     <MESSAGE value="finish landscape function" />
     <MESSAGE value="start cellular automata function" />
@@ -413,19 +420,21 @@
     <MESSAGE value="added notes for future work" />
     <MESSAGE value="fixed issue deforested patches were too small&#10;deforest and dispersion parameters are now lists&#10;fixed CA model to eliminate order effects" />
     <MESSAGE value="updated new_spore function" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated new_spore function" />
+    <MESSAGE value="cleaning up MakeLandscape function" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaning up MakeLandscape function" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="294" selection-start-line="294" selection-end-line="300" selection-end-column="48" />
+        <state relative-caret-position="104">
+          <caret line="302" column="106" lean-forward="true" selection-start-line="289" selection-end-line="302" selection-end-column="106" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
-            <element signature="e#1464#4826#0" />
-            <element signature="e#5061#6439#0" />
-            <element signature="e#6676#7982#0" />
+            <element signature="e#1465#4740#0" />
+            <element signature="e#4975#6353#0" />
+            <element signature="e#6591#7897#0" />
+            <element signature="e#8445#10368#0" />
           </folding>
         </state>
       </provider>

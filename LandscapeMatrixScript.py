@@ -205,7 +205,7 @@ def new_spore(mat, coord):
             release = coord[place]
             new_coord = (coffee_inf[0][i]+release[0], coffee_inf[1][i]+release[1])
             if new_coord[0] < matrix_size & new_coord[1] < matrix_size:
-                spores.update(new_coord)
+                spores.append(new_coord)
 
     return spores
 
@@ -218,10 +218,6 @@ def new_spore(mat, coord):
 
 #Humidity effects: Change infection prob based on neighborhood of
 #target coffee cell
-
-#Clean up this function
-#Change walkers object into list of tuples
-#so multiple spores can occupy a cell
 
 def spore_walk(spores, land, mat, coord):
     for i in range(0, len(spores)):
@@ -240,8 +236,7 @@ def spore_walk(spores, land, mat, coord):
             movement = random.choices(population = coord, weights=land_neighbors, k = 1)
             new_coords = (old_coords[0] + movement[0][0], old_coords[1] + movement[0][1])
 
-            spores.update({old_coords: None})
-            spores.update({new_coords: 1})
+            spores[i] = new_coords
 
             old_coords = new_coords
 
@@ -261,12 +256,10 @@ def spore_walk(spores, land, mat, coord):
                         infec_prob = numpy.random.binomial(n=1, p=0.75)
                         if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
                             mat[infec_target[0], infec_target[1]] = 1
-                            spores.update({new_coords: None})
+                            spores[i] = None
                             break
 
-    new_walkers = {k: v for k, v in spores.items() if v is not None}
-    spores.clear()
-    spores.update(new_walkers)
+    spores = list(filter(None, spores))
 
     return mat, spores
 
@@ -278,12 +271,12 @@ def spore_walk(spores, land, mat, coord):
 matrix_size = 100
 n_patches = 30
 n_draws = 50
-deforest = [10, 35, 50, 65, 80, 95]
+deforest = [0.1, 0.35, 0.5, 0.65, 0.8, 0.95]
 deforest_disp = [2, 2.5, 3, 3.5, 4, 4.5]
 deforest_draws = 30
 
 #Specify number of landscapes and time steps
-n = 50
+n = 1
 t = 1000
 
 #Automate this function so it loops through all scenarios
@@ -293,7 +286,7 @@ def THE_FUNCTION(nlandscape = n):
     for i in range(n):
         # Create landscapes
         (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest[0],
-                                            disp=[0], ddraws=deforest_draws)
+                                            disp=deforest_disp[0], ddraws=deforest_draws)
 
         # Create list of tuples for changing coords
         coord_change = [(-1, -1), (-1, 0), (-1, 1),
