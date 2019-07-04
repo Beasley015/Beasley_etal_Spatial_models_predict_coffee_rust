@@ -19,15 +19,16 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="104">
-              <caret line="302" column="106" lean-forward="true" selection-start-line="289" selection-end-line="302" selection-end-column="106" />
+            <state relative-caret-position="240">
+              <caret line="308" selection-start-line="308" selection-end-line="308" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
                 <element signature="e#1465#4740#0" />
                 <element signature="e#4975#6353#0" />
                 <element signature="e#6591#7897#0" />
-                <element signature="e#8445#10368#0" />
+                <element signature="e#8339#10138#0" />
+                <element signature="e#10685#11729#0" />
               </folding>
             </state>
           </provider>
@@ -361,7 +362,14 @@
       <option name="project" value="LOCAL" />
       <updated>1561911617768</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="I think I fixed the walk function?">
+      <created>1561922994768</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1561922994768</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TodoView">
@@ -396,7 +404,6 @@
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="finish landscape matrix" />
     <MESSAGE value="finish landscape function" />
     <MESSAGE value="start cellular automata function" />
     <MESSAGE value="start fixing neighbors function" />
@@ -421,20 +428,22 @@
     <MESSAGE value="fixed issue deforested patches were too small&#10;deforest and dispersion parameters are now lists&#10;fixed CA model to eliminate order effects" />
     <MESSAGE value="updated new_spore function" />
     <MESSAGE value="cleaning up MakeLandscape function" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaning up MakeLandscape function" />
+    <MESSAGE value="I think I fixed the walk function?" />
+    <option name="LAST_COMMIT_MESSAGE" value="I think I fixed the walk function?" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="302" column="106" lean-forward="true" selection-start-line="289" selection-end-line="302" selection-end-column="106" />
+        <state relative-caret-position="240">
+          <caret line="308" selection-start-line="308" selection-end-line="308" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
             <element signature="e#1465#4740#0" />
             <element signature="e#4975#6353#0" />
             <element signature="e#6591#7897#0" />
-            <element signature="e#8445#10368#0" />
+            <element signature="e#8339#10138#0" />
+            <element signature="e#10685#11729#0" />
           </folding>
         </state>
       </provider>

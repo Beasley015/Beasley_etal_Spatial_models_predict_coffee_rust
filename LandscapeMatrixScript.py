@@ -221,7 +221,7 @@ def new_spore(mat, coord):
 
 def spore_walk(spores, land, mat, coord):
     for i in range(0, len(spores)):
-        step_credit = 15
+        step_credit = 20
         old_coords = list(spores)[i]
 
         while step_credit > 0:
@@ -276,7 +276,7 @@ deforest_disp = [2, 2.5, 3, 3.5, 4, 4.5]
 deforest_draws = 30
 
 #Specify number of landscapes and time steps
-n = 1
+n = 5
 t = 1000
 
 #Automate this function so it loops through all scenarios
@@ -285,7 +285,7 @@ def THE_FUNCTION(nlandscape = n):
     perc_inf = numpy.empty((t, 2, n))
     for i in range(n):
         # Create landscapes
-        (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest[0],
+        (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest[4],
                                             disp=deforest_disp[0], ddraws=deforest_draws)
 
         # Create list of tuples for changing coords
