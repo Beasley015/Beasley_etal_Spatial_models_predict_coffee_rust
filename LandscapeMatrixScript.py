@@ -96,8 +96,13 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
         landscape[indices[i][0], indices[i][1]] = numpy.random.uniform(0.3, 0.95, 1)
 
     # Simulate deforestation
-    while (len(numpy.where(landscape < 0.3)[0])/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest):
-        def_seed = random.choice(indices)
+    while len(numpy.where(landscape < 0.3)[0])/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest:
+        #Choose seed for deforestation
+        forested_coords = numpy.where(landscape > 0.3)
+        def_choice = random.randint(0, numpy.size(forested_coords, 1)-1)
+        def_seed = (forested_coords[0][def_choice], forested_coords[1][def_choice])
+
+        #Build deforested patch
         mu = def_seed
         stdev = disp
         a1, b1 = (0 - mu[0]) / stdev, ((size-1) - mu[0]) / stdev
@@ -114,11 +119,13 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 
     # Pick one coffee cell to initialize infection
     coffee_zeros = numpy.where(coffee == 0)
-    randrow = random.randint(0, numpy.size(coffee_zeros, 1))
+    randrow = random.randint(0, numpy.size(coffee_zeros, 1)-1)
 
     coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
 
-    return (coffee, landscape)
+    start = numpy.where(coffee == 1)
+
+    return (coffee, landscape, start)
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -277,16 +284,16 @@ deforest_draws = 30
 
 #Specify number of landscapes and time steps
 n = 5
-t = 1000
+t = 100
 
-#Automate this function so it loops through all scenarios
-def THE_FUNCTION(nlandscape = n):
+#Write the master function
+def base_function(nlandscape = n):
     # Create blank array to store results
-    perc_inf = numpy.empty((t, 2, n))
+    perc_inf = numpy.empty((t, 4, n))
     for i in range(n):
         # Create landscapes
-        (coffee, landscape) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=deforest[4],
-                                            disp=deforest_disp[0], ddraws=deforest_draws)
+        (coffee, landscape, start) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=defor,
+                                            disp=disp, ddraws=deforest_draws)
 
         # Create list of tuples for changing coords
         coord_change = [(-1, -1), (-1, 0), (-1, 1),
@@ -299,15 +306,23 @@ def THE_FUNCTION(nlandscape = n):
             (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
             perc_inf[j, 0, i] = j
             perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
+            perc_inf[j, 2, i] = start[0]; perc_inf[j, 3, i] = start[1]
             print("j = " + str(j))
 
         print("i = " + str(i))
 
     return perc_inf
 
-perc_inf = THE_FUNCTION(nlandscape=n)
+for i in range(len(deforest)):
+    for j in range(len(deforest_disp)):
+        defor = deforest[i]
+        disp = deforest_disp[j]
 
-perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
+        perc_inf = base_function(nlandscape=n)
 
-numpy.savetxt("def10disp2.csv", perc_inf2, delimiter=",")
+        perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
+
+        filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+".csv"
+
+        numpy.savetxt(filename, perc_inf2, delimiter=",")
 

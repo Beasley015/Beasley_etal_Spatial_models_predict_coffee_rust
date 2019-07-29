@@ -11,24 +11,22 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FavoritesManager">
-    <favorites_list name="QuestCoffeeRustLandscape" />
-  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="308" selection-start-line="308" selection-end-line="308" />
+            <state relative-caret-position="289">
+              <caret line="327" selection-start-line="327" selection-end-line="327" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
-                <element signature="e#1465#4740#0" />
-                <element signature="e#4975#6353#0" />
-                <element signature="e#6591#7897#0" />
-                <element signature="e#8339#10138#0" />
-                <element signature="e#10685#11729#0" />
+                <element signature="e#1465#4835#0" />
+                <element signature="e#5070#6448#0" />
+                <element signature="e#6686#7992#0" />
+                <element signature="e#8434#10233#0" />
+                <element signature="e#10749#11853#0" />
+                <element signature="e#11890#12249#0" />
               </folding>
             </state>
           </provider>
@@ -369,7 +367,14 @@
       <option name="project" value="LOCAL" />
       <updated>1561922994768</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="testing improved walk function">
+      <created>1562284285570</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1562284285570</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TodoView">
@@ -384,9 +389,9 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.24330357" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49512196" visible="true" weight="0.24330357" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" sideWeight="0.502439" side_tool="true" weight="0.24330357" />
+      <window_info id="Favorites" order="2" sideWeight="0.50487804" side_tool="true" weight="0.24330357" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.3289689" />
@@ -404,7 +409,6 @@
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="finish landscape function" />
     <MESSAGE value="start cellular automata function" />
     <MESSAGE value="start fixing neighbors function" />
     <MESSAGE value="fixed neighbors function" />
@@ -429,21 +433,23 @@
     <MESSAGE value="updated new_spore function" />
     <MESSAGE value="cleaning up MakeLandscape function" />
     <MESSAGE value="I think I fixed the walk function?" />
-    <option name="LAST_COMMIT_MESSAGE" value="I think I fixed the walk function?" />
+    <MESSAGE value="testing improved walk function" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing improved walk function" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="308" selection-start-line="308" selection-end-line="308" />
+        <state relative-caret-position="289">
+          <caret line="327" selection-start-line="327" selection-end-line="327" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
-            <element signature="e#1465#4740#0" />
-            <element signature="e#4975#6353#0" />
-            <element signature="e#6591#7897#0" />
-            <element signature="e#8339#10138#0" />
-            <element signature="e#10685#11729#0" />
+            <element signature="e#1465#4835#0" />
+            <element signature="e#5070#6448#0" />
+            <element signature="e#6686#7992#0" />
+            <element signature="e#8434#10233#0" />
+            <element signature="e#10749#11853#0" />
+            <element signature="e#11890#12249#0" />
           </folding>
         </state>
       </provider>
