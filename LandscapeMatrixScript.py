@@ -150,17 +150,18 @@ def cellaut(mat, land):
     neighbors_clean = neighbors_clean.astype(numpy.float64)
 
     # Sum the values of the neighborhood to get number of infected neighbors
-    rowsums = []
+    rowprobs = []
     for i in range(0, numpy.size(neighbors_clean, 0)):
         row = neighbors_clean[i,:]
         row = row[~numpy.isnan(row)]
-        add_row = row.sum()
-        rowsums.append(add_row)
+        rowsums = row.sum()
+        add_row = numpy.random.beta(a=rowsums+0.0001, b=8.0001-rowsums, size=1)
+        rowprobs.append(add_row)
 
     # Use number of infected neighbors to get success probability in a bernoulli trial
     bern_out = []
-    for i in range(0,len(rowsums)):
-        out = numpy.random.binomial(n = 1, p = (0.1*rowsums[i]))
+    for i in range(0,len(rowprobs)):
+        out = numpy.random.binomial(n = 1, p = (0.1*rowprobs[i]))
         bern_out.append(out)
 
     # If bern trial is a success, change focal cell to infected
