@@ -1,25 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/LandscapeMatrixScript.py" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeMatrixScript.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def10disp2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def10disp3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def10disp4.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def10disp5.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def35disp2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def35disp3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def35disp4.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def35disp5.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def65disp2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def65disp3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def65disp4.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def65disp5.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def90disp2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def90disp3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def90disp4.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Outputs/def90disp5.csv" beforeDir="false" />
-    </list>
+    <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,11 +19,6 @@
                 <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#374#1156#0" />
                 <element signature="e#1465#5027#0" />
-                <element signature="e#5262#6640#0" />
-                <element signature="e#6878#8184#0" />
-                <element signature="e#8626#10425#0" />
-                <element signature="e#10941#12045#0" />
-                <element signature="e#12082#12441#0" />
               </folding>
             </state>
           </provider>
@@ -460,11 +437,6 @@
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#374#1156#0" />
             <element signature="e#1465#5027#0" />
-            <element signature="e#5262#6640#0" />
-            <element signature="e#6878#8184#0" />
-            <element signature="e#8626#10425#0" />
-            <element signature="e#10941#12045#0" />
-            <element signature="e#12082#12441#0" />
           </folding>
         </state>
       </provider>
