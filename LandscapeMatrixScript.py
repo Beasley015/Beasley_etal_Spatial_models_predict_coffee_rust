@@ -227,9 +227,9 @@ def new_spore(mat, coord):
 #Humidity effects: Change infection prob based on neighborhood of
 #target coffee cell
 
-def spore_walk(spores, land, mat, coord):
+def spore_walk(spores, land, mat, coord, prob_choose):
     for i in range(0, len(spores)):
-        step_credit = 20
+        step_credit = 5
         old_coords = list(spores)[i]
 
         while step_credit > 0:
@@ -261,7 +261,7 @@ def spore_walk(spores, land, mat, coord):
                     infec_newcoord = random.choice([coord[i] for i in numpy.where(new_neighbors == 0)[0]])
                     infec_target = [new_coords[0] + infec_newcoord[0], new_coords[1] + infec_newcoord[1]]
                     if all(v < 50 for v in infec_target):
-                        infec_prob = numpy.random.binomial(n=1, p=0.75)
+                        infec_prob = numpy.random.binomial(n=1, p=prob_choose)
                         if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
                             mat[infec_target[0], infec_target[1]] = 1
                             spores[i] = None
@@ -282,15 +282,17 @@ n_draws = 50
 deforest = [0.1, 0.35, 0.5, 0.65, 0.8, 0.95]
 deforest_disp = [2, 2.5, 3, 3.5, 4, 4.5]
 deforest_draws = 30
+probs = [0.15,0.5,0.75]
 
 #Specify number of landscapes and time steps
-n = 5
-t = 100
+n = 3
+t = 10
 
 #Write the master function
 def base_function(nlandscape = n):
     # Create blank array to store results
     perc_inf = numpy.empty((t, 4, n))
+
     for i in range(n):
         # Create landscapes
         (coffee, landscape, start) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=defor,
@@ -304,10 +306,12 @@ def base_function(nlandscape = n):
         for j in range(t):
             coffee = cellaut(mat=coffee, land=landscape)
             walkers = new_spore(mat=coffee, coord=coord_change)
-            (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
+            (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change, prob_choose = prob)
             perc_inf[j, 0, i] = j
-            perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
+            perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / \
+                                (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
             perc_inf[j, 2, i] = start[0]; perc_inf[j, 3, i] = start[1]
+            perc_inf[j, 3, i] = prob
             print("j = " + str(j))
 
         print("i = " + str(i))
@@ -316,14 +320,16 @@ def base_function(nlandscape = n):
 
 for i in range(len(deforest)):
     for j in range(len(deforest_disp)):
-        defor = deforest[i]
-        disp = deforest_disp[j]
+        for k in range(len(probs)):
+            defor = deforest[i]
+            disp = deforest_disp[j]
+            prob = probs[k]
 
-        perc_inf = base_function(nlandscape=n)
+            perc_inf = base_function(nlandscape=n)
 
-        perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
+            perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
 
-        filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+".csv"
+            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"prob"+str(probs[k])+".csv"
 
-        numpy.savetxt(filename, perc_inf2, delimiter=",")
+            numpy.savetxt(filename, perc_inf2, delimiter=",")
 
