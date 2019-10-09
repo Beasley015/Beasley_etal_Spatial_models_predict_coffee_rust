@@ -155,7 +155,7 @@ def cellaut(mat, land):
         row = neighbors_clean[i,:]
         row = row[~numpy.isnan(row)]
         rowsums = row.sum()
-        add_row = numpy.random.beta(a=rowsums+0.0001, b=8.0001-rowsums, size=1)
+        add_row = numpy.random.beta(a=rowsums+1, b=8-rowsums+1, size=1)
         rowprobs.append(add_row)
 
     # Use number of infected neighbors to get success probability in a bernoulli trial
