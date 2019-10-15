@@ -277,16 +277,16 @@ def spore_walk(spores, land, mat, coord, prob_choose):
 
 #Specify landscape parameters
 matrix_size = 100
-n_patches = 30
+n_patches = 35
 n_draws = 50
 deforest = [0.1, 0.35, 0.5, 0.65, 0.8, 0.95]
 deforest_disp = [2, 2.5, 3, 3.5, 4, 4.5]
-deforest_draws = 30
+deforest_draws = 35
 probs = [0.15,0.5,0.75]
 
 #Specify number of landscapes and time steps
-n = 3
-t = 10
+n = 50
+t = 2000
 
 #Write the master function
 def base_function(nlandscape = n):
