@@ -1,6 +1,6 @@
 import numpy
 import random
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 ##############################################################################
@@ -277,7 +277,7 @@ def spore_walk(spores, land, mat, coord, prob_choose):
 
 #Specify landscape parameters
 matrix_size = 100
-n_patches = 35
+n_patches = 45
 n_draws = 50
 deforest = [0.1, 0.35, 0.5, 0.65, 0.8, 0.95]
 deforest_disp = [2, 2.5, 3, 3.5, 4, 4.5]
