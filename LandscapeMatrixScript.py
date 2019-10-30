@@ -1,6 +1,6 @@
 import numpy
 import random
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 ##############################################################################
@@ -126,6 +126,9 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
     start = numpy.where(coffee == 1)
 
     return (coffee, landscape, start)
+
+#(mat, land, start) = MakeLandscape(size = matrix_size, patches = n_patches, draws = n_draws, deforest = deforest[0], disp = deforest_disp[0],
+ #                                                                                                                   ddraws = deforest_draws)
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -286,7 +289,7 @@ probs = [0.15,0.5,0.75]
 
 #Specify number of landscapes and time steps
 n = 50
-t = 2000
+t = 500
 
 #Write the master function
 def base_function(nlandscape = n):
