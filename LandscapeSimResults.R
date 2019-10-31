@@ -10,6 +10,44 @@ library(rcompanion)
 library(dunn.test)
 library(viridis)
 
+# Sample beta distributions (for figures) ----------------------------------
+neighbor1 <- rbeta(10000, 2, 8)
+neighbor2 <- rbeta(10000, 5, 5)
+neighbor3 <- rbeta(10000, 8, 2)
+
+ggplot(mapping = aes(x = neighbor1))+
+  geom_density(size = 1)+
+  labs(x = "Infection probability", y = "Density")+
+  scale_x_continuous(limits = c(0,1), expand = c(0,0))+
+  scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
+  theme_bw()+
+  theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
+        axis.text.y = element_blank(), axis.title = element_text(size = 20))
+
+ggsave(file = "beta1.jpg")
+
+ggplot(mapping = aes(x = neighbor2))+
+  geom_density(size = 1)+
+  labs(x = "Infection probability", y = "Density")+
+  scale_x_continuous(limits = c(0,1), expand = c(0,0))+
+  scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
+  theme_bw()+
+  theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
+        axis.text.y = element_blank(), axis.title = element_text(size = 20))
+
+ggsave(file = "beta2.jpg")
+
+ggplot(mapping = aes(x = neighbor3))+
+  geom_density(size = 1)+
+  labs(x = "Infection probability", y = "Density")+
+  scale_x_continuous(limits = c(0,1), expand = c(0,0))+
+  scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
+  theme_bw()+
+  theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
+        axis.text.y = element_blank(), axis.title = element_text(size = 20))
+
+ggsave(file = "beta3.jpg")
+
 # Read in model outputs --------------------------------------
 # Read all csv's into a list
 filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
