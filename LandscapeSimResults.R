@@ -22,7 +22,7 @@ ggplot(mapping = aes(x = neighbor1))+
   scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
   theme_bw()+
   theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
-        axis.text.y = element_blank(), axis.title = element_text(size = 20))
+        axis.text.y = element_blank(), axis.title = element_blank())
 
 ggsave(file = "beta1.jpg")
 
@@ -33,7 +33,7 @@ ggplot(mapping = aes(x = neighbor2))+
   scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
   theme_bw()+
   theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
-        axis.text.y = element_blank(), axis.title = element_text(size = 20))
+        axis.text.y = element_blank(), axis.title = element_blank())
 
 ggsave(file = "beta2.jpg")
 
@@ -44,7 +44,7 @@ ggplot(mapping = aes(x = neighbor3))+
   scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
   theme_bw()+
   theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
-        axis.text.y = element_blank(), axis.title = element_text(size = 20))
+        axis.text.y = element_blank(), axis.title = element_blank())
 
 ggsave(file = "beta3.jpg")
 
