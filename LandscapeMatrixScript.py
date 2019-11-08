@@ -127,8 +127,8 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 
     return (coffee, landscape, start)
 
-#(mat, land, start) = MakeLandscape(size = matrix_size, patches = n_patches, draws = n_draws, deforest = deforest[0], disp = deforest_disp[0],
- #                                                                                                                   ddraws = deforest_draws)
+(mat, land, start) = MakeLandscape(size = matrix_size, patches = n_patches, draws = n_draws, deforest = deforest[1], disp = deforest_disp[5],
+                                                                                                                    ddraws = deforest_draws)
 
 ###################################################################
 ##############    Cellular Automata    ############################
