@@ -128,7 +128,7 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
     return (coffee, landscape, start)
 
 (mat, land, start) = MakeLandscape(size = matrix_size, patches = n_patches, draws = n_draws, deforest = deforest[1], disp = deforest_disp[5],
-                                                                                                                    ddraws = deforest_draws)
+                                                                                           x                         ddraws = deforest_draws)
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -314,7 +314,7 @@ def base_function(nlandscape = n):
             perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / \
                                 (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
             perc_inf[j, 2, i] = start[0]; perc_inf[j, 3, i] = start[1]
-            perc_inf[j, 3, i] = prob
+            perc_inf[j, 4, i] = prob
             print("j = " + str(j))
 
         print("i = " + str(i))
