@@ -92,6 +92,11 @@ output.mat <- do.call(rbind, output.list)
 
 full.infec <- subset(output.mat, output.mat$PercInf == 1)
   
+full.infec %>%
+  group_by(ResistProb, replicate, deforest, dispersion) %>%
+  summarise(newTime = min(Time)) %>%
+  {. ->> full.infec2}
+  
 # plot variation in Percentage Infestation 
 deforestation <- ggplot(data1000, aes(x = deforest, y= PercInf)) +
   geom_boxplot(fill = "forestgreen") +
@@ -145,15 +150,17 @@ ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate),
   
  
 # ploting % infestation through time steps averaging replicates
-dat <- as.tibble(output.mat) %>%
+dat <- as_tibble(output.mat) %>%
   group_by(Time, deforest, dispersion) %>%
-  summarise(m = median(PercInf), sd = sd(PercInf)) 
+  filter(Time <= 150) %>%
+  summarise(m = mean(PercInf), sd = sd(PercInf)) 
 
 # check that it worked
-glimpse(data)
+glimpse(dat)
 
-infection <- ggplot(data = data1) +
-  geom_ribbon(aes(x = Time, ymin = (m-sd), ymax = (m+sd)), fill = "grey70", alpha = 0.6) +
+ggplot(data = dat) +
+  geom_ribbon(aes(x = Time, ymin = (m-sd), ymax = (m+sd)), fill = "grey70", 
+              alpha = 0.6) +
   geom_line(aes(x = Time, y = m)) +
   facet_grid(vars(deforest), vars(dispersion)) +
   theme_classic() +
@@ -163,12 +170,11 @@ infection <- ggplot(data = data1) +
   theme(legend.position = "none")
                 
 # histograms time steps
-hist.rust <- ggplot(data = output.mat, aes(PercInf)) +
+ggplot(data = full.infec, aes(Time)) +
   geom_histogram(binwidth = 0.15, fill = "darkgrey") +
   facet_grid(vars(deforest), vars(dispersion)) +
   theme_classic() +
-  labs(x="Leaf rust infection (%)",
-       y="")
+  labs(x="Time", y="")
 
 # saving plots
 ggsave("rust_infection_all.png", infection.all)
