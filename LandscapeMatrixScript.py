@@ -127,8 +127,8 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 
     return (coffee, landscape, start)
 
-(mat, land, start) = MakeLandscape(size = matrix_size, patches = n_patches, draws = n_draws, deforest = deforest[1], disp = deforest_disp[5],
-                                                                                           x                         ddraws = deforest_draws)
+(mat, land, start) = MakeLandscape(size = matrix_size, patches = n_patches, draws = n_draws, deforest = deforest[0], disp = deforest_disp[0],
+                                                                                                                    ddraws = deforest_draws)
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -158,8 +158,11 @@ def cellaut(mat, land):
         row = neighbors_clean[i,:]
         row = row[~numpy.isnan(row)]
         rowsums = row.sum()
-        add_row = numpy.random.beta(a=rowsums+1, b=8-rowsums+1, size=1)
-        rowprobs.append(add_row)
+        if rowsums > 0:
+            add_row = numpy.random.beta(a=rowsums+1, b=8-rowsums+1, size=1)
+            rowprobs.append(add_row)
+        else:
+            rowprobs.append(0)
 
     # Use number of infected neighbors to get success probability in a bernoulli trial
     bern_out = []
@@ -232,7 +235,7 @@ def new_spore(mat, coord):
 
 def spore_walk(spores, land, mat, coord, prob_choose):
     for i in range(0, len(spores)):
-        step_credit = 5
+        step_credit = 1
         old_coords = list(spores)[i]
 
         while step_credit > 0:
@@ -282,8 +285,8 @@ def spore_walk(spores, land, mat, coord, prob_choose):
 matrix_size = 100
 n_patches = 45
 n_draws = 50
-deforest = [0.1, 0.35, 0.5, 0.65, 0.8, 0.95]
-deforest_disp = [2, 2.5, 3, 3.5, 4, 4.5]
+deforest = [0.1, 0.95]
+deforest_disp = [2, 4.5]
 deforest_draws = 35
 probs = [0.15,0.5,0.75]
 
@@ -294,7 +297,7 @@ t = 500
 #Write the master function
 def base_function(nlandscape = n):
     # Create blank array to store results
-    perc_inf = numpy.empty((t, 4, n))
+    perc_inf = numpy.empty((t, 5, n))
 
     for i in range(n):
         # Create landscapes
@@ -316,6 +319,10 @@ def base_function(nlandscape = n):
             perc_inf[j, 2, i] = start[0]; perc_inf[j, 3, i] = start[1]
             perc_inf[j, 4, i] = prob
             print("j = " + str(j))
+
+            #Add stopping point if landscape is fully infected
+            if len(numpy.where(mat == 0)[0]) == 0:
+                break
 
         print("i = " + str(i))
 
