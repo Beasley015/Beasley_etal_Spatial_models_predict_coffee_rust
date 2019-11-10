@@ -1,7 +1,7 @@
 #####################################################
 # Modeling coffee rust movement through a landscape #
 # N. Aristizabal, E. Beasley, & E. Bueno            #
-# Spring 2019                                       #
+# Spring 2019- ????                                 #
 #####################################################
 library(ggplot2)
 library(dplyr)
@@ -48,6 +48,7 @@ ggplot(mapping = aes(x = neighbor3))+
 
 ggsave(file = "beta3.jpg")
 
+
 # Read in model outputs --------------------------------------
 # Read all csv's into a list
 filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
@@ -55,14 +56,14 @@ shortnames <- list.files("Outputs", pattern = "*.csv")
 output.list <- lapply(filenames, read.csv, header = F)
 
 # Rename columns of each dataframe
-newnames <- c("Time", "PercInf")
+newnames <- c("Time", "PercInf","X","ResistProb")
 output.list <- lapply(output.list, setNames, newnames)
 
 # Set up data -----------------------------------------------
 # Add column to denote replicates
 replicate <- logical()
 for(i in 1:50){
-  new <- rep(i, 1000)
+  new <- rep(i, 500)
   replicate <- append(replicate, new)
 }
   
@@ -78,10 +79,11 @@ disp <- list()
 
 loop.ready <- c(1:length(shortnames))
 
-for(i in loop.ready) {
-  def[[i]] <- mid(shortnames[[i]],4,2)
-  disp[[i]] <- mid(shortnames[[i]],10,1)
-}
+# Need to fix this for loop- not calling the correct characters
+# for(i in loop.ready) {
+#   def[[i]] <- mid(shortnames[[i]],4,2) 
+#   disp[[i]] <- mid(shortnames[[i]],10,1)
+# }
 
 for(i in 1:length(output.list)){
   deforest <- rep(def[[i]], nrow(output.list[[1]]))
@@ -93,9 +95,9 @@ head(output.list[[1]])
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
 
-# Plots ---------------------------------------------------
+# Plots (this is where the big edits are)-------------------------------------
 
-data1000 <- subset(output.mat, output.mat$Time == 999)
+data500 <- subset(output.mat, output.mat$Time == 500)
   
 # plot variation in Percentage Infestation 
 deforestation <- ggplot(data1000, aes(x = deforest, y= PercInf)) +
