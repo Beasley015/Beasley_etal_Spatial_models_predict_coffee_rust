@@ -105,7 +105,7 @@ half.infec %>%
   {. ->> half.infec2}
   
 # plot variation in Percentage Infestation 
-deforestation <- ggplot(data1000, aes(x = deforest, y= PercInf)) +
+deforestation <- ggplot(data1000, aes(x = deforest, y= newTime)) +
   geom_boxplot(fill = "forestgreen") +
   labs(x="Deforestation (%)",
        y="Leaf rust infection (%)") + 
