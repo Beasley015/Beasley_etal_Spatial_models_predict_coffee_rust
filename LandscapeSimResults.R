@@ -71,6 +71,8 @@ output.list <- lapply(output.list, cbind, replicate)
 
 # Pull deforestation and dispersion from file names
 loop.ready <- c(1:length(shortnames))
+def <- list()
+disp <- list()
 
 # Need to fix this for loop- not calling the correct characters
 for(i in loop.ready) {
@@ -105,23 +107,20 @@ half.infec %>%
   {. ->> half.infec2}
   
 # plot variation in Percentage Infestation 
-deforestation <- ggplot(data1000, aes(x = deforest, y= newTime)) +
-  geom_boxplot(fill = "forestgreen") +
-  labs(x="Deforestation (%)",
-       y="Leaf rust infection (%)") + 
+disp3.5 <- subset(full.infec2, full.infec2$dispersion == 3.5)
+
+deforestation <- ggplot(disp3.5, aes(x = deforest, y= newTime)) +
+  geom_boxplot() +
+  labs(x="Deforestation (%)", y="Leaf rust infection (%)") + 
   theme_classic()
 
 # individual percent infestation ~ dispersion
-dispersion <- ggplot(data1000, aes(x = dispersion, y= PercInf)) +
-  geom_boxplot(fill = "deepskyblue3") +
-  labs(x="Degree of dispersion",
-       y="Leaf rust infection (%)") + 
+def.65 <- subset(full.infec2, full.infec2$deforest == 0.65)
+
+dispersion <- ggplot(full.infec2, aes(x = dispersion, y= newTime)) +
+  geom_boxplot() +
+  labs(x="Degree of dispersion", y="Leaf rust infection (%)") + 
   theme_classic()
-
-
-# individual percent infestation ~ deforestation among replicates
-# ggplot(output.mat, aes(x = deforest, y= PercInf)) +
-  #geom_boxplot(aes(fill=factor(deforest)))
 
 full.infec2 %>%
   group_by(deforest, dispersion) %>%
@@ -150,8 +149,7 @@ ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate),
   geom_line() +
   facet_grid(vars(deforest), vars(dispersion)) +
   theme_classic() +
-  labs(x="Time",
-     y="Leaf rust infection (%)") +
+  labs(x="Time", y="Leaf rust infection (%)") +
   theme_classic() +
   theme(legend.position = "none")
   
