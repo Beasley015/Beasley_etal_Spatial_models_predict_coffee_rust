@@ -70,20 +70,13 @@ for(i in 1:50){
 output.list <- lapply(output.list, cbind, replicate)  
 
 # Pull deforestation and dispersion from file names
-mid <- function(text, start_num, num_char){
-  substr(text, start_num, start_num + num_char - 1)
-}
-
-def <- list()
-disp <- list()
-
 loop.ready <- c(1:length(shortnames))
 
 # Need to fix this for loop- not calling the correct characters
-# for(i in loop.ready) {
-#   def[[i]] <- mid(shortnames[[i]],4,2) 
-#   disp[[i]] <- mid(shortnames[[i]],10,1)
-# }
+for(i in loop.ready) {
+  def[[i]] <- strsplit(shortnames[[i]], split = "def|disp|prob|.csv")[[1]][2]
+  disp[[i]] <- strsplit(shortnames[[i]], split = "def|disp|prob|.csv")[[1]][3]
+}
 
 for(i in 1:length(output.list)){
   deforest <- rep(def[[i]], nrow(output.list[[1]]))
@@ -97,7 +90,7 @@ output.mat <- do.call(rbind, output.list)
 
 # Plots (this is where the big edits are)-------------------------------------
 
-data500 <- subset(output.mat, output.mat$Time == 500)
+full.infec <- subset(output.mat, output.mat$PercInf == 1)
   
 # plot variation in Percentage Infestation 
 deforestation <- ggplot(data1000, aes(x = deforest, y= PercInf)) +
@@ -113,16 +106,6 @@ dispersion <- ggplot(data1000, aes(x = dispersion, y= PercInf)) +
        y="Leaf rust infection (%)") + 
   theme_classic()
 
-#Try an anova
-anov <- aov(data = data1000, PercInf ~ deforest + dispersion + deforest*dispersion)
-summary(anov)
-#deforestation is significant, nothing else is.
-
-#Nonparametric test
-nonpar <- scheirerRayHare(PercInf ~ deforest + dispersion, data = data1000)
-#same as anova
-
-dunn <- dunn.test(x = data1000$PercInf, g = data1000$deforest)
 
 # individual percent infestation ~ deforestation among replicates
 # ggplot(output.mat, aes(x = deforest, y= PercInf)) +
@@ -148,8 +131,10 @@ heatplotmedian <- ggplot(datameans, aes(deforest, dispersion, fill = median)) +
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))
 
+# Infection through time -------------------------------
 # percent infestation through time steps
-infection.all <- ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate), alpha = 0.3)) + 
+ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate), 
+                       alpha = 0.3)) + 
   geom_line() +
   facet_grid(vars(deforest), vars(dispersion)) +
   theme_classic() +
@@ -160,7 +145,7 @@ infection.all <- ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor
   
  
 # ploting % infestation through time steps averaging replicates
-data1 <- as.tibble(output.mat) %>%
+dat <- as.tibble(output.mat) %>%
   group_by(Time, deforest, dispersion) %>%
   summarise(m = median(PercInf), sd = sd(PercInf)) 
 
