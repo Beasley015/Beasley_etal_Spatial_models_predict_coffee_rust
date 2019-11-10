@@ -88,7 +88,7 @@ head(output.list[[1]])
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
 
-# Plots (this is where the big edits are)-------------------------------------
+# Plots-------------------------------------
 
 full.infec <- subset(output.mat, output.mat$PercInf == 1)
   
@@ -96,6 +96,13 @@ full.infec %>%
   group_by(ResistProb, replicate, deforest, dispersion) %>%
   summarise(newTime = min(Time)) %>%
   {. ->> full.infec2}
+
+half.infec <- subset(output.mat, output.mat$PercInf <= 0.5)
+
+half.infec %>%
+  group_by(ResistProb, replicate, deforest, dispersion) %>%
+  summarise(newTime = max(Time)) %>%
+  {. ->> half.infec2}
   
 # plot variation in Percentage Infestation 
 deforestation <- ggplot(data1000, aes(x = deforest, y= PercInf)) +
@@ -116,9 +123,9 @@ dispersion <- ggplot(data1000, aes(x = dispersion, y= PercInf)) +
 # ggplot(output.mat, aes(x = deforest, y= PercInf)) +
   #geom_boxplot(aes(fill=factor(deforest)))
 
-data1000 %>%
+full.infec2 %>%
   group_by(deforest, dispersion) %>%
-  summarise(mean = mean(PercInf), median = median(PercInf)) %>%
+  summarise(mean = mean(newTime), median = median(newTime)) %>%
   {. ->> datameans}
 
 # heat map
@@ -170,8 +177,14 @@ ggplot(data = dat) +
   theme(legend.position = "none")
                 
 # histograms time steps
-ggplot(data = full.infec, aes(Time)) +
-  geom_histogram(binwidth = 0.15, fill = "darkgrey") +
+ggplot(data = full.infec2, aes(newTime)) +
+  geom_histogram(fill = "darkgrey") +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic() +
+  labs(x="Time", y="")
+
+ggplot(data = half.infec2, aes(newTime)) +
+  geom_histogram(fill = "darkgrey") +
   facet_grid(vars(deforest), vars(dispersion)) +
   theme_classic() +
   labs(x="Time", y="")
