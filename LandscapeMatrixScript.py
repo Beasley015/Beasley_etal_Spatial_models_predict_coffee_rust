@@ -235,7 +235,7 @@ def new_spore(mat, coord):
 
 def spore_walk(spores, land, mat, coord, prob_choose):
     for i in range(0, len(spores)):
-        step_credit = 1
+        step_credit = 10
         old_coords = list(spores)[i]
 
         while step_credit > 0:
@@ -292,7 +292,7 @@ probs = [0.15,0.5,0.75]
 
 #Specify number of landscapes and time steps
 n = 50
-t = 500
+t = 1000
 
 #Write the master function
 def base_function(nlandscape = n):
@@ -321,7 +321,7 @@ def base_function(nlandscape = n):
             print("j = " + str(j))
 
             #Add stopping point if landscape is fully infected
-            if len(numpy.where(mat == 0)[0]) == 0:
+            if len(numpy.where(coffee == 0)[0]) == 0:
                 break
 
         print("i = " + str(i))
