@@ -3,12 +3,10 @@
 # N. Aristizabal, E. Beasley, & E. Bueno            #
 # Spring 2019- ????                                 #
 #####################################################
-library(ggplot2)
-library(dplyr)
 library(tidyverse)
 library(rcompanion)
-library(dunn.test)
 library(viridis)
+library(patchwork)
 
 # Sample beta distributions (for figures) ----------------------------------
 neighbor1 <- rbeta(10000, 2, 8)
@@ -56,14 +54,14 @@ shortnames <- list.files("Outputs", pattern = "*.csv")
 output.list <- lapply(filenames, read.csv, header = F)
 
 # Rename columns of each dataframe
-newnames <- c("Time", "PercInf","X","ResistProb")
+newnames <- c("Time", "PercInf","X","Y", "ResistProb")
 output.list <- lapply(output.list, setNames, newnames)
 
 # Set up data -----------------------------------------------
 # Add column to denote replicates
 replicate <- logical()
 for(i in 1:50){
-  new <- rep(i, 500)
+  new <- rep(i, 1000)
   replicate <- append(replicate, new)
 }
   
@@ -90,44 +88,116 @@ head(output.list[[1]])
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
 
-# Plots-------------------------------------
+# Prelim plots: histograms and line graphs-------------------------------------
+# histogram time steps
+histo <- ggplot(data = step500, aes(PercInf)) +
+  geom_histogram(fill = "darkgrey", bins = 15) +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic(base_size = 18) +
+  labs(x="% Rust Infection", y="")
 
-full.infec <- subset(output.mat, output.mat$PercInf == 1)
-  
-full.infec %>%
-  group_by(ResistProb, replicate, deforest, dispersion) %>%
-  summarise(newTime = min(Time)) %>%
-  {. ->> full.infec2}
+# percent infestation through time steps
+inf.time <- ggplot(output.mat, aes(x = Time, y = PercInf, 
+                                   group = as.factor(replicate)))+
+  geom_line() +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  labs(x="Time", y="Leaf rust infection (%)") +
+  theme_classic() +
+  theme(legend.position = "none")
+# this looks bad now but that's ok
 
-half.infec <- subset(output.mat, output.mat$PercInf <= 0.5)
+# plotting % infestation through time steps averaging replicates
+dat <- as_tibble(output.mat) %>%
+  group_by(Time, deforest, dispersion) %>%
+  summarise(m = median(PercInf), min = min(PercInf), max = max(PercInf))
 
-half.infec %>%
-  group_by(ResistProb, replicate, deforest, dispersion) %>%
-  summarise(newTime = max(Time)) %>%
-  {. ->> half.infec2}
-  
-# plot variation in Percentage Infestation 
-disp3.5 <- subset(full.infec2, full.infec2$dispersion == 3.5)
+avg.lines <- ggplot(data = dat) +
+  geom_ribbon(aes(x = Time, ymin = min, ymax = max), fill = "grey70", 
+              alpha = 0.6) +
+  geom_line(aes(x = Time, y = m)) +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic() +
+  labs(x="Time",
+       y="Leaf rust infection (%)") +
+  theme_classic(base_size = 18) +
+  theme(legend.position = "none")
 
-deforestation <- ggplot(disp3.5, aes(x = deforest, y= newTime)) +
+# Parameter plots ---------------------------------------------
+# Pull out data from final time step
+step500 <- subset(output.mat, output.mat$Time == 499)
+
+# Subset different resistance levels
+step500lo <- subset(step500, step500$ResistProb == 0.75)
+step500mid <- subset(step500, step500$ResistProb == 0.5)
+step500hi <- subset(step500, step500$ResistProb == 0.15)
+
+# Subset top 10% infection percents
+step500 %>%
+  group_by(deforest, dispersion, ResistProb) %>%
+  filter(PercInf >= quantile(step500$PercInf, 0.9)) %>%
+  {. ->> quant90}
+ 
+# Boxplots -----------------------------------------
+# plot variation in Percentage Infestation at different resistance values
+deforestationlo <- ggplot(step500lo, aes(x = deforest, y= PercInf, fill = dispersion)) +
   geom_boxplot() +
   labs(x="Deforestation (%)", y="Leaf rust infection (%)") + 
   theme_classic()
 
-# individual percent infestation ~ dispersion
-def.65 <- subset(full.infec2, full.infec2$deforest == 0.65)
-
-dispersion <- ggplot(full.infec2, aes(x = dispersion, y= newTime)) +
+deforestationmid <- ggplot(step500mid, aes(x = deforest, y= PercInf, 
+                                           fill = dispersion)) +
   geom_boxplot() +
-  labs(x="Degree of dispersion", y="Leaf rust infection (%)") + 
+  labs(x="Deforestation (%)", y="Leaf rust infection (%)") + 
   theme_classic()
 
-full.infec2 %>%
-  group_by(deforest, dispersion) %>%
-  summarise(mean = mean(newTime), median = median(newTime)) %>%
-  {. ->> datameans}
+deforestationhi <- ggplot(step500hi, aes(x = deforest, y= PercInf, fill = dispersion)) +
+  geom_boxplot() +
+  labs(x="Deforestation (%)", y="Leaf rust infection (%)") + 
+  theme_classic()
 
-# heat map
+# Look at 90th percentile
+top.10lo <- ggplot(quant90[quant90$ResistProb == 0.75,], 
+                   aes(x = deforest, y = PercInf, fill = dispersion))+
+  geom_boxplot()+
+  scale_fill_manual(values = c("gray50", "white"))+
+  labs(x = "Deforestation", y = "% Rust Infection", fill = "Dispersion",
+       title = "Low")+
+  theme_classic(base_size = 20)+
+  theme(axis.title.y = element_blank(), axis.title.x = element_blank())
+
+top.10mid <- ggplot(quant90[quant90$ResistProb == 0.5,], 
+                   aes(x = deforest, y = PercInf, fill = dispersion))+
+  geom_boxplot()+
+  scale_fill_manual(values = c("gray50", "white"))+
+  labs(x = "Deforestation", y = "% Rust Infection", fill = "Dispersion",
+       title = "Mid")+
+  theme_classic(base_size = 20)+
+  theme(legend.position = "none", axis.title.y = element_blank())
+
+top.10hi <- ggplot(quant90[quant90$ResistProb == 0.15,], 
+                   aes(x = deforest, y = PercInf, fill = dispersion))+
+  geom_boxplot()+
+  scale_fill_manual(values = c("gray50", "white"))+
+  labs(x = "Deforestation", y = "% Rust Infection", fill = "Dispersion",
+       title = "High")+
+  theme_classic(base_size = 20)+
+  theme(legend.position = "none", axis.title.x = element_blank())
+
+many.boxes <- top.10hi|top.10mid|top.10lo
+summary(aov(data = quant90, PercInf~deforest+dispersion+ResistProb))
+
+# individual percent infestation ~ dispersion
+# dispersion <- ggplot(full.infec2, aes(x = dispersion, y= newTime)) +
+#   geom_boxplot() +
+#   labs(x="Degree of dispersion", y="Leaf rust infection (%)") + 
+#   theme_classic()
+
+# full.infec2 %>%
+#   group_by(deforest, dispersion) %>%
+#   summarise(mean = mean(newTime), median = median(newTime)) %>%
+#   {. ->> datameans}
+
+# Heat Maps ---------------------------------------------
 heatplotmean <- ggplot(datameans, aes(deforest, dispersion, fill = mean)) + 
   geom_raster(hjust = 0, vjust = 0)+
   scale_fill_viridis(name = "Leaf Rust Infection (%)")+
@@ -142,61 +212,29 @@ heatplotmedian <- ggplot(datameans, aes(deforest, dispersion, fill = median)) +
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))
 
-# Infection through time -------------------------------
-# percent infestation through time steps
-ggplot(output.mat, aes(x = Time, y = PercInf, group = as.factor(replicate), 
-                       alpha = 0.3)) + 
-  geom_line() +
-  facet_grid(vars(deforest), vars(dispersion)) +
-  theme_classic() +
-  labs(x="Time", y="Leaf rust infection (%)") +
-  theme_classic() +
-  theme(legend.position = "none")
+# Does starting location matter -------------------------------
+
   
  
-# ploting % infestation through time steps averaging replicates
-dat <- as_tibble(output.mat) %>%
-  group_by(Time, deforest, dispersion) %>%
-  filter(Time <= 150) %>%
-  summarise(m = mean(PercInf), sd = sd(PercInf)) 
+# Saving Plots ---------------------------------------------------
+# Histogram
+ggsave("histrust.jpeg", histo)
 
-# check that it worked
-glimpse(dat)
+# Line plot
+ggsave("rustinfec.jpeg", avg.lines)
 
-ggplot(data = dat) +
-  geom_ribbon(aes(x = Time, ymin = (m-sd), ymax = (m+sd)), fill = "grey70", 
-              alpha = 0.6) +
-  geom_line(aes(x = Time, y = m)) +
-  facet_grid(vars(deforest), vars(dispersion)) +
-  theme_classic() +
-  labs(x="Time",
-       y="Leaf rust infection (%)") +
-  theme_classic() +
-  theme(legend.position = "none")
-                
-# histograms time steps
-ggplot(data = full.infec2, aes(newTime)) +
-  geom_histogram(fill = "darkgrey") +
-  facet_grid(vars(deforest), vars(dispersion)) +
-  theme_classic() +
-  labs(x="Time", y="")
-
-ggplot(data = half.infec2, aes(newTime)) +
-  geom_histogram(fill = "darkgrey") +
-  facet_grid(vars(deforest), vars(dispersion)) +
-  theme_classic() +
-  labs(x="Time", y="")
-
-# saving plots
+# Boxplots
 ggsave("rust_infection_all.png", infection.all)
 ggsave("rust_infection.png", infection)
 ggsave("rust_dispersion.png", dispersion)
 ggsave("rust_deforestation.png", deforestation)
 
+ggsave("lotsaboxes.jpeg", many.boxes, width = 13, height = 7, units = "in")
+
+# Heat plots
 ggsave("heatplotmean.jpeg", heatplotmean)
 ggsave("heatplotmedian.jpeg", heatplotmedian)
 
-ggsave("hist.rust.jpeg", hist.rust)
   
   
   
