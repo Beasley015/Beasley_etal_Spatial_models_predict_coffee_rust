@@ -216,11 +216,26 @@ heatplotmedian <- ggplot(datameans, aes(deforest, dispersion, fill = median)) +
 quant90 %>%
   filter(X, Y) %>%
   group_by(X, Y) %>%
-  summarise(Count = count()) %>%
+  summarise(Count = n()) %>%
   {. ->> loc.counts}
+
+step500 %>%
+  filter(X, Y) %>%
+  group_by(X, Y) %>%
+  summarise(Count = n()) %>%
+  {. ->> all.loc}
 
 spatial <- ggplot(data = loc.counts, aes(x = X, y = Y, fill = Count))+
   geom_raster()+
+  xlim(0,99)+
+  ylim(0,99)+
+  theme_classic(base_size = 18)+
+  theme(legend.position = "none")
+
+spatial_all <- ggplot(data = all.loc, aes(x = X, y = Y, fill = Count))+
+  geom_raster()+
+  xlim(0,99)+
+  ylim(0,99)+
   theme_classic(base_size = 18)+
   theme(legend.position = "none")
 
