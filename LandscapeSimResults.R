@@ -213,9 +213,17 @@ heatplotmedian <- ggplot(datameans, aes(deforest, dispersion, fill = median)) +
   scale_y_discrete(expand = c(0,0))
 
 # Does starting location matter -------------------------------
+quant90 %>%
+  filter(X, Y) %>%
+  group_by(X, Y) %>%
+  summarise(Count = count()) %>%
+  {. ->> loc.counts}
 
-  
- 
+spatial <- ggplot(data = loc.counts, aes(x = X, y = Y, fill = Count))+
+  geom_raster()+
+  theme_classic(base_size = 18)+
+  theme(legend.position = "none")
+
 # Saving Plots ---------------------------------------------------
 # Histogram
 ggsave("histrust.jpeg", histo)
@@ -235,6 +243,7 @@ ggsave("lotsaboxes.jpeg", many.boxes, width = 13, height = 7, units = "in")
 ggsave("heatplotmean.jpeg", heatplotmean)
 ggsave("heatplotmedian.jpeg", heatplotmedian)
 
-  
+# Raster of infection start
+ggsave("infecstart.jpeg", spatial)
   
   
