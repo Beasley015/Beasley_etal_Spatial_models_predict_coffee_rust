@@ -127,9 +127,6 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 
     return (coffee, landscape, start)
 
-(mat, land, start) = MakeLandscape(size = matrix_size, patches = n_patches, draws = n_draws, deforest = deforest[0], disp = deforest_disp[0],
-                                                                                                                    ddraws = deforest_draws)
-
 ###################################################################
 ##############    Cellular Automata    ############################
 ###################################################################
@@ -159,7 +156,7 @@ def cellaut(mat, land):
         row = row[~numpy.isnan(row)]
         rowsums = row.sum()
         if rowsums > 0:
-            add_row = numpy.random.beta(a=rowsums+1, b=8-rowsums+1, size=1)
+            add_row = numpy.random.beta(a=rowsums+1-prob, b=8-rowsums+1+prob, size=1)
             rowprobs.append(add_row)
         else:
             rowprobs.append(0)
@@ -260,18 +257,19 @@ def spore_walk(spores, land, mat, coord, prob_choose):
             else:
                 step_credit = step_credit-land[new_coords[0], new_coords[1]]
 
-                new_neighbors = neighbors_base(mat=mat, row=new_coords[0], col=new_coords[1])
-                new_neighbors = numpy.array(new_neighbors)
+    for i in range(0, len(spores)):
+        coords = list(spores[i])
+        new_neighbors = neighbors_base(mat=mat, row=coords[0], col=coords[1])
+        new_neighbors = numpy.array(new_neighbors)
 
-                if numpy.any(new_neighbors == 0):
-                    infec_newcoord = random.choice([coord[i] for i in numpy.where(new_neighbors == 0)[0]])
-                    infec_target = [new_coords[0] + infec_newcoord[0], new_coords[1] + infec_newcoord[1]]
-                    if all(v < 50 for v in infec_target):
-                        infec_prob = numpy.random.binomial(n=1, p=prob_choose)
-                        if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
-                            mat[infec_target[0], infec_target[1]] = 1
-                            spores[i] = None
-                            break
+        if numpy.any(new_neighbors == 0):
+            infec_newcoord = random.choice([coord[i] for i in numpy.where(new_neighbors == 0)[0]])
+            infec_target = [new_coords[0] + infec_newcoord[0], new_coords[1] + infec_newcoord[1]]
+            if all(v < 50 for v in infec_target):
+                infec_prob = numpy.random.binomial(n=1, p=prob_choose)
+                if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
+                    mat[infec_target[0], infec_target[1]] = 1
+                    spores[i] = None
 
     spores = list(filter(None, spores))
 
@@ -291,8 +289,8 @@ deforest_draws = 35
 probs = [0.15,0.5,0.75]
 
 #Specify number of landscapes and time steps
-n = 50
-t = 1000
+n = 5
+t = 100
 
 #Write the master function
 def base_function(nlandscape = n):
