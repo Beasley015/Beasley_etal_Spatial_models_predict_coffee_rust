@@ -13,7 +13,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3893">
+            <state relative-caret-position="259">
               <caret line="342" selection-start-line="342" selection-end-line="342" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
@@ -25,11 +25,18 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/NLMSimulatedScript.py">
+        <entry file="file://$PROJECT_DIR$/NLMSimScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-691">
-              <caret line="16" column="55" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
+            <state relative-caret-position="306">
+              <caret line="73" column="52" lean-forward="true" selection-start-line="73" selection-start-column="52" selection-end-line="73" selection-end-column="52" />
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/NLMRaster.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1003" />
           </provider>
         </entry>
       </file>
@@ -438,9 +445,19 @@
     <option name="LAST_COMMIT_MESSAGE" value="testing improved walk function" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/NLMConvertFromRaster.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/NLMSimulatedScript.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="55" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3893">
+        <state relative-caret-position="259">
           <caret line="342" selection-start-line="342" selection-end-line="342" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
@@ -450,10 +467,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/NLMSimulatedScript.py">
+    <entry file="file://$PROJECT_DIR$/NLMRaster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-691">
-          <caret line="16" column="55" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
+        <state relative-caret-position="-1003" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/NLMSimScript.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="73" column="52" lean-forward="true" selection-start-line="73" selection-start-column="52" selection-end-line="73" selection-end-column="52" />
         </state>
       </provider>
     </entry>
