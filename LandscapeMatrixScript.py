@@ -2,6 +2,7 @@ import numpy
 import random
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+from nlmpy import nlmpy as nlm
 
 ##############################################################################
 ################        Neighbors Function             #######################
@@ -127,6 +128,16 @@ def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
 
     return (coffee, landscape, start)
 
+coffee = nlm.randomClusterNN(matrix_size, matrix_size, 0.3, n = '8-neighbourhood')
+coffee = nlm.classifyArray(coffee, [0.25, 0.75])
+
+landscape_clustered = nlm.randomElementNN(matrix_size, matrix_size, n=10000, mask=coffee)
+landscape_clustered = nlm.classifyArray(landscape_clustered, [0.1, 0.9])
+
+landscape_random = nlm.randomUniform01(matrix_size, matrix_size, mask=coffee)
+
+coffee[coffee == 1] = numpy.nan
+
 ###################################################################
 ##############    Cellular Automata    ############################
 ###################################################################
@@ -156,7 +167,7 @@ def cellaut(mat, land):
         row = row[~numpy.isnan(row)]
         rowsums = row.sum()
         if rowsums > 0:
-            add_row = numpy.random.beta(a=rowsums+1-prob, b=8-rowsums+1+prob, size=1)
+            add_row = numpy.random.beta(a=rowsums+1, b=8-rowsums+1, size=1)
             rowprobs.append(add_row)
         else:
             rowprobs.append(0)
@@ -266,7 +277,7 @@ def spore_walk(spores, land, mat, coord, prob_choose):
             infec_newcoord = random.choice([coord[i] for i in numpy.where(new_neighbors == 0)[0]])
             infec_target = [new_coords[0] + infec_newcoord[0], new_coords[1] + infec_newcoord[1]]
             if all(v < 50 for v in infec_target):
-                infec_prob = numpy.random.binomial(n=1, p=prob_choose)
+                infec_prob = numpy.random.binomial(n=1, p=0.5)
                 if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
                     mat[infec_target[0], infec_target[1]] = 1
                     spores[i] = None
@@ -286,7 +297,7 @@ n_draws = 50
 deforest = [0.1, 0.95]
 deforest_disp = [2, 4.5]
 deforest_draws = 35
-probs = [0.15,0.5,0.75]
+cluster = []
 
 #Specify number of landscapes and time steps
 n = 5
@@ -310,12 +321,11 @@ def base_function(nlandscape = n):
         for j in range(t):
             coffee = cellaut(mat=coffee, land=landscape)
             walkers = new_spore(mat=coffee, coord=coord_change)
-            (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change, prob_choose = prob)
+            (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
             perc_inf[j, 0, i] = j
             perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / \
                                 (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
             perc_inf[j, 2, i] = start[0]; perc_inf[j, 3, i] = start[1]
-            perc_inf[j, 4, i] = prob
             print("j = " + str(j))
 
             #Add stopping point if landscape is fully infected
@@ -328,16 +338,16 @@ def base_function(nlandscape = n):
 
 for i in range(len(deforest)):
     for j in range(len(deforest_disp)):
-        for k in range(len(probs)):
+        for k in range(len()):
             defor = deforest[i]
             disp = deforest_disp[j]
-            prob = probs[k]
+            cluster =
 
             perc_inf = base_function(nlandscape=n)
 
             perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
 
-            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"prob"+str(probs[k])+".csv"
+            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"cluster"+str(cluster[k])+".csv"
 
             numpy.savetxt(filename, perc_inf2, delimiter=",")
 
