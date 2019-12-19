@@ -35,108 +35,32 @@ def neighbors_base(mat, row, col, radius=1):
 ################          Construct Landscape          #######################
 ##############################################################################
 
-def MakeLandscape(size, patches, draws, deforest, disp, ddraws):
-    #Create blank landscape
-    coffee = numpy.empty(shape = (size, size))
-    coffee[:] = numpy.nan
+def MakeLandscape(size, deforest, disp, cluster):
+    #Create coffee matrix
+    coffee = nlm.randomClusterNN(size, size, cluster, n = '8-neighbourhood')
+    coffee = nlm.classifyArray(coffee, [0.25, 0.75])
 
-    #Seed two random locations in the landscape with coffee
-    randoms = [None]*patches
-    for cells in range(0, patches):
-        randoms[cells] = (random.randint(1, size-1), random.randint(1, size-1))
+    #Create landscape matrix
+    landscape_clustered = nlm.randomElementNN(size, size, n=disp*2000, mask=coffee)
+    landscape_clustered = nlm.classifyArray(landscape_clustered, [deforest, 1-deforest])
 
-    for coords in randoms:
-        coffee[coords] = 0
+    ones = numpy.where(landscape_clustered == 1)
+    zeroes = numpy.where(landscape_clustered == 0)
 
-    #Draw from beta dists centered around coords
-    betavals = numpy.empty((draws, 2, patches))
+    landscape_clustered[ones[0], ones[1]] = numpy.random.uniform(0.6, 1, len(ones[1]))
+    landscape_clustered[zeroes[0], zeroes[1]] = numpy.random.uniform(0, 0.3, len(zeroes[1]))
 
-    for patch in range(0, patches):
-        coords = numpy.array(randoms[patch])
-        mu = coords
-        stdev = 1.5
-        a1, b1 = (0-mu[0])/stdev, ((size-1)-mu[0])/stdev
-        a2, b2 = (0 - mu[1]) / stdev, ((size-1) - mu[1]) / stdev
-        x = stats.truncnorm.rvs(a1, b1, size=draws, loc = mu[0], scale = stdev)
-        y = stats.truncnorm.rvs(a2, b2, size=draws, loc = mu[1], scale = stdev)
-        betavals[:,0,patch] = x
-        betavals[:,1,patch] = y
+    landscape = landscape_clustered
 
-    betavals = betavals.round()
-
-    #Grow patches from coords
-    for patch in range(0, patches):
-        coords = betavals[:, :, patch]
-        for cell in range(0, len(coords)):
-            i,j = coords[cell,:]
-            coffee[int(i), int(j)] = 0
-
-    #Use neighbors function to remove solitary points
-    neighbor_array = numpy.empty(shape=(1,10), dtype = "float")
-    neighbor_array[:] = numpy.nan
-    for i in range(size):
-        for j in range(size):
-            if coffee[i,j] == 0:
-                neighbor_out = neighbors_base(mat=coffee, row=i, col=j, radius=1)
-                neighbor_out.append(i)
-                neighbor_out.append(j)
-                neighbor_array = numpy.vstack([neighbor_array, neighbor_out])
-
-    neighbor_array = neighbor_array[1:,:]
-
-    for row in range(0, numpy.size(neighbor_array, 0)):
-        if numpy.any(neighbor_array[row,0:8] == 0) == False:
-            coffee[int(neighbor_array[row,8]),int(neighbor_array[row,9])] = numpy.nan
-
-    #Create fully forested landscape
-    indices = numpy.argwhere(coffee)
-    landscape = numpy.empty(shape=(size,size))
-    landscape[coffee == 0] = numpy.nan
-
-    for i in range(0, len(indices)):
-        landscape[indices[i][0], indices[i][1]] = numpy.random.uniform(0.3, 0.95, 1)
-
-    # Simulate deforestation
-    while len(numpy.where(landscape < 0.3)[0])/numpy.count_nonzero(~numpy.isnan(landscape)) < deforest:
-        #Choose seed for deforestation
-        forested_coords = numpy.where(landscape > 0.3)
-        def_choice = random.randint(0, numpy.size(forested_coords, 1)-1)
-        def_seed = (forested_coords[0][def_choice], forested_coords[1][def_choice])
-
-        #Build deforested patch
-        mu = def_seed
-        stdev = disp
-        a1, b1 = (0 - mu[0]) / stdev, ((size-1) - mu[0]) / stdev
-        a2, b2 = (0 - mu[1]) / stdev, ((size-1) - mu[1]) / stdev
-        x = stats.truncnorm.rvs(a1, b1, size=ddraws, loc=mu[0], scale=stdev)
-        y = stats.truncnorm.rvs(a2, b2, size=ddraws, loc=mu[1], scale=stdev)
-
-        clear_coords = numpy.column_stack((x,y))
-        clear_coords = clear_coords.round().astype("int")
-
-        for i in range(0, len(clear_coords[:,0])):
-            if coffee[clear_coords[i,0],clear_coords[i,1]] != 0:
-                landscape[clear_coords[i,0],clear_coords[i,1]] = numpy.random.uniform(0.05, 0.3, 1)
-
-    # Pick one coffee cell to initialize infection
+    #Initialize infection
     coffee_zeros = numpy.where(coffee == 0)
-    randrow = random.randint(0, numpy.size(coffee_zeros, 1)-1)
+    randrow = random.randint(0, numpy.size(coffee_zeros, 1) - 1)
 
     coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
 
     start = numpy.where(coffee == 1)
 
     return (coffee, landscape, start)
-
-coffee = nlm.randomClusterNN(matrix_size, matrix_size, 0.3, n = '8-neighbourhood')
-coffee = nlm.classifyArray(coffee, [0.25, 0.75])
-
-landscape_clustered = nlm.randomElementNN(matrix_size, matrix_size, n=10000, mask=coffee)
-landscape_clustered = nlm.classifyArray(landscape_clustered, [0.1, 0.9])
-
-landscape_random = nlm.randomUniform01(matrix_size, matrix_size, mask=coffee)
-
-coffee[coffee == 1] = numpy.nan
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -292,11 +216,8 @@ def spore_walk(spores, land, mat, coord, prob_choose):
 
 #Specify landscape parameters
 matrix_size = 100
-n_patches = 45
-n_draws = 50
-deforest = [0.1, 0.95]
-deforest_disp = [2, 4.5]
-deforest_draws = 35
+deforest = []
+deforest_disp = []
 cluster = []
 
 #Specify number of landscapes and time steps
