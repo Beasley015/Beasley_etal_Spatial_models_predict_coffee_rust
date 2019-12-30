@@ -40,6 +40,10 @@ def MakeLandscape(size, deforest, disp, cluster):
     coffee = nlm.randomClusterNN(size, size, cluster, n = '8-neighbourhood')
     coffee = nlm.classifyArray(coffee, [0.25, 0.75])
 
+    # Remove 1's from coffee
+    coffee_ones = numpy.where(coffee == 1)
+    coffee[coffee_ones[0], coffee_ones[1]] = numpy.nan
+
     #Create landscape matrix
     landscape_clustered = nlm.randomElementNN(size, size, n=disp*2000, mask=coffee)
     landscape_clustered = nlm.classifyArray(landscape_clustered, [deforest, 1-deforest])
@@ -159,13 +163,7 @@ def new_spore(mat, coord):
 #################    Random Walk    ###############################
 ###################################################################
 
-#Wind effects: new array that affects probability of movement, but not
-#cost? Or both prob and cost?
-
-#Humidity effects: Change infection prob based on neighborhood of
-#target coffee cell
-
-def spore_walk(spores, land, mat, coord, prob_choose):
+def spore_walk(spores, land, mat, coord):
     for i in range(0, len(spores)):
         step_credit = 10
         old_coords = list(spores)[i]
@@ -216,13 +214,13 @@ def spore_walk(spores, land, mat, coord, prob_choose):
 
 #Specify landscape parameters
 matrix_size = 100
-deforest = []
-deforest_disp = []
-cluster = []
+deforest = [0.15, 0.3, 0.45, 0.6, 0.75]
+deforest_disp = [1, 2, 3, 4, 5]
+cluster = [0.1, 0.2, 0.3]
 
 #Specify number of landscapes and time steps
-n = 5
-t = 100
+n = 50
+t = 1000
 
 #Write the master function
 def base_function(nlandscape = n):
@@ -231,8 +229,7 @@ def base_function(nlandscape = n):
 
     for i in range(n):
         # Create landscapes
-        (coffee, landscape, start) = MakeLandscape(size=matrix_size, patches=n_patches, draws=n_draws, deforest=defor,
-                                            disp=disp, ddraws=deforest_draws)
+        (coffee, landscape, start) = MakeLandscape(size=matrix_size, deforest=defor, disp=disp, cluster=agg)
 
         # Create list of tuples for changing coords
         coord_change = [(-1, -1), (-1, 0), (-1, 1),
@@ -259,10 +256,10 @@ def base_function(nlandscape = n):
 
 for i in range(len(deforest)):
     for j in range(len(deforest_disp)):
-        for k in range(len()):
+        for k in range(len(cluster)):
             defor = deforest[i]
             disp = deforest_disp[j]
-            cluster =
+            agg = cluster[k]
 
             perc_inf = base_function(nlandscape=n)
 
