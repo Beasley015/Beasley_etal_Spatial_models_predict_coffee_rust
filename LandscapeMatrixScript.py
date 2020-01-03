@@ -40,10 +40,6 @@ def MakeLandscape(size, deforest, disp, cluster):
     coffee = nlm.randomClusterNN(size, size, cluster, n = '8-neighbourhood')
     coffee = nlm.classifyArray(coffee, [0.25, 0.75])
 
-    # Remove 1's from coffee
-    coffee_ones = numpy.where(coffee == 1)
-    coffee[coffee_ones[0], coffee_ones[1]] = numpy.nan
-
     #Create landscape matrix
     landscape_clustered = nlm.randomElementNN(size, size, n=disp*2000, mask=coffee)
     landscape_clustered = nlm.classifyArray(landscape_clustered, [deforest, 1-deforest])
@@ -55,6 +51,10 @@ def MakeLandscape(size, deforest, disp, cluster):
     landscape_clustered[zeroes[0], zeroes[1]] = numpy.random.uniform(0, 0.3, len(zeroes[1]))
 
     landscape = landscape_clustered
+
+    # Remove 1's from coffee
+    coffee_ones = numpy.where(coffee == 1)
+    coffee[coffee_ones[0], coffee_ones[1]] = numpy.nan
 
     #Initialize infection
     coffee_zeros = numpy.where(coffee == 0)
