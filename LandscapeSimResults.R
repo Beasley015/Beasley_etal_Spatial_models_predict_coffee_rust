@@ -1,6 +1,6 @@
 #####################################################
 # Modeling coffee rust movement through a landscape #
-# N. Aristizabal, E. Beasley, & E. Bueno            #
+# N. Aristizabal, E. Beasley, E. Bueno, & E. White  #
 # Spring 2019- ????                                 #
 #####################################################
 library(tidyverse)
@@ -54,8 +54,9 @@ shortnames <- list.files("Outputs", pattern = "*.csv")
 output.list <- lapply(filenames, read.csv, header = F)
 
 # Rename columns of each dataframe
-newnames <- c("Time", "PercInf","X","Y", "ResistProb")
+newnames <- c("Time", "PercInf","X","Y", "?")
 output.list <- lapply(output.list, setNames, newnames)
+output.list <- map(output.list, ~ (.x %>% select(-'?')))
 
 # Set up data -----------------------------------------------
 # Add column to denote replicates
@@ -71,17 +72,19 @@ output.list <- lapply(output.list, cbind, replicate)
 loop.ready <- c(1:length(shortnames))
 def <- list()
 disp <- list()
+cluster <- list()
 
-# Need to fix this for loop- not calling the correct characters
 for(i in loop.ready) {
-  def[[i]] <- strsplit(shortnames[[i]], split = "def|disp|prob|.csv")[[1]][2]
-  disp[[i]] <- strsplit(shortnames[[i]], split = "def|disp|prob|.csv")[[1]][3]
+  def[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][2]
+  disp[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][3]
+  cluster[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][4]
 }
 
 for(i in 1:length(output.list)){
   deforest <- rep(def[[i]], nrow(output.list[[1]]))
   dispersion <- rep(disp[[i]], nrow(output.list[[1]]))
-  output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion)
+  clusters <- rep(cluster[[i]], nrow(output.list[[1]]))
+  output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion, clusters)
 }
 head(output.list[[1]])
 
@@ -89,16 +92,19 @@ head(output.list[[1]])
 output.mat <- do.call(rbind, output.list)
 
 # Prelim plots: histograms and line graphs-------------------------------------
+# Pull out data from final time step
+step.final <- subset(output.mat, output.mat$Time == 999)
+
 # histogram time steps
-histo <- ggplot(data = step500, aes(PercInf)) +
+histo <- ggplot(data = step.final[which(step.final$clusters==0.3),], aes(PercInf)) +
   geom_histogram(fill = "darkgrey", bins = 15) +
   facet_grid(vars(deforest), vars(dispersion)) +
   theme_classic(base_size = 18) +
   labs(x="% Rust Infection", y="")
 
 # percent infestation through time steps
-inf.time <- ggplot(output.mat, aes(x = Time, y = PercInf, 
-                                   group = as.factor(replicate)))+
+inf.time <- ggplot(output.mat[which(output.mat$clusters == 0.3),], 
+                   aes(x = Time, y = PercInf, group = as.factor(replicate)))+
   geom_line() +
   facet_grid(vars(deforest), vars(dispersion)) +
   labs(x="Time", y="Leaf rust infection (%)") +
@@ -107,11 +113,11 @@ inf.time <- ggplot(output.mat, aes(x = Time, y = PercInf,
 # this looks bad now but that's ok
 
 # plotting % infestation through time steps averaging replicates
-dat <- as_tibble(output.mat) %>%
-  group_by(Time, deforest, dispersion) %>%
+avg.timestep <- as_tibble(output.mat) %>%
+  group_by(Time, deforest, dispersion, clusters) %>%
   summarise(m = median(PercInf), min = min(PercInf), max = max(PercInf))
 
-avg.lines <- ggplot(data = dat) +
+avg.lines <- ggplot(data = avg.timestep[which(avg.timestep$clusters==0.3),]) +
   geom_ribbon(aes(x = Time, ymin = min, ymax = max), fill = "grey70", 
               alpha = 0.6) +
   geom_line(aes(x = Time, y = m)) +
@@ -123,9 +129,6 @@ avg.lines <- ggplot(data = dat) +
   theme(legend.position = "none")
 
 # Parameter plots ---------------------------------------------
-# Pull out data from final time step
-step500 <- subset(output.mat, output.mat$Time == 499)
-
 # Subset different resistance levels
 step500lo <- subset(step500, step500$ResistProb == 0.75)
 step500mid <- subset(step500, step500$ResistProb == 0.5)
@@ -192,12 +195,12 @@ summary(aov(data = quant90, PercInf~deforest+dispersion+ResistProb))
 #   labs(x="Degree of dispersion", y="Leaf rust infection (%)") + 
 #   theme_classic()
 
-# full.infec2 %>%
-#   group_by(deforest, dispersion) %>%
-#   summarise(mean = mean(newTime), median = median(newTime)) %>%
-#   {. ->> datameans}
-
 # Heat Maps ---------------------------------------------
+full.infec2 %>%
+  group_by(deforest, dispersion) %>%
+  summarise(mean = mean(newTime), median = median(newTime)) %>%
+  {. ->> datameans}
+
 heatplotmean <- ggplot(datameans, aes(deforest, dispersion, fill = mean)) + 
   geom_raster(hjust = 0, vjust = 0)+
   scale_fill_viridis(name = "Leaf Rust Infection (%)")+
