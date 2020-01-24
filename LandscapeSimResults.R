@@ -9,42 +9,42 @@ library(viridis)
 library(patchwork)
 
 # Sample beta distributions (for figures) ----------------------------------
-neighbor1 <- rbeta(10000, 2, 8)
-neighbor2 <- rbeta(10000, 5, 5)
-neighbor3 <- rbeta(10000, 8, 2)
-
-ggplot(mapping = aes(x = neighbor1))+
-  geom_density(size = 1)+
-  labs(x = "Infection probability", y = "Density")+
-  scale_x_continuous(limits = c(0,1), expand = c(0,0))+
-  scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
-  theme_bw()+
-  theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
-        axis.text.y = element_blank(), axis.title = element_blank())
-
-ggsave(file = "beta1.jpg")
-
-ggplot(mapping = aes(x = neighbor2))+
-  geom_density(size = 1)+
-  labs(x = "Infection probability", y = "Density")+
-  scale_x_continuous(limits = c(0,1), expand = c(0,0))+
-  scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
-  theme_bw()+
-  theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
-        axis.text.y = element_blank(), axis.title = element_blank())
-
-ggsave(file = "beta2.jpg")
-
-ggplot(mapping = aes(x = neighbor3))+
-  geom_density(size = 1)+
-  labs(x = "Infection probability", y = "Density")+
-  scale_x_continuous(limits = c(0,1), expand = c(0,0))+
-  scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
-  theme_bw()+
-  theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
-        axis.text.y = element_blank(), axis.title = element_blank())
-
-ggsave(file = "beta3.jpg")
+# neighbor1 <- rbeta(10000, 2, 8)
+# neighbor2 <- rbeta(10000, 5, 5)
+# neighbor3 <- rbeta(10000, 8, 2)
+# 
+# ggplot(mapping = aes(x = neighbor1))+
+#   geom_density(size = 1)+
+#   labs(x = "Infection probability", y = "Density")+
+#   scale_x_continuous(limits = c(0,1), expand = c(0,0))+
+#   scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
+#   theme_bw()+
+#   theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
+#         axis.text.y = element_blank(), axis.title = element_blank())
+# 
+# ggsave(file = "beta1.jpg")
+# 
+# ggplot(mapping = aes(x = neighbor2))+
+#   geom_density(size = 1)+
+#   labs(x = "Infection probability", y = "Density")+
+#   scale_x_continuous(limits = c(0,1), expand = c(0,0))+
+#   scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
+#   theme_bw()+
+#   theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
+#         axis.text.y = element_blank(), axis.title = element_blank())
+# 
+# ggsave(file = "beta2.jpg")
+# 
+# ggplot(mapping = aes(x = neighbor3))+
+#   geom_density(size = 1)+
+#   labs(x = "Infection probability", y = "Density")+
+#   scale_x_continuous(limits = c(0,1), expand = c(0,0))+
+#   scale_y_continuous(limits = c(0,4.5), expand = c(0,0))+
+#   theme_bw()+
+#   theme(panel.grid = element_blank(), axis.text.x = element_text(size = 16),
+#         axis.text.y = element_blank(), axis.title = element_blank())
+# 
+# ggsave(file = "beta3.jpg")
 
 
 # Read in model outputs --------------------------------------
@@ -91,16 +91,38 @@ head(output.list[[1]])
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
 
-# Prelim plots: histograms and line graphs-------------------------------------
+# Histograms -------------------------------------
 # Pull out data from final time step
 step.final <- subset(output.mat, output.mat$Time == 999)
 
 # histogram time steps
-histo <- ggplot(data = step.final[which(step.final$clusters==0.3),], aes(PercInf)) +
+histo3 <- ggplot(data = step.final[which(step.final$clusters==0.3),], 
+                 aes(PercInf*100)) +
   geom_histogram(fill = "darkgrey", bins = 15) +
   facet_grid(vars(deforest), vars(dispersion)) +
   theme_classic(base_size = 18) +
-  labs(x="% Rust Infection", y="")
+  labs(x="% Rust Infection", y="Frequency")+
+  theme(axis.text.y = element_blank())
+
+histo2 <- ggplot(data = step.final[which(step.final$clusters==0.2),], 
+                 aes(PercInf*100)) +
+  geom_histogram(fill = "darkgrey", bins = 15) +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic(base_size = 18) +
+  labs(x="% Rust Infection", y="Frequency")+
+  theme(axis.text.y = element_blank())
+
+histo1 <- ggplot(data = step.final[which(step.final$clusters==0.1),], 
+                 aes(PercInf*100)) +
+  geom_histogram(fill = "darkgrey", bins = 15) +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  theme_classic(base_size = 18) +
+  labs(x="% Rust Infection", y="Frequency")+
+  theme(axis.text.y = element_blank())
+
+# ggsave(histo1, filename = "hist1.jpeg", width = 8.5, height = 6)
+# ggsave(histo2, filename = "hist2.jpeg", width = 8.5, height = 6)
+# ggsave(histo3, filename = "hist3.jpeg", width = 8.5, height = 6)
 
 # percent infestation through time steps
 inf.time <- ggplot(output.mat[which(output.mat$clusters == 0.3),], 
