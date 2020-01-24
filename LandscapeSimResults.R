@@ -7,6 +7,7 @@ library(tidyverse)
 library(rcompanion)
 library(viridis)
 library(patchwork)
+library(agricolae)
 
 # Sample beta distributions (for figures) ----------------------------------
 # neighbor1 <- rbeta(10000, 2, 8)
@@ -124,118 +125,44 @@ histo1 <- ggplot(data = step.final[which(step.final$clusters==0.1),],
 # ggsave(histo2, filename = "hist2.jpeg", width = 8.5, height = 6)
 # ggsave(histo3, filename = "hist3.jpeg", width = 8.5, height = 6)
 
-# percent infestation through time steps
-inf.time <- ggplot(output.mat[which(output.mat$clusters == 0.3),], 
-                   aes(x = Time, y = PercInf, group = as.factor(replicate)))+
-  geom_line() +
-  facet_grid(vars(deforest), vars(dispersion)) +
-  labs(x="Time", y="Leaf rust infection (%)") +
-  theme_classic() +
-  theme(legend.position = "none")
-# this looks bad now but that's ok
-
-# plotting % infestation through time steps averaging replicates
-avg.timestep <- as_tibble(output.mat) %>%
-  group_by(Time, deforest, dispersion, clusters) %>%
-  summarise(m = median(PercInf), min = min(PercInf), max = max(PercInf))
-
-avg.lines <- ggplot(data = avg.timestep[which(avg.timestep$clusters==0.3),]) +
-  geom_ribbon(aes(x = Time, ymin = min, ymax = max), fill = "grey70", 
-              alpha = 0.6) +
-  geom_line(aes(x = Time, y = m)) +
-  facet_grid(vars(deforest), vars(dispersion)) +
-  theme_classic() +
-  labs(x="Time",
-       y="Leaf rust infection (%)") +
-  theme_classic(base_size = 18) +
-  theme(legend.position = "none")
-
-# Parameter plots ---------------------------------------------
-# Subset different resistance levels
-step500lo <- subset(step500, step500$ResistProb == 0.75)
-step500mid <- subset(step500, step500$ResistProb == 0.5)
-step500hi <- subset(step500, step500$ResistProb == 0.15)
-
-# Subset top 10% infection percents
-step500 %>%
-  group_by(deforest, dispersion, ResistProb) %>%
-  filter(PercInf >= quantile(step500$PercInf, 0.9)) %>%
-  {. ->> quant90}
- 
-# Boxplots -----------------------------------------
-# plot variation in Percentage Infestation at different resistance values
-deforestationlo <- ggplot(step500lo, aes(x = deforest, y= PercInf, fill = dispersion)) +
-  geom_boxplot() +
-  labs(x="Deforestation (%)", y="Leaf rust infection (%)") + 
-  theme_classic()
-
-deforestationmid <- ggplot(step500mid, aes(x = deforest, y= PercInf, 
-                                           fill = dispersion)) +
-  geom_boxplot() +
-  labs(x="Deforestation (%)", y="Leaf rust infection (%)") + 
-  theme_classic()
-
-deforestationhi <- ggplot(step500hi, aes(x = deforest, y= PercInf, fill = dispersion)) +
-  geom_boxplot() +
-  labs(x="Deforestation (%)", y="Leaf rust infection (%)") + 
-  theme_classic()
-
-# Look at 90th percentile
-top.10lo <- ggplot(quant90[quant90$ResistProb == 0.75,], 
-                   aes(x = deforest, y = PercInf, fill = dispersion))+
-  geom_boxplot()+
-  scale_fill_manual(values = c("gray50", "white"))+
-  labs(x = "Deforestation", y = "% Rust Infection", fill = "Dispersion",
-       title = "Low")+
-  theme_classic(base_size = 20)+
-  theme(axis.title.y = element_blank(), axis.title.x = element_blank())
-
-top.10mid <- ggplot(quant90[quant90$ResistProb == 0.5,], 
-                   aes(x = deforest, y = PercInf, fill = dispersion))+
-  geom_boxplot()+
-  scale_fill_manual(values = c("gray50", "white"))+
-  labs(x = "Deforestation", y = "% Rust Infection", fill = "Dispersion",
-       title = "Mid")+
-  theme_classic(base_size = 20)+
-  theme(legend.position = "none", axis.title.y = element_blank())
-
-top.10hi <- ggplot(quant90[quant90$ResistProb == 0.15,], 
-                   aes(x = deforest, y = PercInf, fill = dispersion))+
-  geom_boxplot()+
-  scale_fill_manual(values = c("gray50", "white"))+
-  labs(x = "Deforestation", y = "% Rust Infection", fill = "Dispersion",
-       title = "High")+
-  theme_classic(base_size = 20)+
-  theme(legend.position = "none", axis.title.x = element_blank())
-
-many.boxes <- top.10hi|top.10mid|top.10lo
-summary(aov(data = quant90, PercInf~deforest+dispersion+ResistProb))
-
-# individual percent infestation ~ dispersion
-# dispersion <- ggplot(full.infec2, aes(x = dispersion, y= newTime)) +
-#   geom_boxplot() +
-#   labs(x="Degree of dispersion", y="Leaf rust infection (%)") + 
-#   theme_classic()
-
 # Heat Maps ---------------------------------------------
-full.infec2 %>%
-  group_by(deforest, dispersion) %>%
-  summarise(mean = mean(newTime), median = median(newTime)) %>%
-  {. ->> datameans}
+# Calculate Pearson Skewness Coefficient
+step.final %>%
+  group_by(deforest, dispersion, clusters) %>%
+  summarise(skew = skewness(PercInf)) %>%
+  {. ->> data.skew}
 
-heatplotmean <- ggplot(datameans, aes(deforest, dispersion, fill = mean)) + 
+# Shape data into list
+skew.list <- list()
+for(i in 1:length(unique(data.skew$clusters))){
+  skew.list[[i]] <- data.skew[which(data.skew$clusters==unique(data.skew$clusters[i])),]
+}
+
+heatplot1 <- ggplot(skew.list[[1]], aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
-  scale_fill_viridis(name = "Leaf Rust Infection (%)")+
-  labs(x = "Deforestation (%)", y = "Degree of Dispersion")+
+  scale_fill_viridis(name = "Skew", limits = c(0, 3))+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))
 
-heatplotmedian <- ggplot(datameans, aes(deforest, dispersion, fill = median)) + 
+heatplot2 <- ggplot(skew.list[[2]], aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
-  scale_fill_viridis(name = "Leaf Rust Infection (%)")+
-  labs(x = "Deforestation (%)", y = "Degree of Dispersion")+
+  scale_fill_viridis(name = "Skew", limits = c(0, 3))+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))
+
+heatplot3 <- ggplot(skew.list[[3]], aes(deforest, dispersion, fill = skew)) + 
+  geom_raster(hjust = 0, vjust = 0)+
+  scale_fill_viridis(name = "Skew", limits = c(0, 3))+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))
+
+# Compare heatplots: where do they differ most? -----------------------------
+# Change each element of skew.list into matrix
+
+# Use raster functions to compare matrices
 
 # Does starting location matter -------------------------------
 quant90 %>%
