@@ -141,23 +141,36 @@ for(i in 1:length(unique(data.skew$clusters))){
 heatplot1 <- ggplot(skew.list[[1]], aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
   scale_fill_viridis(name = "Skew", limits = c(0, 3))+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
+  labs(x = "Deforestation (%)", y = "Dispersion", title = "Cluster = 0.1")+
   scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size = 18)
 
 heatplot2 <- ggplot(skew.list[[2]], aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
   scale_fill_viridis(name = "Skew", limits = c(0, 3))+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
+  labs(x = "Deforestation (%)", y = "Dispersion", title = "Cluster = 0.2")+
   scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size = 18)
 
 heatplot3 <- ggplot(skew.list[[3]], aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
   scale_fill_viridis(name = "Skew", limits = c(0, 3))+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
+  labs(x = "Deforestation (%)", y = "Dispersion", title = "Cluster = 0.3")+
   scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size =  18)
+
+layout <- "
+AABB
+#CC#
+"
+
+heats <- heatplot1 + heatplot2 + heatplot3 + 
+  plot_layout(design = layout, guides = 'collect')
+
+# ggsave(heats, filename = 'heatmaps.jpeg', height = 6.5, width = 8.5)
 
 # Compare heatplots: where do they differ most? -----------------------------
 # Change each element of skew.list into matrix
