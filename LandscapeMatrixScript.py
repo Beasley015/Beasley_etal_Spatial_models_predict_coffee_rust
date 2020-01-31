@@ -1,6 +1,6 @@
 import numpy
 import random
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import scipy.stats as stats
 from nlmpy import nlmpy as nlm
 
@@ -37,7 +37,7 @@ def neighbors_base(mat, row, col, radius=1):
 
 def MakeLandscape(size, deforest, disp, cluster):
     #Create coffee matrix
-    coffee = nlm.randomClusterNN(size, size, cluster, n = '8-neighbourhood')
+    coffee = nlm.randomClusterNN(size, size, cluster, n = '4-neighbourhood')
     coffee = nlm.classifyArray(coffee, [0.25, 0.75])
 
     #Create landscape matrix
@@ -216,7 +216,7 @@ def spore_walk(spores, land, mat, coord):
 matrix_size = 100
 deforest = [0.15, 0.3, 0.45, 0.6, 0.75]
 deforest_disp = [1, 2, 3, 4, 5]
-cluster = [0.1, 0.2, 0.3]
+disag = [0.1, 0.2, 0.3]
 
 #Specify number of landscapes and time steps
 n = 50
@@ -229,7 +229,7 @@ def base_function(nlandscape = n):
 
     for i in range(n):
         # Create landscapes
-        (coffee, landscape, start) = MakeLandscape(size=matrix_size, deforest=defor, disp=disp, cluster=agg)
+        (coffee, landscape, start) = MakeLandscape(size=matrix_size, deforest=defor, disp=disp, cluster=disagg)
 
         # Create list of tuples for changing coords
         coord_change = [(-1, -1), (-1, 0), (-1, 1),
@@ -259,13 +259,13 @@ for i in range(len(deforest)):
         for k in range(len(cluster)):
             defor = deforest[i]
             disp = deforest_disp[j]
-            agg = cluster[k]
+            disagg = disag[k]
 
             perc_inf = base_function(nlandscape=n)
 
             perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
 
-            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"cluster"+str(cluster[k])+".csv"
+            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"disagg"+str(cluster[k])+".csv"
 
             numpy.savetxt(filename, perc_inf2, delimiter=",")
 
