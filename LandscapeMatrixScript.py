@@ -37,7 +37,7 @@ def neighbors_base(mat, row, col, radius=1):
 
 def MakeLandscape(size, deforest, disp, cluster):
     #Create coffee matrix
-    coffee = nlm.randomClusterNN(size, size, cluster, n = '4-neighbourhood')
+    coffee = nlm.randomClusterNN(size, size, cluster, n = '8-neighbourhood')
     coffee = nlm.classifyArray(coffee, [0.25, 0.75])
 
     #Create landscape matrix
@@ -216,7 +216,7 @@ def spore_walk(spores, land, mat, coord):
 matrix_size = 100
 deforest = [0.15, 0.3, 0.45, 0.6, 0.75]
 deforest_disp = [1, 2, 3, 4, 5]
-disag = [0.1, 0.2, 0.3]
+disag = [0.05]
 
 #Specify number of landscapes and time steps
 n = 50
@@ -256,7 +256,7 @@ def base_function(nlandscape = n):
 
 for i in range(len(deforest)):
     for j in range(len(deforest_disp)):
-        for k in range(len(cluster)):
+        for k in range(len(disag)):
             defor = deforest[i]
             disp = deforest_disp[j]
             disagg = disag[k]
@@ -265,7 +265,7 @@ for i in range(len(deforest)):
 
             perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
 
-            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"disagg"+str(cluster[k])+".csv"
+            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"disagg"+str(disag[k])+".csv"
 
             numpy.savetxt(filename, perc_inf2, delimiter=",")
 
