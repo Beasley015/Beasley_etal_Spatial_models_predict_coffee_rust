@@ -256,7 +256,7 @@ def base_function(nlandscape = n):
 
 for i in range(len(deforest)):
     for j in range(len(deforest_disp)):
-        for k in range(len(disag)):
+        for k in range(len(cluster)):
             defor = deforest[i]
             disp = deforest_disp[j]
             disagg = disag[k]
@@ -265,7 +265,7 @@ for i in range(len(deforest)):
 
             perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
 
-            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"disagg"+str(disag[k])+".csv"
+            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"disagg"+str(cluster[k])+".csv"
 
             numpy.savetxt(filename, perc_inf2, delimiter=",")
 
