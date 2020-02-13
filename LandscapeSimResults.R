@@ -73,50 +73,63 @@ output.list <- lapply(output.list, cbind, replicate)
 loop.ready <- c(1:length(shortnames))
 def <- list()
 disp <- list()
-cluster <- list()
+kaffee <- list()
 
 for(i in loop.ready) {
   def[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][2]
   disp[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][3]
-  cluster[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][4]
+  kaffee[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][4]
 }
 
 for(i in 1:length(output.list)){
   deforest <- rep(def[[i]], nrow(output.list[[1]]))
   dispersion <- rep(disp[[i]], nrow(output.list[[1]]))
-  clusters <- rep(cluster[[i]], nrow(output.list[[1]]))
-  output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion, clusters)
+  coff <- rep(kaffee[[i]], nrow(output.list[[1]]))
+  output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion, coff)
 }
 head(output.list[[1]])
 
 # Turn list into big-ass data frame
 output.mat <- do.call(rbind, output.list)
+output.mat$deforest <- as.factor(1-as.numeric(as.character(output.mat$deforest)))
 
 # Histograms -------------------------------------
 # Pull out data from final time step
 step.final <- subset(output.mat, output.mat$Time == 999)
 
 # histogram time steps
-histo3 <- ggplot(data = step.final[which(step.final$clusters==0.3),], 
+histo3 <- ggplot(data = step.final[which(step.final$coff==0.3),], 
                  aes(PercInf*100)) +
   geom_histogram(fill = "darkgrey", bins = 15) +
   facet_grid(vars(deforest), vars(dispersion)) +
+  lims(x = c(0,50))+
   theme_classic(base_size = 18) +
   labs(x="% Rust Infection", y="Frequency")+
   theme(axis.text.y = element_blank())
 
-histo2 <- ggplot(data = step.final[which(step.final$clusters==0.2),], 
+histo2 <- ggplot(data = step.final[which(step.final$coff==0.2),], 
                  aes(PercInf*100)) +
   geom_histogram(fill = "darkgrey", bins = 15) +
   facet_grid(vars(deforest), vars(dispersion)) +
+  lims(x = c(0,50))+
   theme_classic(base_size = 18) +
   labs(x="% Rust Infection", y="Frequency")+
   theme(axis.text.y = element_blank())
 
-histo1 <- ggplot(data = step.final[which(step.final$clusters==0.1),], 
+histo1 <- ggplot(data = step.final[which(step.final$coff==0.1),], 
                  aes(PercInf*100)) +
   geom_histogram(fill = "darkgrey", bins = 15) +
   facet_grid(vars(deforest), vars(dispersion)) +
+  lims(x = c(0,50))+
+  theme_classic(base_size = 18) +
+  labs(x="% Rust Infection", y="Frequency")+
+  theme(axis.text.y = element_blank())
+
+histo05 <- ggplot(data = step.final[which(step.final$coff==0.05),], 
+                  aes(PercInf*100)) +
+  geom_histogram(fill = "darkgrey", bins = 15) +
+  facet_grid(vars(deforest), vars(dispersion)) +
+  lims(x = c(0,50))+
   theme_classic(base_size = 18) +
   labs(x="% Rust Infection", y="Frequency")+
   theme(axis.text.y = element_blank())
@@ -128,20 +141,28 @@ histo1 <- ggplot(data = step.final[which(step.final$clusters==0.1),],
 # Heat Maps ---------------------------------------------
 # Calculate Pearson Skewness Coefficient
 step.final %>%
-  group_by(deforest, dispersion, clusters) %>%
+  group_by(deforest, dispersion, coff) %>%
   summarise(skew = skewness(PercInf)) %>%
   {. ->> data.skew}
 
 # Shape data into list
 skew.list <- list()
-for(i in 1:length(unique(data.skew$clusters))){
-  skew.list[[i]] <- data.skew[which(data.skew$clusters==unique(data.skew$clusters[i])),]
+for(i in 1:length(unique(data.skew$coff))){
+  skew.list[[i]] <- data.skew[which(data.skew$coff==unique(data.skew$coff)[i]),]
 }
+
+heatplot05 <- ggplot(skew.list[[4]], aes(deforest, dispersion, fill = skew)) + 
+  geom_raster(hjust = 0, vjust = 0)+
+  scale_fill_viridis(name = "Skew", limits = c(0, 3))+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size = 18)
 
 heatplot1 <- ggplot(skew.list[[1]], aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
   scale_fill_viridis(name = "Skew", limits = c(0, 3))+
-  labs(x = "Deforestation (%)", y = "Dispersion", title = "Cluster = 0.1")+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))+
   theme_classic(base_size = 18)
@@ -149,7 +170,7 @@ heatplot1 <- ggplot(skew.list[[1]], aes(deforest, dispersion, fill = skew)) +
 heatplot2 <- ggplot(skew.list[[2]], aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
   scale_fill_viridis(name = "Skew", limits = c(0, 3))+
-  labs(x = "Deforestation (%)", y = "Dispersion", title = "Cluster = 0.2")+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))+
   theme_classic(base_size = 18)
@@ -157,7 +178,7 @@ heatplot2 <- ggplot(skew.list[[2]], aes(deforest, dispersion, fill = skew)) +
 heatplot3 <- ggplot(skew.list[[3]], aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
   scale_fill_viridis(name = "Skew", limits = c(0, 3))+
-  labs(x = "Deforestation (%)", y = "Dispersion", title = "Cluster = 0.3")+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))+
   theme_classic(base_size =  18)
