@@ -66,6 +66,9 @@ def MakeLandscape(size, deforest, disp, cluster):
 
     return (coffee, landscape, start)
 
+# (coffee, landscape, size) = MakeLandscape(size=100, deforest=0.45, disp=3, cluster=0.05)
+# plt.matshow(coffee)
+
 ###################################################################
 ##############    Cellular Automata    ############################
 ###################################################################
