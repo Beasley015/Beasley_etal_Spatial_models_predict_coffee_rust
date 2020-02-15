@@ -47,8 +47,8 @@ def MakeLandscape(size, deforest, disp, cluster):
     ones = numpy.where(landscape_clustered == 1)
     zeroes = numpy.where(landscape_clustered == 0)
 
-    landscape_clustered[ones[0], ones[1]] = numpy.random.uniform(0.6, 1, len(ones[1]))
-    landscape_clustered[zeroes[0], zeroes[1]] = numpy.random.uniform(0, 0.3, len(zeroes[1]))
+    landscape_clustered[ones[0], ones[1]] = numpy.random.uniform(0, 0.3, len(ones[1]))
+    landscape_clustered[zeroes[0], zeroes[1]] = numpy.random.uniform(0.6, 1, len(zeroes[1]))
 
     landscape = landscape_clustered
 
