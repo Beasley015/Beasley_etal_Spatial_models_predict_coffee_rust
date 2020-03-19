@@ -1,6 +1,6 @@
 import numpy
 import random
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import scipy.stats as stats
 from nlmpy import nlmpy as nlm
 
@@ -66,8 +66,11 @@ def MakeLandscape(size, deforest, disp, cluster):
 
     return (coffee, landscape, start)
 
-# (coffee, landscape, size) = MakeLandscape(size=100, deforest=0.45, disp=3, cluster=0.05)
-# plt.matshow(coffee)
+(coffee, landscape, size) = MakeLandscape(size=100, deforest=0.45, disp=3, cluster=0.075)
+plt.matshow(coffee)
+
+
+
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -219,7 +222,7 @@ def spore_walk(spores, land, mat, coord):
 matrix_size = 100
 deforest = [0.15, 0.3, 0.45, 0.6, 0.75]
 deforest_disp = [1, 2, 3, 4, 5]
-disag = [0.05]
+disag = [0.1, 0.2, 0.3]
 
 #Specify number of landscapes and time steps
 n = 50
