@@ -42,7 +42,7 @@ def MakeLandscape(size, deforest, disp, cluster):
 
     #Create landscape matrix
     landscape_clustered = nlm.randomElementNN(size, size, n=disp*2000, mask=coffee)
-    landscape_clustered = nlm.classifyArray(landscape_clustered, [deforest, 1-deforest])
+    landscape_clustered = nlm.classifyArray(landscape_clustered, [1-deforest, deforest])
 
     ones = numpy.where(landscape_clustered == 1)
     zeroes = numpy.where(landscape_clustered == 0)
@@ -66,10 +66,33 @@ def MakeLandscape(size, deforest, disp, cluster):
 
     return (coffee, landscape, start)
 
-(coffee, landscape, size) = MakeLandscape(size=100, deforest=0.45, disp=3, cluster=0.075)
-plt.matshow(coffee)
+(coffee, landscape, start) = MakeLandscape(size=100, deforest=0.45, disp=5, cluster=0.2)
+plt.matshow(landscape)
 
+# Define a dictionary of possible neighbourhood structures:
+neighbourhoods = {}
+neighbourhoods['4-neighbourhood'] = numpy.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
+neighbourhoods['8-neighbourhood'] = numpy.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+neighbourhoods['diagonal'] = numpy.array([[0, 1, 1], [1, 1, 1], [1, 1, 0]])
 
+# Create percolation array
+randomArray = nlm.random(nRow, nCol)
+percolationArray = nlm.classifyArray(randomArray, [1 - p, p])
+# As nan not supported in cluster algorithm replace with zeros
+numpy.place(percolationArray, numpy.isnan(percolationArray), 0)
+# Define clusters
+clusters, nClusters = nlm.ndimage.measurements.label(percolationArray, neighbourhoods['4-neighbourhood'])
+# Create random set of values for each the clusters
+randomValues = numpy.random.random(nClusters)
+randomValues = numpy.insert(randomValues, 0, 0)  # for background non-cluster
+# Apply values by indexing by cluster
+clusterArray = randomValues[clusters]
+# Gap fill with nearest neighbour interpolation
+interpolatedArray = nlm.nnInterpolate(clusterArray, clusterArray == 0) # the issue is here...
+# Apply mask and rescale
+maskedArray = maskArray(interpolatedArray, mask)
+rescaledArray = linearRescale01(maskedArray)
+return (rescaledArray)
 
 
 ###################################################################
