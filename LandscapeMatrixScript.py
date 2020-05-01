@@ -1,6 +1,6 @@
 import numpy
 import random
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import scipy.stats as stats
 from nlmpy import nlmpy as nlm
 
@@ -37,7 +37,7 @@ def neighbors_base(mat, row, col, radius=1):
 
 def MakeLandscape(size, deforest, disp, cluster):
     #Create coffee matrix
-    coffee = nlm.randomClusterNN(size, size, cluster, n = '8-neighbourhood')
+    coffee = nlm.randomElementNN(size, size, n=int(cluster*500))
     coffee = nlm.classifyArray(coffee, [0.25, 0.75])
 
     #Create landscape matrix
@@ -65,35 +65,6 @@ def MakeLandscape(size, deforest, disp, cluster):
     start = numpy.where(coffee == 1)
 
     return (coffee, landscape, start)
-
-(coffee, landscape, start) = MakeLandscape(size=100, deforest=0.45, disp=5, cluster=0.2)
-plt.matshow(landscape)
-
-# Define a dictionary of possible neighbourhood structures:
-neighbourhoods = {}
-neighbourhoods['4-neighbourhood'] = numpy.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
-neighbourhoods['8-neighbourhood'] = numpy.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
-neighbourhoods['diagonal'] = numpy.array([[0, 1, 1], [1, 1, 1], [1, 1, 0]])
-
-# Create percolation array
-randomArray = nlm.random(nRow, nCol)
-percolationArray = nlm.classifyArray(randomArray, [1 - p, p])
-# As nan not supported in cluster algorithm replace with zeros
-numpy.place(percolationArray, numpy.isnan(percolationArray), 0)
-# Define clusters
-clusters, nClusters = nlm.ndimage.measurements.label(percolationArray, neighbourhoods['4-neighbourhood'])
-# Create random set of values for each the clusters
-randomValues = numpy.random.random(nClusters)
-randomValues = numpy.insert(randomValues, 0, 0)  # for background non-cluster
-# Apply values by indexing by cluster
-clusterArray = randomValues[clusters]
-# Gap fill with nearest neighbour interpolation
-interpolatedArray = nlm.nnInterpolate(clusterArray, clusterArray == 0) # the issue is here...
-# Apply mask and rescale
-maskedArray = maskArray(interpolatedArray, mask)
-rescaledArray = linearRescale01(maskedArray)
-return (rescaledArray)
-
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -243,9 +214,9 @@ def spore_walk(spores, land, mat, coord):
 
 #Specify landscape parameters
 matrix_size = 100
-deforest = [0.15, 0.3, 0.45, 0.6, 0.75]
-deforest_disp = [1, 2, 3, 4, 5]
-disag = [0.1, 0.2, 0.3]
+deforest = [0.75]
+deforest_disp = [5]
+disag = [0.5, 1.5]
 
 #Specify number of landscapes and time steps
 n = 50
@@ -297,4 +268,3 @@ for i in range(len(deforest)):
             filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"disagg"+str(disag[k])+".csv"
 
             numpy.savetxt(filename, perc_inf2, delimiter=",")
-

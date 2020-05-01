@@ -4,6 +4,16 @@
     <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LandscapeMatrixScript.py" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeMatrixScript.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LandscapeSimResults.R" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeSimResults.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cluster1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cluster3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hist1.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hist2.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hist3.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/land_def15_disp3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/land_def45_disp1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/land_def45_disp5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/land_def75_disp3.png" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,15 +26,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="97">
-              <caret line="69" column="22" lean-forward="true" selection-start-line="69" selection-start-column="22" selection-end-line="69" selection-end-column="22" />
+            <state relative-caret-position="34">
+              <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
               <folding>
-                <element signature="e#0#12#0" expanded="true" />
-                <element signature="e#405#1187#0" />
-                <element signature="e#1481#2563#0" />
-                <element signature="e#4147#5678#0" />
-                <element signature="e#5916#7222#0" />
-                <element signature="e#7475#9220#0" />
+                <element signature="e#406#1188#0" />
+                <element signature="e#1482#2552#0" />
+                <element signature="e#2787#4318#0" />
+                <element signature="e#4556#5862#0" />
+                <element signature="e#6115#7860#0" />
               </folding>
             </state>
           </provider>
@@ -49,8 +58,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="676" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="237" />
+    <option name="y" value="372" />
     <option name="width" value="697" />
     <option name="height" value="371" />
   </component>
@@ -384,8 +394,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49512196" visible="true" weight="0.17261904" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -453,15 +462,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="97">
-          <caret line="69" column="22" lean-forward="true" selection-start-line="69" selection-start-column="22" selection-end-line="69" selection-end-column="22" />
+        <state relative-caret-position="34">
+          <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
           <folding>
-            <element signature="e#0#12#0" expanded="true" />
-            <element signature="e#405#1187#0" />
-            <element signature="e#1481#2563#0" />
-            <element signature="e#4147#5678#0" />
-            <element signature="e#5916#7222#0" />
-            <element signature="e#7475#9220#0" />
+            <element signature="e#406#1188#0" />
+            <element signature="e#1482#2552#0" />
+            <element signature="e#2787#4318#0" />
+            <element signature="e#4556#5862#0" />
+            <element signature="e#6115#7860#0" />
           </folding>
         </state>
       </provider>
