@@ -8,6 +8,7 @@ library(rcompanion)
 library(viridis)
 library(patchwork)
 library(agricolae)
+library(fitdistrplus)
 
 # Sample beta distributions (for figures) ----------------------------------
 # neighbor1 <- rbeta(10000, 2, 8)
@@ -91,13 +92,13 @@ library(agricolae)
 # 
 # # Turn list into big-ass data frame
 # output.mat <- do.call(rbind, output.list)
-# output.mat <- output.mat[-output.mat$'?']
 # 
 # write.csv(output.mat, file = "outputmat.csv")
 
 # ------------------------
 
 output.mat <- read.csv("outputmat.csv")
+output.mat <- output.mat[,-1]
 
 # Histograms -------------------------------------
 # Pull out data from final time step
@@ -151,10 +152,32 @@ ggplot(data = max.final, aes(x = factor(coff), y = max))+
 
 # ggsave(file = "MaxInfBoxes.jpeg")
 
-step.final %>%
+# Approx. peak of the distribution
+beta.parms <- step.final %>%
   group_by(deforest, dispersion, coff) %>%
-  # function to find peak of histogram %>%
-  {. ->> peak.final}
+  select(-c(Time, X, Y, replicate)) %>%
+  group_map(~ fitdist(.x$PercInf, "beta"))
+
+betamax <- function(x){
+  a <- x$estimate[1]
+  b <- x$estimate[2]
+  
+  max <- (a-1)/(a+b-2)
+  
+  return(max)
+}
+
+maxes <- lapply(beta.parms, betamax) #Problem here: shouldn't be negative
+
+maxmat <- as.data.frame(matrix(as.numeric(maxes), ncol = 3))
+colnames(maxmat) <- c('Low', 'Mid', 'High')
+
+max.df <- maxmat %>%
+  pivot_longer(cols = 'Low':'High', names_to = "Clustering", 
+               values_to = "Peak")
+
+ggplot(max.df, aes(x = Clustering, y = Peak))+
+  geom_boxplot()
 
 # Heat Maps ---------------------------------------------
 # Calculate Pearson Skewness Coefficient
