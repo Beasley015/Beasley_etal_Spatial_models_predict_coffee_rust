@@ -49,56 +49,56 @@ library(fitdistrplus)
 # ggsave(file = "beta3.jpg")
 
 
-# # Read in model outputs --------------------------------------
-# # Read all csv's into a list
-# filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
-# shortnames <- list.files("Outputs", pattern = "*.csv")
-# output.list <- lapply(filenames, read.csv, header = F)
-# 
-# # Rename columns of each dataframe
-# newnames <- c("Time", "PercInf","X","Y","?")
-# output.list <- lapply(output.list, setNames, newnames)
-# output.list <- map(output.list, ~ (.x %>% select(-'?')))
-# 
-# # Set up data -----------------------------------------------
-# # Add column to denote replicates
-# replicate <- logical()
-# for(i in 1:50){
-#   new <- rep(i, 1000)
-#   replicate <- append(replicate, new)
-# }
-# 
-# output.list <- lapply(output.list, cbind, replicate)
-# 
-# # Pull deforestation and dispersion from file names
-# loop.ready <- c(1:length(shortnames))
-# def <- list()
-# disp <- list()
-# kaffee <- list()
-# 
-# for(i in loop.ready) {
-#   def[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][2]
-#   disp[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][3]
-#   kaffee[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][4]
-# }
-# 
-# for(i in 1:length(output.list)){
-#   deforest <- rep(def[[i]], nrow(output.list[[1]]))
-#   dispersion <- rep(disp[[i]], nrow(output.list[[1]]))
-#   coff <- rep(kaffee[[i]], nrow(output.list[[1]]))
-#   output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion, coff)
-# }
-# head(output.list[[1]])
-# 
-# # Turn list into big-ass data frame
-# output.mat <- do.call(rbind, output.list)
-# 
-# write.csv(output.mat, file = "outputmat.csv")
+# Read in model outputs --------------------------------------
+# Read all csv's into a list
+filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
+shortnames <- list.files("Outputs", pattern = "*.csv")
+output.list <- lapply(filenames, read.csv, header = F)
+
+# Rename columns of each dataframe
+newnames <- c("Time", "PercInf","X","Y","Nope")
+output.list <- lapply(output.list, setNames, newnames)
+output.list <- lapply(output.list, function(x) x[!(names(x)) %in% "Nope"])
+
+# Set up data -----------------------------------------------
+# Add column to denote replicates
+replicate <- logical()
+for(i in 1:50){
+  new <- rep(i, 1000)
+  replicate <- append(replicate, new)
+}
+
+output.list <- lapply(output.list, cbind, replicate)
+
+# Pull deforestation and dispersion from file names
+loop.ready <- c(1:length(shortnames))
+def <- list()
+disp <- list()
+kaffee <- list()
+
+for(i in loop.ready) {
+  def[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][2]
+  disp[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][3]
+  kaffee[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][4]
+}
+
+for(i in 1:length(output.list)){
+  deforest <- rep(def[[i]], nrow(output.list[[1]]))
+  dispersion <- rep(disp[[i]], nrow(output.list[[1]]))
+  coff <- rep(kaffee[[i]], nrow(output.list[[1]]))
+  output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion, coff)
+}
+head(output.list[[1]])
+
+# Turn list into big-ass data frame
+output.mat <- do.call(rbind, output.list)
+
+# Save it as a compressed file
+saveRDS(output.mat, file = "outputmat.rds")
 
 # ------------------------
 
-output.mat <- read.csv("outputmat.csv")
-output.mat <- output.mat[,-1]
+output.mat <- readRDS("outputmat.rds")
 
 # Histograms -------------------------------------
 # Pull out data from final time step
@@ -155,14 +155,14 @@ ggplot(data = max.final, aes(x = factor(coff), y = max))+
 # Approx. peak of the distribution
 beta.parms <- step.final %>%
   group_by(deforest, dispersion, coff) %>%
-  select(-c(Time, X, Y, replicate)) %>%
+  dplyr::select(-c(Time, X, Y, replicate)) %>%
   group_map(~ fitdist(.x$PercInf, "beta"))
 
 betamax <- function(x){
   a <- x$estimate[1]
   b <- x$estimate[2]
   
-  max <- (a-1)/(a+b-2)
+  max <- (a)/(a+b)
   
   return(max)
 }
@@ -176,8 +176,14 @@ max.df <- maxmat %>%
   pivot_longer(cols = 'Low':'High', names_to = "Clustering", 
                values_to = "Peak")
 
-ggplot(max.df, aes(x = Clustering, y = Peak))+
-  geom_boxplot()
+max.df$Clustering <- factor(max.df$Clustering, levels = c('Low', 'Mid', 'High'))
+
+peak.of.dist <- ggplot(max.df, aes(x = Clustering, y = Peak))+
+  geom_boxplot(fill = 'lightgray')+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# ggsave(peak.of.dist, filename = 'distpeakplot.jpeg')
 
 # Heat Maps ---------------------------------------------
 # Calculate Pearson Skewness Coefficient
@@ -216,28 +222,54 @@ heatplot3 <- ggplot(skew.list[[3]], aes(deforest, dispersion, fill = skew)) +
   scale_y_discrete(expand = c(0,0))+
   theme_classic(base_size =  18)
 
-heatplot4 <- ggplot(skew.list[[4]], aes(deforest, dispersion, fill = skew)) + 
-  geom_raster(hjust = 0, vjust = 0)+
-  scale_fill_viridis(name = "Skew", limits = c(0, 3))+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
-  scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))+
-  theme_classic(base_size =  18)
 
 layout <- "
-AABB
-CCDD
+#AA#
+BBCC
 "
 
-heats <- heatplot1 + heatplot2 + heatplot3 + heatplot4 +
+heats <- heatplot1 + ggtitle('A)') + 
+  heatplot2 + ggtitle('B)') +
+  heatplot3 + ggtitle('C)') +
   plot_layout(design = layout, guides = 'collect')
 
-# ggsave(heats, filename = 'heatmaps.jpeg', height = 6.5, width = 8.5)
+ggsave(heats, filename = 'heatmaps.jpeg', height = 6.5, width = 9.5)
 
-# Compare heatplots: where do they differ most? -----------------------------
-# Change each element of skew.list into matrix
+# Closer look at lowest clustering value ----------------------
+lowest.skew <- skew.list[[1]]
 
-# Use raster functions to compare matrices
+ggplot(data = lowest.skew, aes(x = deforest, y = skew, group = dispersion))+
+  geom_line(aes(color = dispersion), size = 2)+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = lowest.skew, aes(x = deforest, y = skew))+
+  geom_violin()+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = lowest.skew, aes(x = dispersion, y = skew))+
+  geom_violin()+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+lowest.max <- max.final %>%
+  filter(coff == 0.1)
+
+ggplot(data = lowest.max, aes(x = deforest, y = max, group = dispersion))+
+  geom_line(aes(color = dispersion), size = 2)+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = lowest.max, aes(x = deforest, y = max))+
+  geom_violin()+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = lowest.max, aes(x = dispersion, y = max))+
+  geom_violin()+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
 
 # Does starting location matter -------------------------------
 quant90 %>%
