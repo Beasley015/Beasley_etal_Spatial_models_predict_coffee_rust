@@ -50,60 +50,115 @@ library(fitdistrplus)
 
 
 # Read in model outputs --------------------------------------
-# Read all csv's into a list
-filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
-shortnames <- list.files("Outputs", pattern = "*.csv")
-output.list <- lapply(filenames, read.csv, header = F)
-
-# Rename columns of each dataframe
-newnames <- c("Time", "PercInf","X","Y","Nope")
-output.list <- lapply(output.list, setNames, newnames)
-output.list <- lapply(output.list, function(x) x[!(names(x)) %in% "Nope"])
-
-# Set up data -----------------------------------------------
-# Add column to denote replicates
-replicate <- logical()
-for(i in 1:50){
-  new <- rep(i, 1000)
-  replicate <- append(replicate, new)
-}
-
-output.list <- lapply(output.list, cbind, replicate)
-
-# Pull deforestation and dispersion from file names
-loop.ready <- c(1:length(shortnames))
-def <- list()
-disp <- list()
-kaffee <- list()
-
-for(i in loop.ready) {
-  def[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][2]
-  disp[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][3]
-  kaffee[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][4]
-}
-
-for(i in 1:length(output.list)){
-  deforest <- rep(def[[i]], nrow(output.list[[1]]))
-  dispersion <- rep(disp[[i]], nrow(output.list[[1]]))
-  coff <- rep(kaffee[[i]], nrow(output.list[[1]]))
-  output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion, coff)
-}
-head(output.list[[1]])
-
-# Turn list into big-ass data frame
-output.mat <- do.call(rbind, output.list)
-
-# Save it as a compressed file
-saveRDS(output.mat, file = "outputmat.rds")
+# # Read all csv's into a list
+# filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
+# shortnames <- list.files("Outputs", pattern = "*.csv")
+# output.list <- lapply(filenames, read.csv, header = F)
+# 
+# # Rename columns of each dataframe
+# newnames <- c("Time", "PercInf","X","Y","Nope")
+# output.list <- lapply(output.list, setNames, newnames)
+# output.list <- lapply(output.list, function(x) x[!(names(x)) %in% "Nope"])
+# 
+# # Set up data -----------------------------------------------
+# # Add column to denote replicates
+# replicate <- logical()
+# for(i in 1:50){
+#   new <- rep(i, 1000)
+#   replicate <- append(replicate, new)
+# }
+# 
+# output.list <- lapply(output.list, cbind, replicate)
+# 
+# # Pull deforestation and dispersion from file names
+# loop.ready <- c(1:length(shortnames))
+# def <- list()
+# disp <- list()
+# kaffee <- list()
+# 
+# for(i in loop.ready) {
+#   def[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][2]
+#   disp[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][3]
+#   kaffee[[i]] <- strsplit(shortnames[[i]], split = "def|disp|cluster|.csv")[[1]][4]
+# }
+# 
+# for(i in 1:length(output.list)){
+#   deforest <- rep(def[[i]], nrow(output.list[[1]]))
+#   dispersion <- rep(disp[[i]], nrow(output.list[[1]]))
+#   coff <- rep(kaffee[[i]], nrow(output.list[[1]]))
+#   output.list[[i]] <- cbind(output.list[[i]], deforest, dispersion, coff)
+# }
+# head(output.list[[1]])
+# 
+# # Turn list into big-ass data frame
+# output.mat <- do.call(rbind, output.list)
+# 
+# # Save it as a compressed file
+# saveRDS(output.mat, file = "outputmat.rds")
 
 # ------------------------
 
 output.mat <- readRDS("outputmat.rds")
 
-# Histograms -------------------------------------
 # Pull out data from final time step
 step.final <- subset(output.mat, output.mat$Time == 999)
 
+# Summary stats ---------------------------------------
+# Histogram of all outcomes
+hist.all <- ggplot(data = step.final)+
+  geom_histogram(aes(x = PercInf), fill = 'lightgray', color = 'black', 
+                 boundary = 0)+
+  scale_x_continuous(expand = c(0,0))+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1100))+
+  labs(x = "Rust Prevalence", y = "Count")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# ggsave(hist.all, filename = 'histall.jpeg')
+  
+# Range of prevalence values
+range(step.final$PercInf)
+
+# Get parameters of distribution across all parameter combinations
+beta.all <- fitdist(step.final$PercInf, "beta")
+
+# Calculate expected value
+betaexpec <- function(x){
+  a <- x$estimate[1]
+  b <- x$estimate[2]
+  
+  expec <- (a)/(a+b)
+  
+  return(expec)
+}
+
+betaexpec(beta.all)
+
+# Calculate skew
+betaskew <- function(x){
+  a <- x$estimate[1]
+  b <- x$estimate[2]
+  
+  skew <- (2*(b-a)*sqrt(a+b+1))/((a+b+2)*sqrt(a*b))
+  
+  return(skew)
+}
+
+betaskew(beta.all)
+
+# Calculate concentration parameter
+betakappa <- function(x){
+  a <- x$estimate[1]
+  b <- x$estimate[2]
+  
+  kap <- a + b
+  
+  return(kap)
+}
+
+betakappa(beta.all)
+
+# Histograms -------------------------------------
 # histogram time steps
 histo3 <- ggplot(data = step.final[which(step.final$coff==0.3),], 
                  aes(PercInf*100)) +
@@ -136,7 +191,9 @@ histo1 <- ggplot(data = step.final[which(step.final$coff==0.1),],
 # ggsave(histo2, filename = "hist2.jpeg", width = 8.5, height = 6)
 # ggsave(histo3, filename = "hist3.jpeg", width = 8.5, height = 6)
 
-# Get peak and max infection rates for each clustering value --------------
+
+
+# Get params of dists for each clustering value --------------
 # Max infection
 step.final %>%
   group_by(deforest, dispersion, coff) %>%
@@ -158,32 +215,55 @@ beta.parms <- step.final %>%
   dplyr::select(-c(Time, X, Y, replicate)) %>%
   group_map(~ fitdist(.x$PercInf, "beta"))
 
-betamax <- function(x){
-  a <- x$estimate[1]
-  b <- x$estimate[2]
-  
-  max <- (a)/(a+b)
-  
-  return(max)
-}
 
-maxes <- lapply(beta.parms, betamax) #Problem here: shouldn't be negative
 
-maxmat <- as.data.frame(matrix(as.numeric(maxes), ncol = 3))
-colnames(maxmat) <- c('Low', 'Mid', 'High')
+expec.list <- lapply(beta.parms, betaexpec)
 
-max.df <- maxmat %>%
+expecmat <- as.data.frame(matrix(as.numeric(expec.list), ncol = 3))
+colnames(expecmat) <- c('Low', 'Mid', 'High')
+
+expec.df <- expecmat %>%
   pivot_longer(cols = 'Low':'High', names_to = "Clustering", 
-               values_to = "Peak")
+               values_to = "Expected.Value")
 
-max.df$Clustering <- factor(max.df$Clustering, levels = c('Low', 'Mid', 'High'))
+expec.df$Clustering <- factor(expec.df$Clustering, levels = c('Low', 'Mid', 'High'))
 
-peak.of.dist <- ggplot(max.df, aes(x = Clustering, y = Peak))+
+ggplot(expec.df, aes(x = Clustering, y = Expected.Value))+
   geom_boxplot(fill = 'lightgray')+
+  labs(y = "Expected Value: % Infected")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
 # ggsave(peak.of.dist, filename = 'distpeakplot.jpeg')
+
+# Calculate skew
+betaspread <- function(x){
+  a <- x$estimate[1]
+  b <- x$estimate[2]
+  
+  cons <- a+b
+  
+  return(cons)
+}
+
+spread.list <- lapply(beta.parms, betaspread)
+
+spreadmat <- as.data.frame(matrix(as.numeric(spread.list), ncol = 3))
+colnames(spreadmat) <- c('Low', 'Mid', 'High')
+
+spread.df <- spreadmat %>%
+  pivot_longer(cols = 'Low':'High', names_to = "Clustering", 
+               values_to = "Concentration")
+
+spread.df$Clustering <- factor(spread.df$Clustering, 
+                               levels = c('Low', 'Mid', 'High'))
+
+conc.plot <- ggplot(data = spread.df, aes(x = Clustering, y = Concentration))+
+  geom_boxplot(fill = 'lightgray')+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# ggsave(conc.plot, filename = "spreadplot.jpeg")
 
 # Heat Maps ---------------------------------------------
 # Calculate Pearson Skewness Coefficient
@@ -192,31 +272,35 @@ step.final %>%
   summarise(skew = skewness(PercInf)) %>%
   {. ->> data.skew}
 
-# Shape data into list
-skew.list <- list()
-for(i in 1:length(unique(data.skew$coff))){
-  skew.list[[i]] <- data.skew[which(data.skew$coff==unique(data.skew$coff)[i]),]
-}
+# Box plot for overall trends
+skew.box <- ggplot(data = data.skew, aes(x = coff, y = skew))+
+  geom_boxplot(fill = 'lightgray')+
+  labs(x = "Coffee Clustering", y = "Pearson's Skew")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+  
+# ggsave(skew.box, filename = "skewbox.jpeg")
 
-heatplot1 <- ggplot(skew.list[[1]], aes(deforest, dispersion, fill = skew)) + 
+# Make skew heatplots
+heatplot1 <- ggplot(subset(data.skew, coff %in% 0.1), 
+                    aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
-  scale_fill_viridis(name = "Skew", limits = c(0, 3))+
   labs(x = "Deforestation (%)", y = "Dispersion")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))+
   theme_classic(base_size = 18)
 
-heatplot2 <- ggplot(skew.list[[2]], aes(deforest, dispersion, fill = skew)) + 
+heatplot2 <- ggplot(subset(data.skew, coff %in% 0.2), 
+                    aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
-  scale_fill_viridis(name = "Skew", limits = c(0, 3))+
   labs(x = "Deforestation (%)", y = "Dispersion")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))+
   theme_classic(base_size = 18)
 
-heatplot3 <- ggplot(skew.list[[3]], aes(deforest, dispersion, fill = skew)) + 
+heatplot3 <- ggplot(subset(data.skew, coff %in% 0.3), 
+                    aes(deforest, dispersion, fill = skew)) + 
   geom_raster(hjust = 0, vjust = 0)+
-  scale_fill_viridis(name = "Skew", limits = c(0, 3))+
   labs(x = "Deforestation (%)", y = "Dispersion")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))+
@@ -231,9 +315,41 @@ BBCC
 heats <- heatplot1 + ggtitle('A)') + 
   heatplot2 + ggtitle('B)') +
   heatplot3 + ggtitle('C)') +
-  plot_layout(design = layout, guides = 'collect')
+  plot_layout(design = layout, guides = 'collect')&
+  scale_fill_viridis_c(limits = range(data.skew$skew), name = "Skew")
 
-ggsave(heats, filename = 'heatmaps.jpeg', height = 6.5, width = 9.5)
+# ggsave(heats, filename = 'heatmaps.jpeg', height = 6.5, width = 9.5)
+
+# Heat plots for max values
+maxheat1 <- ggplot(subset(max.final, coff %in% 0.1), 
+                   aes(deforest, dispersion, fill = max)) + 
+  geom_raster(hjust = 0, vjust = 0)+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size = 18)
+
+maxheat2 <- ggplot(subset(max.final, coff %in% 0.2), 
+                   aes(deforest, dispersion, fill = max)) + 
+  geom_raster(hjust = 0, vjust = 0)+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size = 18)
+
+maxheat3 <- ggplot(subset(max.final, coff %in% 0.3), 
+                   aes(deforest, dispersion, fill = max)) + 
+  geom_raster(hjust = 0, vjust = 0)+
+  labs(x = "Deforestation (%)", y = "Dispersion")+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size = 18)
+
+maxheats <- maxheat1 + ggtitle('A)') + 
+  maxheat2 + ggtitle('B)') +
+  maxheat3 + ggtitle('C)') +
+  plot_layout(design = layout, guides = 'collect') &
+  scale_fill_viridis_c(name = "Max Infection", limits = range(max.final$max))
 
 # Closer look at lowest clustering value ----------------------
 lowest.skew <- skew.list[[1]]
