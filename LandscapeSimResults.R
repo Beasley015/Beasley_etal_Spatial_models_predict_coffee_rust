@@ -193,93 +193,119 @@ histo1 <- ggplot(data = step.final[which(step.final$coff==0.1),],
 
 
 
-# Get params of dists for each clustering value --------------
+# Boxplots for each clustering value --------------
 # Max infection
 step.final %>%
   group_by(deforest, dispersion, coff) %>%
   summarise(max = max(PercInf)) %>%
   {. ->> max.final}
 
-ggplot(data = max.final, aes(x = factor(coff), y = max))+
+maxbox <- ggplot(data = max.final, aes(x = factor(coff), y = max))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Coffee Clustering", y = "Maximum % Infected")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
-# ggsave(file = "MaxInfBoxes.jpeg")
+# ggsave(maxbox, file = "MaxInfBoxes.jpeg")
 
-# Approx. peak of the distribution
-beta.parms <- step.final %>%
+# Expected value of the distribution
+beta.final <- step.final %>%
   group_by(deforest, dispersion, coff) %>%
-  dplyr::select(-c(Time, X, Y, replicate)) %>%
-  group_map(~ fitdist(.x$PercInf, "beta"))
+  mutate(alpha = fitdist(PercInf, "beta")$estimate[1]) %>%
+  mutate(beta = fitdist(PercInf, "beta")$estimate[2]) %>%
+  dplyr::select(deforest:beta) %>%
+  distinct()
 
-
-
-expec.list <- lapply(beta.parms, betaexpec)
-
-expecmat <- as.data.frame(matrix(as.numeric(expec.list), ncol = 3))
-colnames(expecmat) <- c('Low', 'Mid', 'High')
-
-expec.df <- expecmat %>%
-  pivot_longer(cols = 'Low':'High', names_to = "Clustering", 
-               values_to = "Expected.Value")
-
-expec.df$Clustering <- factor(expec.df$Clustering, levels = c('Low', 'Mid', 'High'))
-
-ggplot(expec.df, aes(x = Clustering, y = Expected.Value))+
+exp.final <- beta.final %>%
+  mutate(Expected.Value = (alpha)/(alpha+beta))
+  
+expected.boxes <- ggplot(exp.final, aes(x = coff, y = Expected.Value))+
   geom_boxplot(fill = 'lightgray')+
-  labs(y = "Expected Value: % Infected")+
+  labs(y = "Expected Value", x = "Coffee Clustering")+
+  scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
-# ggsave(peak.of.dist, filename = 'distpeakplot.jpeg')
+# ggsave(expected.boxes, filename = 'expecplot.jpeg')
 
 # Calculate skew
-betaspread <- function(x){
-  a <- x$estimate[1]
-  b <- x$estimate[2]
-  
-  cons <- a+b
-  
-  return(cons)
-}
+skew.final <- beta.final %>%
+  mutate(skew=((2*(beta-alpha)*sqrt(alpha+beta+1))/
+                 ((alpha+beta+2)*sqrt(alpha*beta))))
 
-spread.list <- lapply(beta.parms, betaspread)
-
-spreadmat <- as.data.frame(matrix(as.numeric(spread.list), ncol = 3))
-colnames(spreadmat) <- c('Low', 'Mid', 'High')
-
-spread.df <- spreadmat %>%
-  pivot_longer(cols = 'Low':'High', names_to = "Clustering", 
-               values_to = "Concentration")
-
-spread.df$Clustering <- factor(spread.df$Clustering, 
-                               levels = c('Low', 'Mid', 'High'))
-
-conc.plot <- ggplot(data = spread.df, aes(x = Clustering, y = Concentration))+
+skew.plot <- ggplot(data = skew.final, aes(x = coff, y = skew))+
   geom_boxplot(fill = 'lightgray')+
+  labs(x = "Coffee Clustering", y = "Skew")+
+  scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# ggsave(skew.plot, filename = 'skewplot.jpeg')
+
+# Concentration parameter
+conc.final <- beta.final %>%
+  mutate(kappa = alpha + beta)
+
+conc.plot <- ggplot(data = conc.final, aes(x = coff, y = kappa))+
+  geom_boxplot(fill = 'lightgray')+
+  labs(x = "Coffee Clustering", y = "Kappa")+
+  scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
 # ggsave(conc.plot, filename = "spreadplot.jpeg")
 
-# Heat Maps ---------------------------------------------
-# Calculate Pearson Skewness Coefficient
-step.final %>%
-  group_by(deforest, dispersion, coff) %>%
-  summarise(skew = skewness(PercInf)) %>%
-  {. ->> data.skew}
+# Put all boxplots together
+megabox <- expected.boxes+ggtitle("A)")+
+  maxbox+ggtitle("B)")+
+  skew.plot+ggtitle("C)")+
+  conc.plot+ggtitle("D)")
 
-# Box plot for overall trends
-skew.box <- ggplot(data = data.skew, aes(x = coff, y = skew))+
-  geom_boxplot(fill = 'lightgray')+
-  labs(x = "Coffee Clustering", y = "Pearson's Skew")+
-  theme_bw(base_size = 18)+
-  theme(panel.grid = element_blank())
-  
-# ggsave(skew.box, filename = "skewbox.jpeg")
+# ggsave(megabox, file = 'megabox.jpeg', width = 8, height = 6.5, units = 'in')
+
+# Heat Maps ---------------------------------------------
+# Write master function
+# Which is currently not working
+makin.heatmaps <- function(x, nplots, param){
+  plotlist <- list()
+  cluster <- c(0.1, 0.2, 0.3)
+  for(i in 1:nplots){
+    plotlist[[i]] <- ggplot(subset(x, coff %in% cluster[i]), 
+           aes(deforest, dispersion, fill = param)) + 
+      geom_raster(hjust = 0, vjust = 0)+
+      labs(x = "Deforestation (%)", y = "Dispersion")+
+      scale_x_discrete(expand = c(0,0))+
+      scale_y_discrete(expand = c(0,0))+
+      theme_classic(base_size = 18)
+  }
+  return(plotlist)
+}
+
+# Layout for patchwork grouping
+layout <- 
+  "AABB
+   #CC#"
+
+# Expected values
+exp.heats <- makin.heatmaps(x = exp.final, nplots = 3, param = Expected.Value)
+
+exp.heats[[1]]+ggtitle('A)')+
+  exp.heats[[2]]+ggtitle('B)')+
+  exp.heats[[3]]+ggtitle('C)')+
+  plot_layout(design = layout, guides = 'collect')&
+  scale_fill_viridis_c(limits = range(exp.final$Expected.Value),
+                       name = "Expected Value")
+
+# Max values
+max.heats <- makin.heatmaps(x = max.final, nplots = 3, param = max.final$max)
+
+max.heats[[1]]+ggtitle('A)')+
+  max.heats[[2]]+ggtitle('B)')+
+  max.heats[[3]]+ggtitle('C)')+
+  plot_layout(design = layout, guides = 'collect')&
+  scale_fill_viridis_c(limits = range(max.final$max),
+                       name = "Max % Infction")
 
 # Make skew heatplots
 heatplot1 <- ggplot(subset(data.skew, coff %in% 0.1), 
