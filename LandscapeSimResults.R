@@ -271,8 +271,9 @@ makin.heatmaps <- function(x, nplots, param){
   plotlist <- list()
   cluster <- c(0.1, 0.2, 0.3)
   for(i in 1:nplots){
-    plotlist[[i]] <- ggplot(subset(x, coff %in% cluster[i]), 
-           aes(deforest, dispersion, fill = param)) + 
+    dat <- filter(x, coff == cluster[i])
+    plotlist[[i]] <- ggplot(dat, aes_string('deforest', 'dispersion', 
+                                            fill = param)) + 
       geom_raster(hjust = 0, vjust = 0)+
       labs(x = "Deforestation (%)", y = "Dispersion")+
       scale_x_discrete(expand = c(0,0))+
@@ -288,7 +289,7 @@ layout <-
    #CC#"
 
 # Expected values
-exp.heats <- makin.heatmaps(x = exp.final, nplots = 3, param = Expected.Value)
+exp.heats <- makin.heatmaps(x = exp.final, nplots = 3, param = 'Expected.Value')
 
 exp.heats[[1]]+ggtitle('A)')+
   exp.heats[[2]]+ggtitle('B)')+
@@ -298,120 +299,37 @@ exp.heats[[1]]+ggtitle('A)')+
                        name = "Expected Value")
 
 # Max values
-max.heats <- makin.heatmaps(x = max.final, nplots = 3, param = max.final$max)
+max.heats <- makin.heatmaps(x = max.final, nplots = 3, param = 'max')
 
 max.heats[[1]]+ggtitle('A)')+
   max.heats[[2]]+ggtitle('B)')+
   max.heats[[3]]+ggtitle('C)')+
   plot_layout(design = layout, guides = 'collect')&
   scale_fill_viridis_c(limits = range(max.final$max),
-                       name = "Max % Infction")
+                       name = "Max % Infection")
 
-# Make skew heatplots
-heatplot1 <- ggplot(subset(data.skew, coff %in% 0.1), 
-                    aes(deforest, dispersion, fill = skew)) + 
-  geom_raster(hjust = 0, vjust = 0)+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
-  scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))+
-  theme_classic(base_size = 18)
+# Skew
+skew.heats <- makin.heatmaps(x = skew.final, nplots = 3, param = 'skew')
 
-heatplot2 <- ggplot(subset(data.skew, coff %in% 0.2), 
-                    aes(deforest, dispersion, fill = skew)) + 
-  geom_raster(hjust = 0, vjust = 0)+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
-  scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))+
-  theme_classic(base_size = 18)
-
-heatplot3 <- ggplot(subset(data.skew, coff %in% 0.3), 
-                    aes(deforest, dispersion, fill = skew)) + 
-  geom_raster(hjust = 0, vjust = 0)+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
-  scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))+
-  theme_classic(base_size =  18)
-
-
-layout <- "
-#AA#
-BBCC
-"
-
-heats <- heatplot1 + ggtitle('A)') + 
-  heatplot2 + ggtitle('B)') +
-  heatplot3 + ggtitle('C)') +
+skew.heats[[1]]+ggtitle('A)')+
+  skew.heats[[2]]+ggtitle('B)')+
+  skew.heats[[3]]+ggtitle('C)')+
   plot_layout(design = layout, guides = 'collect')&
-  scale_fill_viridis_c(limits = range(data.skew$skew), name = "Skew")
+  scale_fill_viridis_c(limits = range(skew.final$skew),
+                       name = "Skew")
 
-# ggsave(heats, filename = 'heatmaps.jpeg', height = 6.5, width = 9.5)
+# Concentration
+conc.heats <- makin.heatmaps(x = conc.final, nplots = 3, param = 'kappa')
 
-# Heat plots for max values
-maxheat1 <- ggplot(subset(max.final, coff %in% 0.1), 
-                   aes(deforest, dispersion, fill = max)) + 
-  geom_raster(hjust = 0, vjust = 0)+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
-  scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))+
-  theme_classic(base_size = 18)
+conc.heats[[1]]+ggtitle('A)')+
+  conc.heats[[2]]+ggtitle('B)')+
+  conc.heats[[3]]+ggtitle('C)')+
+  plot_layout(design = layout, guides = 'collect')&
+  scale_fill_viridis_c(limits = range(conc.final$kappa),
+                       name = "Kappa")
 
-maxheat2 <- ggplot(subset(max.final, coff %in% 0.2), 
-                   aes(deforest, dispersion, fill = max)) + 
-  geom_raster(hjust = 0, vjust = 0)+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
-  scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))+
-  theme_classic(base_size = 18)
+# Closer look at promising patterns ----------------------
 
-maxheat3 <- ggplot(subset(max.final, coff %in% 0.3), 
-                   aes(deforest, dispersion, fill = max)) + 
-  geom_raster(hjust = 0, vjust = 0)+
-  labs(x = "Deforestation (%)", y = "Dispersion")+
-  scale_x_discrete(expand = c(0,0))+
-  scale_y_discrete(expand = c(0,0))+
-  theme_classic(base_size = 18)
-
-maxheats <- maxheat1 + ggtitle('A)') + 
-  maxheat2 + ggtitle('B)') +
-  maxheat3 + ggtitle('C)') +
-  plot_layout(design = layout, guides = 'collect') &
-  scale_fill_viridis_c(name = "Max Infection", limits = range(max.final$max))
-
-# Closer look at lowest clustering value ----------------------
-lowest.skew <- skew.list[[1]]
-
-ggplot(data = lowest.skew, aes(x = deforest, y = skew, group = dispersion))+
-  geom_line(aes(color = dispersion), size = 2)+
-  theme_bw(base_size = 18)+
-  theme(panel.grid = element_blank())
-
-ggplot(data = lowest.skew, aes(x = deforest, y = skew))+
-  geom_violin()+
-  theme_bw(base_size = 18)+
-  theme(panel.grid = element_blank())
-
-ggplot(data = lowest.skew, aes(x = dispersion, y = skew))+
-  geom_violin()+
-  theme_bw(base_size = 18)+
-  theme(panel.grid = element_blank())
-
-lowest.max <- max.final %>%
-  filter(coff == 0.1)
-
-ggplot(data = lowest.max, aes(x = deforest, y = max, group = dispersion))+
-  geom_line(aes(color = dispersion), size = 2)+
-  theme_bw(base_size = 18)+
-  theme(panel.grid = element_blank())
-
-ggplot(data = lowest.max, aes(x = deforest, y = max))+
-  geom_violin()+
-  theme_bw(base_size = 18)+
-  theme(panel.grid = element_blank())
-
-ggplot(data = lowest.max, aes(x = dispersion, y = max))+
-  geom_violin()+
-  theme_bw(base_size = 18)+
-  theme(panel.grid = element_blank())
 
 # Does starting location matter -------------------------------
 quant90 %>%
@@ -440,26 +358,3 @@ spatial_all <- ggplot(data = all.loc, aes(x = X, y = Y, fill = Count))+
   theme_classic(base_size = 18)+
   theme(legend.position = "none")
 
-# Saving Plots ---------------------------------------------------
-# Histogram
-ggsave("histrust.jpeg", histo)
-
-# Line plot
-ggsave("rustinfec.jpeg", avg.lines)
-
-# Boxplots
-ggsave("rust_infection_all.png", infection.all)
-ggsave("rust_infection.png", infection)
-ggsave("rust_dispersion.png", dispersion)
-ggsave("rust_deforestation.png", deforestation)
-
-ggsave("lotsaboxes.jpeg", many.boxes, width = 13, height = 7, units = "in")
-
-# Heat plots
-ggsave("heatplotmean.jpeg", heatplotmean)
-ggsave("heatplotmedian.jpeg", heatplotmedian)
-
-# Raster of infection start
-ggsave("infecstart.jpeg", spatial)
-  
-  
