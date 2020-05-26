@@ -329,7 +329,131 @@ conc.heats[[1]]+ggtitle('A)')+
                        name = "Kappa")
 
 # Closer look at promising patterns ----------------------
+# Expected values ##
+exp.hi <- filter(exp.final, coff == '0.3')
+exp.mid <- filter(exp.final, coff == '0.2')
+exp.lo <- filter(exp.final, coff == '0.1')
 
+# Expected value increases with deforestation at hi clustering
+exp.hi.plot <- ggplot(data = exp.hi, aes(x = deforest, y = Expected.Value, color = dispersion))+
+  geom_jitter(size = 2)+
+  labs(x = '% Deforestation', y = 'Expected Value')+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# ggsave(exp.hi.plot, file = 'exphiplot.jpeg')
+
+# No clear patterns at mid clustering
+ggplot(data = exp.mid, aes(x = deforest, y = Expected.Value, color = dispersion))+
+  geom_jitter(size = 2)+
+  labs(x = '% Deforestation', y = 'Expected Value')+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# Ditto low clustering
+ggplot(data = exp.lo, aes(x = deforest, y = Expected.Value, color = dispersion))+
+  geom_jitter(size = 2)+
+  labs(x = '% Deforestation', y = 'Expected Value')+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# Maximum infection ##
+max.lo <- filter(max.final, coff == '0.1')
+max.mid <- filter(max.final, coff == '0.2')
+max.hi <- filter(max.final, coff == '0.3')
+
+# No clear patterns at low clustering
+ggplot(data = max.lo, aes(x = deforest, y = max, color = dispersion))+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Maximum Infection")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# Hi deforest = hi max infec at mid clustering
+max.mid.plot <- ggplot(data = max.mid, aes(x = deforest, y = max, 
+                                           color = dispersion))+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Maximum Infection")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# ggsave(max.mid.plot, filename = 'maxmidplot.jpeg')
+
+# No clear patterns at high clustering values
+ggplot(data = max.hi, aes(x = deforest, y = max, color = dispersion))+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Maximum Infection")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# Skew ##
+skew.hi <- filter(skew.final, coff == '0.3')
+skew.mid <- filter(skew.final, coff == '0.2')
+skew.lo <- filter(skew.final, coff == '0.1')
+
+# Weird 'cutoff' point at high clustering
+skew.hi.plot <- ggplot(data = skew.hi, aes(x = deforest, y = skew, 
+                                           color = dispersion))+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Skew")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# ggsave(skew.hi.plot, filename = 'skewhiplot.jpeg')
+
+# No clear patterns at mid and high clustering
+ggplot(data = skew.mid, aes(x = deforest, y = skew, color = dispersion))+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Skew")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = skew.lo, aes(x = deforest, y = skew, color = dispersion))+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Skew")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# Concentration param ##
+conc.hi <- filter(conc.final, coff == '0.3')
+conc.mid <- filter(conc.final, coff == '0.2')
+conc.lo <- filter(conc.final, coff == '0.1')
+
+# Highest dispersion value seems to have higher kappa
+kappa.hi.plot <- ggplot(data = conc.hi, aes(x = as.numeric(deforest), y = kappa, 
+                                            color = dispersion))+
+  geom_line(size = 1.5)+
+  labs(x = "% Deforestation", y = "Kappa")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+# ggsave(kappa.hi.plot, filename = 'kappahiplot.jpeg')
+
+# No clear patterns at low or mid clustering
+ggplot(data = conc.mid, aes(x = as.numeric(deforest), y = kappa, 
+                            color = dispersion))+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Kappa")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = conc.lo, aes(x = as.numeric(deforest), y = kappa, color = dispersion))+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Kappa")+
+  scale_color_viridis_d(name = "Dispersion")+
+  theme_bw(base_size = 18)+
+  theme(panel.grid = element_blank())
 
 # Does starting location matter -------------------------------
 quant90 %>%
