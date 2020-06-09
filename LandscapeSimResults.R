@@ -191,8 +191,6 @@ histo1 <- ggplot(data = step.final[which(step.final$coff==0.1),],
 # ggsave(histo2, filename = "hist2.jpeg", width = 8.5, height = 6)
 # ggsave(histo3, filename = "hist3.jpeg", width = 8.5, height = 6)
 
-
-
 # Boxplots for each clustering value --------------
 # Max infection
 step.final %>%
@@ -335,12 +333,18 @@ exp.mid <- filter(exp.final, coff == '0.2')
 exp.lo <- filter(exp.final, coff == '0.1')
 
 # Expected value increases with deforestation at hi clustering
-exp.hi.plot <- ggplot(data = exp.hi, aes(x = deforest, y = Expected.Value, color = dispersion))+
-  geom_jitter(size = 2)+
+exp.hi.plot <- ggplot(data = exp.hi, aes(x = deforest, y = Expected.Value))+
+  geom_point(aes(color = dispersion), size = 2)+
+  geom_smooth(se = F, method = 'lm')+
   labs(x = '% Deforestation', y = 'Expected Value')+
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
+
+cor.test(x = as.numeric(exp.hi$deforest), y = exp.hi$Expected.Value, 
+         method = "spearman")
+cor.test(x = as.numeric(exp.hi$dispersion), y = exp.hi$Expected.Value, 
+         method = "spearman")
 
 # ggsave(exp.hi.plot, file = 'exphiplot.jpeg')
 
@@ -352,6 +356,11 @@ ggplot(data = exp.mid, aes(x = deforest, y = Expected.Value, color = dispersion)
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
+cor.test(x = as.numeric(exp.mid$deforest), y = exp.mid$Expected.Value, 
+         method = "spearman")
+cor.test(x = as.numeric(exp.mid$dispersion), y = exp.mid$Expected.Value, 
+         method = "spearman")
+
 # Ditto low clustering
 ggplot(data = exp.lo, aes(x = deforest, y = Expected.Value, color = dispersion))+
   geom_jitter(size = 2)+
@@ -359,6 +368,11 @@ ggplot(data = exp.lo, aes(x = deforest, y = Expected.Value, color = dispersion))
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
+
+cor.test(x = as.numeric(exp.lo$deforest), y = exp.lo$Expected.Value, 
+         method = "spearman")
+cor.test(x = as.numeric(exp.lo$dispersion), y = exp.lo$Expected.Value, 
+         method = "spearman")
 
 # Maximum infection ##
 max.lo <- filter(max.final, coff == '0.1')
@@ -373,16 +387,19 @@ ggplot(data = max.lo, aes(x = deforest, y = max, color = dispersion))+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
+cor.test(x = as.numeric(max.lo$deforest), y = max.lo$max, method = "spearman")
+cor.test(x = as.numeric(max.lo$dispersion), y = max.lo$max, method = "spearman")
+
 # Hi deforest = hi max infec at mid clustering
-max.mid.plot <- ggplot(data = max.mid, aes(x = deforest, y = max, 
-                                           color = dispersion))+
+ggplot(data = max.mid, aes(x = deforest, y = max, color = dispersion))+
   geom_point(size = 2)+
   labs(x = "% Deforestation", y = "Maximum Infection")+
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
-# ggsave(max.mid.plot, filename = 'maxmidplot.jpeg')
+cor.test(x = as.numeric(max.mid$deforest), y = max.mid$max, method = "spearman")
+cor.test(x = as.numeric(max.mid$dispersion), y = max.mid$max, method = "spearman")
 
 # No clear patterns at high clustering values
 ggplot(data = max.hi, aes(x = deforest, y = max, color = dispersion))+
@@ -391,6 +408,9 @@ ggplot(data = max.hi, aes(x = deforest, y = max, color = dispersion))+
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
+
+cor.test(x = as.numeric(max.hi$deforest), y = max.hi$max, method = "spearman")
+cor.test(x = as.numeric(max.hi$dispersion), y = max.hi$max, method = "spearman")
 
 # Skew ##
 skew.hi <- filter(skew.final, coff == '0.3')
@@ -406,15 +426,21 @@ skew.hi.plot <- ggplot(data = skew.hi, aes(x = deforest, y = skew,
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
+cor.test(x = as.numeric(skew.hi$deforest), y = skew.hi$skew, method = "spearman")
+cor.test(x = as.numeric(skew.hi$dispersion), y = skew.hi$skew, method = "spearman")
+
 # ggsave(skew.hi.plot, filename = 'skewhiplot.jpeg')
 
-# No clear patterns at mid and high clustering
+# No clear patterns at mid and low clustering
 ggplot(data = skew.mid, aes(x = deforest, y = skew, color = dispersion))+
   geom_point(size = 2)+
   labs(x = "% Deforestation", y = "Skew")+
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
+
+cor.test(x = as.numeric(skew.mid$deforest), y = skew.mid$skew, method = "spearman")
+cor.test(x = as.numeric(skew.mid$dispersion), y = skew.mid$skew, method = "spearman")
 
 ggplot(data = skew.lo, aes(x = deforest, y = skew, color = dispersion))+
   geom_point(size = 2)+
@@ -423,13 +449,16 @@ ggplot(data = skew.lo, aes(x = deforest, y = skew, color = dispersion))+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
+cor.test(x = as.numeric(skew.lo$deforest), y = skew.lo$skew, method = "spearman")
+cor.test(x = as.numeric(skew.lo$dispersion), y = skew.lo$skew, method = "spearman")
+
 # Concentration param ##
 conc.hi <- filter(conc.final, coff == '0.3')
 conc.mid <- filter(conc.final, coff == '0.2')
 conc.lo <- filter(conc.final, coff == '0.1')
 
 # Highest dispersion value seems to have higher kappa
-kappa.hi.plot <- ggplot(data = conc.hi, aes(x = as.numeric(deforest), y = kappa, 
+kappa.hi.plot <- ggplot(data = conc.hi, aes(x = as.numeric(deforest), y = kappa,
                                             color = dispersion))+
   geom_line(size = 1.5)+
   labs(x = "% Deforestation", y = "Kappa")+
@@ -437,23 +466,35 @@ kappa.hi.plot <- ggplot(data = conc.hi, aes(x = as.numeric(deforest), y = kappa,
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
-# ggsave(kappa.hi.plot, filename = 'kappahiplot.jpeg')
+# ggsave(kappa.hi.plot, filename = "kappahiplot.jpeg")
+
+cor.test(x = as.numeric(conc.hi$deforest), y = conc.hi$kappa, method = "spearman")
+cor.test(x = as.numeric(conc.hi$dispersion), y = conc.hi$kappa, method = "spearman")
 
 # No clear patterns at low or mid clustering
-ggplot(data = conc.mid, aes(x = as.numeric(deforest), y = kappa, 
+kappa.mid.plot <- ggplot(data = conc.mid, aes(x = as.numeric(deforest), y = kappa, 
                             color = dispersion))+
-  geom_point(size = 2)+
+  geom_line(size = 1.5)+
   labs(x = "% Deforestation", y = "Kappa")+
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
+# ggsave(kappa.mid.plot, filename = "kappamidplot.jpeg")
+
+cor.test(x = as.numeric(conc.mid$deforest), y = conc.mid$kappa, method = "spearman")
+cor.test(x = as.numeric(conc.mid$dispersion), y = conc.mid$kappa, 
+         method = "spearman")
+
 ggplot(data = conc.lo, aes(x = as.numeric(deforest), y = kappa, color = dispersion))+
-  geom_point(size = 2)+
+  geom_line(size = 1.5)+
   labs(x = "% Deforestation", y = "Kappa")+
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
+
+cor.test(x = as.numeric(conc.lo$deforest), y = conc.lo$kappa, method = "spearman")
+cor.test(x = as.numeric(conc.lo$dispersion), y = conc.lo$kappa, method = "spearman")
 
 # Does starting location matter -------------------------------
 quant90 %>%
