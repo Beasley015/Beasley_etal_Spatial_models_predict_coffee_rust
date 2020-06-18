@@ -458,11 +458,11 @@ conc.mid <- filter(conc.final, coff == '0.2')
 conc.lo <- filter(conc.final, coff == '0.1')
 
 # Highest dispersion value seems to have higher kappa
-kappa.hi.plot <- ggplot(data = conc.hi, aes(x = as.numeric(deforest), y = kappa,
-                                            color = dispersion))+
-  geom_line(size = 1.5)+
-  labs(x = "% Deforestation", y = "Kappa")+
-  scale_color_viridis_d(name = "Dispersion")+
+kappa.hi.plot <- ggplot(data = conc.hi, aes(x = as.numeric(dispersion), y = kappa,
+                                            color = deforest))+
+  geom_point(size = 2)+
+  labs(x = "Dispersion", y = "Kappa")+
+  scale_color_viridis_d(name = "% Deforestation")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
@@ -471,12 +471,12 @@ kappa.hi.plot <- ggplot(data = conc.hi, aes(x = as.numeric(deforest), y = kappa,
 cor.test(x = as.numeric(conc.hi$deforest), y = conc.hi$kappa, method = "spearman")
 cor.test(x = as.numeric(conc.hi$dispersion), y = conc.hi$kappa, method = "spearman")
 
-# No clear patterns at low or mid clustering
-kappa.mid.plot <- ggplot(data = conc.mid, aes(x = as.numeric(deforest), y = kappa, 
-                            color = dispersion))+
-  geom_line(size = 1.5)+
-  labs(x = "% Deforestation", y = "Kappa")+
-  scale_color_viridis_d(name = "Dispersion")+
+# Slight pattern at mid clustering
+kappa.mid.plot <- ggplot(data = conc.mid, aes(x = as.numeric(dispersion), y = kappa, 
+                            color = deforest))+
+  geom_point(size = 2)+
+  labs(x = "Dispersion", y = "Kappa")+
+  scale_color_viridis_d(name = "% Deforestation")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
@@ -486,6 +486,7 @@ cor.test(x = as.numeric(conc.mid$deforest), y = conc.mid$kappa, method = "spearm
 cor.test(x = as.numeric(conc.mid$dispersion), y = conc.mid$kappa, 
          method = "spearman")
 
+# No clear patterns at low clustering
 ggplot(data = conc.lo, aes(x = as.numeric(deforest), y = kappa, color = dispersion))+
   geom_line(size = 1.5)+
   labs(x = "% Deforestation", y = "Kappa")+
@@ -497,29 +498,30 @@ cor.test(x = as.numeric(conc.lo$deforest), y = conc.lo$kappa, method = "spearman
 cor.test(x = as.numeric(conc.lo$dispersion), y = conc.lo$kappa, method = "spearman")
 
 # Does starting location matter -------------------------------
-quant90 %>%
-  filter(X, Y) %>%
-  group_by(X, Y) %>%
-  summarise(Count = n()) %>%
-  {. ->> loc.counts}
+hi.loc <- step.final %>%
+  group_by(coff) %>%
+  filter(PercInf > quantile(PercInf, 0.75)) %>%
+  mutate(quant = "Top25")
 
-step500 %>%
-  filter(X, Y) %>%
-  group_by(X, Y) %>%
-  summarise(Count = n()) %>%
-  {. ->> all.loc}
+lo.loc <- step.final %>%
+  group_by(coff) %>%
+  filter(PercInf < quantile(PercInf, 0.25)) %>%
+  mutate(quant = "Bottom25")
 
-spatial <- ggplot(data = loc.counts, aes(x = X, y = Y, fill = Count))+
+all.loc <- rbind(hi.loc, lo.loc) %>%
+  group_by(X,Y,quant) %>%
+  summarise(count = n()) %>%
+  mutate(count = ifelse(quant == "Bottom25", -count, count)) %>%
+  ungroup() %>%
+  group_by(X,Y) %>%
+  mutate(val = sum(count))
+
+# Well this is weird
+ggplot(data = all.loc, aes(x = X, y = Y, fill = val))+
   geom_raster()+
-  xlim(0,99)+
-  ylim(0,99)+
-  theme_classic(base_size = 18)+
-  theme(legend.position = "none")
+  scale_fill_fermenter(type = 'div')+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size = 18)
 
-spatial_all <- ggplot(data = all.loc, aes(x = X, y = Y, fill = Count))+
-  geom_raster()+
-  xlim(0,99)+
-  ylim(0,99)+
-  theme_classic(base_size = 18)+
-  theme(legend.position = "none")
-
+# Analysis to determine if distribution of values in space is random
