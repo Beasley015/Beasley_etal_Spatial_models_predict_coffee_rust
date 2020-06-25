@@ -9,6 +9,7 @@ library(viridis)
 library(patchwork)
 library(agricolae)
 library(fitdistrplus)
+library(raster)
 
 # Sample beta distributions (for figures) ----------------------------------
 # neighbor1 <- rbeta(10000, 2, 8)
@@ -498,6 +499,11 @@ cor.test(x = as.numeric(conc.lo$deforest), y = conc.lo$kappa, method = "spearman
 cor.test(x = as.numeric(conc.lo$dispersion), y = conc.lo$kappa, method = "spearman")
 
 # Does starting location matter -------------------------------
+all.loc <- step.final %>%
+  dplyr::select(X,Y) %>%
+  group_by(X,Y) %>%
+  mutate(count = n())
+
 hi.loc <- step.final %>%
   group_by(coff) %>%
   filter(PercInf > quantile(PercInf, 0.75)) %>%
@@ -508,7 +514,7 @@ lo.loc <- step.final %>%
   filter(PercInf < quantile(PercInf, 0.25)) %>%
   mutate(quant = "Bottom25")
 
-all.loc <- rbind(hi.loc, lo.loc) %>%
+test.loc <- rbind(hi.loc, lo.loc) %>%
   group_by(X,Y,quant) %>%
   summarise(count = n()) %>%
   mutate(count = ifelse(quant == "Bottom25", -count, count)) %>%
@@ -517,11 +523,26 @@ all.loc <- rbind(hi.loc, lo.loc) %>%
   mutate(val = sum(count))
 
 # Well this is weird
-ggplot(data = all.loc, aes(x = X, y = Y, fill = val))+
+start.coords <- ggplot(data = test.loc, aes(x = X, y = Y, fill = factor(val)))+
   geom_raster()+
-  scale_fill_fermenter(type = 'div')+
+  scale_fill_brewer(type = 'div', name = "")+
   scale_x_discrete(expand = c(0,0))+
   scale_y_discrete(expand = c(0,0))+
   theme_classic(base_size = 18)
 
-# Analysis to determine if distribution of values in space is random
+# ggsave(start.coords, filename = "startcoords.jpeg")
+
+# Is there any clustering among all starting locations?
+all.start <- ggplot(data = all.loc, aes(x = X, y = Y, fill = count))+
+  geom_raster()+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  theme_classic(base_size = 18)
+# Looks fairly even
+
+# Convert data frame to raster
+loc.raster <- rasterFromXYZ(all.loc)
+
+# Look for autocorrelation
+Moran(loc.raster$val)
+# Close to 0
