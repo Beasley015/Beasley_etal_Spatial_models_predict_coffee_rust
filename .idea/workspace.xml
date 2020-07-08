@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LandscapeMatrixScript.py" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeMatrixScript.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LandscapeSimResults.R" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeSimResults.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cluster1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cluster3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hist1.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hist2.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hist3.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/land_def15_disp3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/land_def45_disp1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/land_def45_disp5.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/land_def75_disp3.png" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,9 +15,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
+            <state relative-caret-position="85">
+              <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
               <folding>
+                <element signature="e#0#12#0" expanded="true" />
                 <element signature="e#406#1188#0" />
                 <element signature="e#1482#2552#0" />
                 <element signature="e#2787#4318#0" />
@@ -462,9 +452,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/LandscapeMatrixScript.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
+        <state relative-caret-position="85">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
           <folding>
+            <element signature="e#0#12#0" expanded="true" />
             <element signature="e#406#1188#0" />
             <element signature="e#1482#2552#0" />
             <element signature="e#2787#4318#0" />

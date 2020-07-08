@@ -1,6 +1,6 @@
 import numpy
 import random
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import scipy.stats as stats
 from nlmpy import nlmpy as nlm
 
@@ -65,6 +65,8 @@ def MakeLandscape(size, deforest, disp, cluster):
     start = numpy.where(coffee == 1)
 
     return (coffee, landscape, start)
+
+(coffee, landscape, start) = MakeLandscape(size=100, deforest=0.15, disp=3, cluster=1.5)
 
 ###################################################################
 ##############    Cellular Automata    ############################
