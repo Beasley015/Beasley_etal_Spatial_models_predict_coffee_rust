@@ -37,18 +37,18 @@ def neighbors_base(mat, row, col, radius=1):
 
 def MakeLandscape(size, deforest, disp, cluster):
     #Create coffee matrix
-    coffee = nlm.randomElementNN(size, size, n=int(cluster*500))
+    coffee = nlm.randomClusterNN(size, size, cluster, n = '8-neighbourhood')
     coffee = nlm.classifyArray(coffee, [0.25, 0.75])
 
     #Create landscape matrix
     landscape_clustered = nlm.randomElementNN(size, size, n=disp*2000, mask=coffee)
-    landscape_clustered = nlm.classifyArray(landscape_clustered, [1-deforest, deforest])
+    landscape_clustered = nlm.classifyArray(landscape_clustered, [deforest, 1-deforest])
 
     ones = numpy.where(landscape_clustered == 1)
     zeroes = numpy.where(landscape_clustered == 0)
 
-    landscape_clustered[ones[0], ones[1]] = numpy.random.uniform(0, 0.3, len(ones[1]))
-    landscape_clustered[zeroes[0], zeroes[1]] = numpy.random.uniform(0.6, 1, len(zeroes[1]))
+    landscape_clustered[ones[0], ones[1]] = numpy.random.uniform(0.6, 1, len(ones[1]))
+    landscape_clustered[zeroes[0], zeroes[1]] = numpy.random.uniform(0, 0.3, len(zeroes[1]))
 
     landscape = landscape_clustered
 
@@ -66,7 +66,7 @@ def MakeLandscape(size, deforest, disp, cluster):
 
     return (coffee, landscape, start)
 
-(coffee, landscape, start) = MakeLandscape(size=100, deforest=0.15, disp=3, cluster=1.5)
+(coffee, landscape, start) = MakeLandscape(size=100, deforest=0.45, disp=5, cluster=0.2)
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -216,9 +216,9 @@ def spore_walk(spores, land, mat, coord):
 
 #Specify landscape parameters
 matrix_size = 100
-deforest = [0.75]
-deforest_disp = [5]
-disag = [0.5, 1.5]
+deforest = [0.15, 0.3, 0.45, 0.6, 0.75]
+deforest_disp = [1, 2, 3, 4, 5]
+cluster = [0.1, 0.2, 0.3]
 
 #Specify number of landscapes and time steps
 n = 50
@@ -231,7 +231,7 @@ def base_function(nlandscape = n):
 
     for i in range(n):
         # Create landscapes
-        (coffee, landscape, start) = MakeLandscape(size=matrix_size, deforest=defor, disp=disp, cluster=disagg)
+        (coffee, landscape, start) = MakeLandscape(size=matrix_size, deforest=defor, disp=disp, cluster=agg)
 
         # Create list of tuples for changing coords
         coord_change = [(-1, -1), (-1, 0), (-1, 1),
@@ -245,7 +245,8 @@ def base_function(nlandscape = n):
             perc_inf[j, 0, i] = j
             perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / \
                                 (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
-            perc_inf[j, 2, i] = start[0]; perc_inf[j, 3, i] = start[1]
+            perc_inf[j, 2, i] = start[0];
+            perc_inf[j, 3, i] = start[1]
             print("j = " + str(j))
 
             #Add stopping point if landscape is fully infected
@@ -258,15 +259,16 @@ def base_function(nlandscape = n):
 
 for i in range(len(deforest)):
     for j in range(len(deforest_disp)):
-        for k in range(len(disag)):
+        for k in range(len(cluster)):
             defor = deforest[i]
             disp = deforest_disp[j]
-            disagg = disag[k]
+            agg = cluster[k]
 
             perc_inf = base_function(nlandscape=n)
 
             perc_inf2 = perc_inf.transpose(2,0,1).reshape(-1, perc_inf.shape[1])
 
-            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"disagg"+str(disag[k])+".csv"
+            filename = "def"+str(deforest[i])+"disp"+str(deforest_disp[j])+"cluster"+str(cluster[k])+".csv"
 
             numpy.savetxt(filename, perc_inf2, delimiter=",")
+
