@@ -203,7 +203,7 @@ maxbox <- ggplot(data = max.final, aes(x = factor(coff), y = max))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Coffee Clustering", y = "Maximum % Infected")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
 # ggsave(maxbox, file = "MaxInfBoxes.jpeg")
@@ -222,8 +222,9 @@ exp.final <- beta.final %>%
 expected.boxes <- ggplot(exp.final, aes(x = coff, y = Expected.Value))+
   geom_boxplot(fill = 'lightgray')+
   labs(y = "Expected Value", x = "Coffee Clustering")+
-  scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
-  theme_bw(base_size = 18)+
+  scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", 
+                              '0.3' = "High"))+
+  theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
 # ggsave(expected.boxes, filename = 'expecplot.jpeg')
@@ -237,7 +238,7 @@ skew.plot <- ggplot(data = skew.final, aes(x = coff, y = skew))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Coffee Clustering", y = "Skew")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
 # ggsave(skew.plot, filename = 'skewplot.jpeg')
@@ -248,9 +249,9 @@ conc.final <- beta.final %>%
 
 conc.plot <- ggplot(data = conc.final, aes(x = coff, y = kappa))+
   geom_boxplot(fill = 'lightgray')+
-  labs(x = "Coffee Clustering", y = "Kappa")+
+  labs(x = "Coffee Clustering", y = "Precision (Kappa)")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
 # ggsave(conc.plot, filename = "spreadplot.jpeg")
@@ -261,7 +262,8 @@ megabox <- expected.boxes+ggtitle("A)")+
   skew.plot+ggtitle("C)")+
   conc.plot+ggtitle("D)")
 
-# ggsave(megabox, file = 'megabox.jpeg', width = 8, height = 6.5, units = 'in')
+# ggsave(megabox, file = 'megabox.jpeg', width = 8, height = 6.5,
+#        units = 'in')
 
 # Heat Maps ---------------------------------------------
 # Write master function
@@ -339,7 +341,7 @@ exp.hi.plot <- ggplot(data = exp.hi, aes(x = deforest, y = Expected.Value))+
   geom_smooth(se = F, method = 'lm')+
   labs(x = '% Deforestation', y = 'Expected Value')+
   scale_color_viridis_d(name = "Dispersion")+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
 cor.test(x = as.numeric(exp.hi$deforest), y = exp.hi$Expected.Value, 
@@ -403,11 +405,12 @@ cor.test(x = as.numeric(max.mid$deforest), y = max.mid$max, method = "spearman")
 cor.test(x = as.numeric(max.mid$dispersion), y = max.mid$max, method = "spearman")
 
 # No clear patterns at high clustering values
-ggplot(data = max.hi, aes(x = deforest, y = max, color = dispersion))+
+max.hi.plot <- ggplot(data = max.hi, aes(x = dispersion, y = max, 
+                                         color = deforest))+
   geom_point(size = 2)+
-  labs(x = "% Deforestation", y = "Maximum Infection")+
-  scale_color_viridis_d(name = "Dispersion")+
-  theme_bw(base_size = 18)+
+  labs(x = "Dispersion", y = "Maximum Infection")+
+  scale_color_viridis_d(name = "Deforestation")+
+  theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
 cor.test(x = as.numeric(max.hi$deforest), y = max.hi$max, method = "spearman")
@@ -424,7 +427,7 @@ skew.hi.plot <- ggplot(data = skew.hi, aes(x = deforest, y = skew,
   geom_point(size = 2)+
   labs(x = "% Deforestation", y = "Skew")+
   scale_color_viridis_d(name = "Dispersion")+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
 cor.test(x = as.numeric(skew.hi$deforest), y = skew.hi$skew, method = "spearman")
@@ -459,12 +462,13 @@ conc.mid <- filter(conc.final, coff == '0.2')
 conc.lo <- filter(conc.final, coff == '0.1')
 
 # Highest dispersion value seems to have higher kappa
-kappa.hi.plot <- ggplot(data = conc.hi, aes(x = as.numeric(dispersion), y = kappa,
-                                            color = deforest))+
+kappa.hi.plot <- ggplot(data = conc.hi,
+                        aes(x = as.numeric(dispersion), y = kappa,
+                            color = deforest))+
   geom_point(size = 2)+
-  labs(x = "Dispersion", y = "Kappa")+
-  scale_color_viridis_d(name = "% Deforestation")+
-  theme_bw(base_size = 18)+
+  labs(x = "Dispersion", y = "Precision (Kappa)")+
+  scale_color_viridis_d(name = "Deforestation")+
+  theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
 # ggsave(kappa.hi.plot, filename = "kappahiplot.jpeg")
@@ -476,12 +480,12 @@ cor.test(x = as.numeric(conc.hi$dispersion), y = conc.hi$kappa, method = "spearm
 kappa.mid.plot <- ggplot(data = conc.mid, aes(x = as.numeric(dispersion), y = kappa, 
                             color = deforest))+
   geom_point(size = 2)+
-  labs(x = "Dispersion", y = "Kappa")+
+  labs(x = "Dispersion", y = "Precision (Kappa)")+
   scale_color_viridis_d(name = "% Deforestation")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
-# ggsave(kappa.mid.plot, filename = "kappamidplot.jpeg")
+ggsave(kappa.mid.plot, filename = "kappamidplot.jpeg")
 
 cor.test(x = as.numeric(conc.mid$deforest), y = conc.mid$kappa, method = "spearman")
 cor.test(x = as.numeric(conc.mid$dispersion), y = conc.mid$kappa, 
@@ -492,11 +496,20 @@ ggplot(data = conc.lo, aes(x = as.numeric(deforest), y = kappa, color = dispersi
   geom_line(size = 1.5)+
   labs(x = "% Deforestation", y = "Kappa")+
   scale_color_viridis_d(name = "Dispersion")+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 1)+
   theme(panel.grid = element_blank())
 
 cor.test(x = as.numeric(conc.lo$deforest), y = conc.lo$kappa, method = "spearman")
 cor.test(x = as.numeric(conc.lo$dispersion), y = conc.lo$kappa, method = "spearman")
+
+# Put plots at high clustering together
+megadot <- exp.hi.plot+ggtitle("A)")+
+  max.hi.plot+ggtitle("B)")+
+  skew.hi.plot+ggtitle("C)")+
+  kappa.hi.plot+ggtitle("D)")
+
+ggsave(megadot, file = 'megadot.jpeg', width = 10, height = 7.5,
+       units = 'in')
 
 # Does starting location matter -------------------------------
 all.loc <- step.final %>%
