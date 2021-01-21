@@ -1,6 +1,6 @@
 import numpy
 import random
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import scipy.stats as stats
 from nlmpy import nlmpy as nlm
 
@@ -57,7 +57,7 @@ def MakeLandscape(size, deforest, disp, cluster):
     coffee[coffee_ones[0], coffee_ones[1]] = numpy.nan
 
     #Initialize infection
-    coffee_zeros = numpy.where(coffee == 0)
+    coffee_zeros = numpy.where(coffee[10:110, 10:110] == 0)
     randrow = random.randint(0, numpy.size(coffee_zeros, 1) - 1)
 
     coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
@@ -211,11 +211,6 @@ def spore_walk(spores, land, mat, coord):
     return mat, spores
 
 ###################################################################
-#############  Trim buffer from matrix  ###########################
-###################################################################
-def mat_trim(mat):
-
-###################################################################
 ################ Put it all together ##############################
 ###################################################################
 
@@ -227,7 +222,7 @@ cluster = [0.1, 0.2, 0.3]
 
 #Specify number of landscapes and time steps
 n = 50
-t = 1000
+t = 1
 
 #Write the master function
 def base_function(nlandscape = n):
@@ -248,17 +243,17 @@ def base_function(nlandscape = n):
             walkers = new_spore(mat=coffee, coord=coord_change)
             (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
 
-            # Insert trim function here
+            output = coffee[10:110, 10:110]
 
             perc_inf[j, 0, i] = j
-            perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / \
-                                (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
+            perc_inf[j, 1, i] = numpy.count_nonzero(output == 1) / \
+                                (numpy.count_nonzero(output == 1) + numpy.count_nonzero(output == 0))
             perc_inf[j, 2, i] = start[0];
             perc_inf[j, 3, i] = start[1]
             print("j = " + str(j))
 
             #Add stopping point if landscape is fully infected
-            if len(numpy.where(coffee == 0)[0]) == 0:
+            if len(numpy.where(output == 0)[0]) == 0:
                 break
 
         print("i = " + str(i))
