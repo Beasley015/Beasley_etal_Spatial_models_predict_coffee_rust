@@ -1,7 +1,6 @@
 import numpy
 import random
 #import matplotlib.pyplot as plt
-import scipy.stats as stats
 from nlmpy import nlmpy as nlm
 
 ##############################################################################
@@ -37,11 +36,11 @@ def neighbors_base(mat, row, col, radius=1):
 
 def MakeLandscape(size, deforest, disp, cluster):
     #Create coffee matrix
-    coffee = nlm.randomClusterNN(size, size, cluster, n = '8-neighbourhood')
+    coffee = nlm.randomClusterNN(size, size, cluster, n='8-neighbourhood')
     coffee = nlm.classifyArray(coffee, [0.25, 0.75])
 
     #Create landscape matrix
-    landscape_clustered = nlm.randomElementNN(size, size, n=disp*2000, mask=coffee)
+    landscape_clustered = nlm.randomElementNN(size, size, n=disp*2000)
     landscape_clustered = nlm.classifyArray(landscape_clustered, [deforest, 1-deforest])
 
     ones = numpy.where(landscape_clustered == 1)
@@ -52,12 +51,15 @@ def MakeLandscape(size, deforest, disp, cluster):
 
     landscape = landscape_clustered
 
+    #Represent coffee cells with nan
+    landscape[numpy.where(coffee == 0)] = numpy.nan
+
     # Remove 1's from coffee
     coffee_ones = numpy.where(coffee == 1)
     coffee[coffee_ones[0], coffee_ones[1]] = numpy.nan
 
     #Initialize infection
-    coffee_zeros = numpy.where(coffee[10:110, 10:110] == 0)
+    coffee_zeros = numpy.where(coffee == 0)
     randrow = random.randint(0, numpy.size(coffee_zeros, 1) - 1)
 
     coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
@@ -65,8 +67,6 @@ def MakeLandscape(size, deforest, disp, cluster):
     start = numpy.where(coffee == 1)
 
     return (coffee, landscape, start)
-
-(coffee, landscape, start) = MakeLandscape(size=100, deforest=0.45, disp=5, cluster=0.2)
 
 ###################################################################
 ##############    Cellular Automata    ############################
@@ -222,7 +222,7 @@ cluster = [0.1, 0.2, 0.3]
 
 #Specify number of landscapes and time steps
 n = 50
-t = 1
+t = 1000
 
 #Write the master function
 def base_function(nlandscape = n):
