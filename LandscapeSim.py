@@ -216,7 +216,7 @@ def spore_walk(spores, land, mat, coord):
 
 #Specify landscape parameters
 matrix_size = 120
-deforest = [0.15, 0.3, 0.45, 0.6, 0.75]
+deforest = [0.45, 0.6, 0.75]
 deforest_disp = [1, 2, 3, 4, 5]
 cluster = [0.1, 0.2, 0.3]
 
