@@ -3,7 +3,10 @@
 
 import contextlib
 import socket
-import urllib.request
+
+from matplotlib import cbook
+cbook.warn_deprecated("3.2", name=__name__, obj_type="module",
+                      alternative="pytest-remotedata")
 
 # save original socket method for restoration
 # These are global so that re-calling the turn_off_internet function doesn't
@@ -27,7 +30,7 @@ _orig_opener = None
 
 def check_internet_off(original_function):
     """
-    Wraps ``original_function``, which in most cases is assumed
+    Wrap ``original_function``, which in most cases is assumed
     to be a `socket.socket` method, to raise an `IOError` for any operations
     on non-local AF_INET sockets.
     """
@@ -76,6 +79,7 @@ def turn_off_internet(verbose=False):
     using some other means of accessing the internet, but all default python
     modules (urllib, requests, etc.) use socket [citation needed].
     """
+    import urllib.request
 
     global INTERNET_OFF
     global _orig_opener
@@ -108,6 +112,7 @@ def turn_on_internet(verbose=False):
     """
     Restore internet access.  Not used, but kept in case it is needed.
     """
+    import urllib.request
 
     global INTERNET_OFF
     global _orig_opener
@@ -130,8 +135,10 @@ def turn_on_internet(verbose=False):
 
 @contextlib.contextmanager
 def no_internet(verbose=False):
-    """Context manager to temporarily disable internet access (if not already
-    disabled).  If it was already disabled before entering the context manager
+    """
+    Temporarily disables internet access (if not already disabled).
+
+    If it was already disabled before entering the context manager
     (i.e. `turn_off_internet` was called previously) then this is a no-op and
     leaves internet access disabled until a manual call to `turn_on_internet`.
     """
