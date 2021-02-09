@@ -52,8 +52,9 @@ library(raster)
 
 # Read in model outputs --------------------------------------
 # # Read all csv's into a list
-# filenames <- list.files("Outputs", pattern = "*.csv", full.names = T)
-# shortnames <- list.files("Outputs", pattern = "*.csv")
+# filenames <- list.files("Outputs_buffered", pattern = "*.csv", 
+#                         full.names = T)
+# shortnames <- list.files("Outputs_buffered", pattern = "*.csv")
 # output.list <- lapply(filenames, read.csv, header = F)
 # 
 # # Rename columns of each dataframe
@@ -97,7 +98,7 @@ library(raster)
 # # Save it as a compressed file
 # saveRDS(output.mat, file = "outputmat.rds")
 
-# ------------------------
+# Read in output matrix ------------------------
 
 output.mat <- readRDS("outputmat.rds")
 
@@ -110,7 +111,7 @@ hist.all <- ggplot(data = step.final)+
   geom_histogram(aes(x = PercInf), fill = 'lightgray', color = 'black', 
                  boundary = 0)+
   scale_x_continuous(expand = c(0,0))+
-  scale_y_continuous(expand = c(0,0), limits = c(0, 1100))+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 750))+
   labs(x = "Rust Prevalence", y = "Count")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
