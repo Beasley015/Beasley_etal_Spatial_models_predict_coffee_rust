@@ -28,7 +28,7 @@ land2 = land[:, cols[2] + 1:]
 # Trim rows with all nan from first raster section
 rows = []
 for i in range(land1.shape[0]):
-    if numpy.isnan(land1[i,:]).all():
+    if numpy.isnan(land1[i, :]).all():
         rows.append(i)
 
 land1 = numpy.delete(land1, rows, axis=0)
