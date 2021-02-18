@@ -276,7 +276,7 @@ exp.mid <- filter(exp.final, coff == '0.2')
 exp.lo <- filter(exp.final, coff == '0.1')
 
 # No clear patterns w/expected value at high clustering
-exp.hi.plot <- ggplot(data = exp.hi, aes(x = deforest, y = Expected.Value))+
+ggplot(data = exp.hi, aes(x = deforest, y = Expected.Value))+
   geom_point(aes(color = dispersion), size = 2)+
   geom_smooth(se = F, method = 'lm')+
   labs(x = '% Deforestation', y = 'Expected Value')+
