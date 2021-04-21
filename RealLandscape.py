@@ -1,5 +1,6 @@
 import rasterio
 import numpy
+import random
 from matplotlib import pyplot as plt
 
 # Read in land cover data #############
@@ -32,3 +33,30 @@ for i in range(land1.shape[0]):
         rows.append(i)
 
 land1 = numpy.delete(land1, rows, axis=0)
+
+###################################################
+#    Function for creating coffee arrays          #
+###################################################
+def MakeCoffee(raster_in):
+    # Create array of blanks
+    coffee = numpy.empty(shape=raster_in.shape)
+    # Fill with values representing uninfected coffee
+    coffee[numpy.where(raster_in == 3)] = 0
+    coffee[numpy.where(raster_in != 3)] = numpy.nan
+
+    # Initialize infection
+    coffee_zeros = numpy.where(coffee == 0)
+    randrow = random.randint(0, numpy.size(coffee_zeros, 1) - 1)
+
+    coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
+
+    start = numpy.where(coffee == 1)
+
+    return(coffee, start)
+
+###################################################
+#        Creating landscape arrays                #
+###################################################
+
+# Create landscape array
+land1[numpy.where(land1 == 3)] = numpy.nan

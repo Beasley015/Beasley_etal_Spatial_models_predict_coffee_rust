@@ -66,7 +66,7 @@ def MakeLandscape(size, deforest, disp, cluster):
 
     start = numpy.where(coffee == 1)
 
-    return (coffee, landscape, start)
+    return(coffee, landscape, start)
 
 ###################################################################
 ##############    Cellular Automata    ############################
