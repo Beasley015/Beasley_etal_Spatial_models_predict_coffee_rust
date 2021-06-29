@@ -1,7 +1,6 @@
 import rasterio
 import numpy
 import random
-from matplotlib import pyplot as plt
 
 # Read in land cover data #############
 # Read full raster file
@@ -272,12 +271,12 @@ def real_function(raster, t=t):
         (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
 
         perc_inf[j, 0] = j
-        perc_inf[j, 1] = numpy.count_nonzero(output == 1) / \
-                            (numpy.count_nonzero(output == 1) + numpy.count_nonzero(output == 0))
+        perc_inf[j, 1] = numpy.count_nonzero(coffee == 1) / \
+                            (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
         perc_inf[j, 2] = start[0];
         perc_inf[j, 3] = start[1]
         print("j = " + str(j))
 
     return perc_inf
 
-real_function(raster = land1)
+out = real_function(raster = land1)
