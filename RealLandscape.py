@@ -63,12 +63,14 @@ def neighbors_base(mat, row, col, radius=1):
 ###################################################
 #    Function for creating coffee arrays          #
 ###################################################
+
+# Coffee cover class = 5
 def MakeCoffee(raster_in):
     # Create array of blanks
     coffee = numpy.empty(shape=raster_in.shape)
     # Fill with values representing uninfected coffee
-    coffee[numpy.where(raster_in == 3)] = 0
-    coffee[numpy.where(raster_in != 3)] = numpy.nan
+    coffee[numpy.where(raster_in == 5)] = 0
+    coffee[numpy.where(raster_in != 5)] = numpy.nan
 
     # Initialize infection
     coffee_zeros = numpy.where(coffee == 0)
@@ -83,19 +85,28 @@ def MakeCoffee(raster_in):
 ###################################################
 #        Creating landscape arrays                #
 ###################################################
+# Land cover classes
+# 1 = Forest
+# 2 = Scrub
+# 3 = Human settlement
+# 4 = Pasture
+# 6 = Other
+# 7 = Water
 
 def MakeLand(raster_in):
     # Read in raster
     land = raster_in
 
     # Create landscape array
-    land[numpy.where(land == 3)] = numpy.nan
+    land[numpy.where(land == 5)] = numpy.nan
 
     # Fill numbered values with canopy cover values
     land[numpy.where(land == 7)] = 0
-    land[numpy.where(land == 5)] = numpy.random.uniform(0.6, 1, len(land[numpy.where(land == 5)]))
-    land[numpy.where(land == 4)] = numpy.random.uniform(0.3, 0.6, len(land[numpy.where(land == 4)]))
-    land[numpy.where(land >= 1)] = numpy.random.uniform(0, 0.3, len(land[numpy.where(land >= 1)]))
+    land[numpy.where(land == 1)] = numpy.random.uniform(0.6, 1, len(land[numpy.where(land == 1)]))
+    land[numpy.where(land == 3)] = numpy.random.uniform(0.3, 0.6, len(land[numpy.where(land == 3)]))
+    land[numpy.where(land == 2)] = numpy.random.uniform(0, 0.3, len(land[numpy.where(land == 2)]))
+    land[numpy.where(land == 4)] = numpy.random.uniform(0, 0.3, len(land[numpy.where(land == 4)]))
+    land[numpy.where(land == 6)] = numpy.random.uniform(0, 0.3, len(land[numpy.where(land == 6)]))
 
     return(land)
 
@@ -246,7 +257,7 @@ def spore_walk(spores, land, mat, coord):
 ###################################################################
 
 # Specify time steps
-t = 100
+t = 1000
 
 # Write the full function
 def real_function(raster, t=t):
@@ -279,4 +290,5 @@ def real_function(raster, t=t):
 
     return perc_inf
 
-out = real_function(raster = land1)
+out1 = real_function(raster = land1)
+out2 = real_function(raster = land2)
