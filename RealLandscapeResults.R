@@ -33,10 +33,10 @@ land2extent <- extent(bothlands, 1, nrow(rawmat), colNA[3]+1,ncol(rawmat))
 land2raw <- crop(bothlands, land2extent)
 
 # Extract coffee values
-land1 <- land1raw == 3
+land1 <- land1raw == 5
 land1[land1 == 0] <- NA
 
-land2 <- land2raw == 3
+land2 <- land2raw == 5
 land2[land2 == 0] <- NA
 
 # Calculate aggregation index -------------------
