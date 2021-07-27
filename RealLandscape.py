@@ -224,14 +224,14 @@ def spore_walk(spores, land, mat, coord):
             movement = random.choices(population = coord, weights=land_neighbors, k = 1)
             new_coords = (old_coords[0] + movement[0][0], old_coords[1] + movement[0][1])
 
-            spores[i] = new_coords
-
-            old_coords = new_coords
-
-            if new_coords[0] > land.shape[0] or new_coords[1] > land.shape[1]:
+            if mat[new_coords[0], new_coords[1]] == numpy.nan and land[new_coords[0], new_coords[1]] == numpy.nan:
                 break
 
             else:
+                spores[i] = new_coords
+
+                old_coords = new_coords
+
                 step_credit = step_credit-land[new_coords[0], new_coords[1]]
 
     for i in range(0, len(spores)):
@@ -259,10 +259,13 @@ def spore_walk(spores, land, mat, coord):
 # Specify time steps
 t = 1000
 
+# Specify number of times the sim will be run
+reps = 50
+
 # Write the full function
-def real_function(raster, t=t):
+def real_function(raster, t=t, rep = reps):
     # Create blank array to store results
-    perc_inf = numpy.empty((t, 4))
+    perc_inf = numpy.empty((t, 5))
 
     # Get size of raster
     matrix_size = raster.shape
@@ -276,19 +279,25 @@ def real_function(raster, t=t):
     (coffee, start) = MakeCoffee(raster_in=raster)
     landscape = MakeLand(raster_in=raster)
 
-    for j in range(t):
-        coffee = cellaut(mat = coffee, land = landscape)
-        walkers = new_spore(mat=coffee, coord=coord_change)
-        (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
+    for i in range(reps):
+        for j in range(t):
+            coffee = cellaut(mat = coffee, land = landscape)
+            walkers = new_spore(mat=coffee, coord=coord_change)
+            (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
 
-        perc_inf[j, 0] = j
-        perc_inf[j, 1] = numpy.count_nonzero(coffee == 1) / \
-                            (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
-        perc_inf[j, 2] = start[0];
-        perc_inf[j, 3] = start[1]
-        print("j = " + str(j))
+            perc_inf[j, 0] = j
+            perc_inf[j, 1] = numpy.count_nonzero(coffee == 1) / \
+                                (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
+            perc_inf[j, 2] = start[0];
+            perc_inf[j, 3] = start[1]
+            perc_inf[j, 4] = i
+            print("j = " + str(j))
 
     return perc_inf
 
 out1 = real_function(raster = land1)
-out2 = real_function(raster = land2)
+#out2 = real_function(raster = land2)
+
+# Save results
+final = out1.transpose(2, 0, 1).reshape(-1, out1.shape[1])
+numpy.savetxt("land1", final, delimiter=",")
