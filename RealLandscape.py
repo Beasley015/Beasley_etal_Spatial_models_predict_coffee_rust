@@ -213,40 +213,45 @@ def spore_walk(spores, land, mat, coord):
         old_coords = list(spores)[i]
 
         while step_credit > 0:
+            # Get neighbors of each spore
             land_neighbors = numpy.array(neighbors_base(mat=land, row=old_coords[0], col=old_coords[1]),
                                          dtype=numpy.float64)
 
+            # Convert missing data to 0s otherwise python gets angry
             if numpy.isnan(land_neighbors).any():
                 land_neighbors[numpy.isnan(land_neighbors)] = 0
                 land_neighbors[land_neighbors == None] = 0
 
             land_neighbors[land_neighbors > 0] = 1
-            movement = random.choices(population = coord, weights=land_neighbors, k = 1)
-            new_coords = (old_coords[0] + movement[0][0], old_coords[1] + movement[0][1])
 
-            if mat[new_coords[0], new_coords[1]] == numpy.nan and land[new_coords[0], new_coords[1]] == numpy.nan:
+            if land_neighbors.all() == 0:
                 break
 
             else:
+                # Get movement location and move spore
+                indices = numpy.where(land_neighbors != 0)
+                index = random.choices(indices[0], k = 1) # Shit this is so hacky
+                movement = coord[index[0]]
+                new_coords = (old_coords[0] + movement[0], old_coords[1] + movement[1])
+
                 spores[i] = new_coords
 
                 old_coords = new_coords
 
                 step_credit = step_credit-land[new_coords[0], new_coords[1]]
 
-    for i in range(0, len(spores)):
-        coords = list(spores[i])
-        new_neighbors = neighbors_base(mat=mat, row=coords[0], col=coords[1])
-        new_neighbors = numpy.array(new_neighbors)
+                for i in range(0, len(spores)):
+                    coords = list(spores[i])
+                    new_neighbors = neighbors_base(mat=mat, row=coords[0], col=coords[1])
+                    new_neighbors = numpy.array(new_neighbors)
 
-        if numpy.any(new_neighbors == 0):
-            infec_newcoord = random.choice([coord[i] for i in numpy.where(new_neighbors == 0)[0]])
-            infec_target = [new_coords[0] + infec_newcoord[0], new_coords[1] + infec_newcoord[1]]
-            if all(v < 50 for v in infec_target):
-                infec_prob = numpy.random.binomial(n=1, p=0.5)
-                if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
-                    mat[infec_target[0], infec_target[1]] = 1
-                    spores[i] = None
+                    if numpy.any(new_neighbors == 0):
+                        infec_newcoord = random.choice([coord[i] for i in numpy.where(new_neighbors == 0)[0]])
+                        infec_target = [new_coords[0] + infec_newcoord[0], new_coords[1] + infec_newcoord[1]]
+                        infec_prob = numpy.random.binomial(n=1, p=0.5)
+                        if infec_prob == 1 and mat[infec_target[0], infec_target[1]] == 0:
+                            mat[infec_target[0], infec_target[1]] = 1
+                            spores[i] = None
 
     spores = list(filter(None, spores))
 
@@ -265,7 +270,7 @@ reps = 50
 # Write the full function
 def real_function(raster, t=t, rep = reps):
     # Create blank array to store results
-    perc_inf = numpy.empty((t, 5))
+    perc_inf = numpy.empty((t, 5, reps))
 
     # Get size of raster
     matrix_size = raster.shape
@@ -285,19 +290,21 @@ def real_function(raster, t=t, rep = reps):
             walkers = new_spore(mat=coffee, coord=coord_change)
             (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
 
-            perc_inf[j, 0] = j
-            perc_inf[j, 1] = numpy.count_nonzero(coffee == 1) / \
+            perc_inf[j, 0, i] = j
+            perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / \
                                 (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
-            perc_inf[j, 2] = start[0];
-            perc_inf[j, 3] = start[1]
-            perc_inf[j, 4] = i
+            perc_inf[j, 2, i] = start[0];
+            perc_inf[j, 3, i] = start[1]
+            perc_inf[j, 4, i] = i
             print("j = " + str(j))
+
+        print("i = " + str(i))
 
     return perc_inf
 
-out1 = real_function(raster = land1)
-#out2 = real_function(raster = land2)
+#out1 = real_function(raster = land1)
+out2 = real_function(raster = land2)
 
 # Save results
-final = out1.transpose(2, 0, 1).reshape(-1, out1.shape[1])
-numpy.savetxt("land1", final, delimiter=",")
+final = out2.transpose(2, 0, 1).reshape(-1, out1.shape[1])
+numpy.savetxt("land2", final, delimiter=",")
