@@ -306,5 +306,5 @@ def real_function(raster, t=t, rep = reps):
 out2 = real_function(raster = land2)
 
 # Save results
-final = out2.transpose(2, 0, 1).reshape(-1, out1.shape[1])
+final = out2.transpose(2, 0, 1).reshape(-1, out2.shape[1])
 numpy.savetxt("land2", final, delimiter=",")
