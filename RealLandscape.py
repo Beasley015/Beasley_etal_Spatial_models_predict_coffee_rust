@@ -1,6 +1,7 @@
 import rasterio
 import numpy
 import random
+import copy
 
 # Read in land cover data #############
 # Read full raster file
@@ -33,6 +34,7 @@ for i in range(land1.shape[0]):
 
 land1 = numpy.delete(land1, rows, axis=0)
 
+
 ##############################################################################
 ################        Neighbors Function             #######################
 ##############################################################################
@@ -41,7 +43,7 @@ def neighbors_base(mat, row, col, radius=1):
     # inputs: mat = matrix to look at, row and col = indexes, radius=number of cells around
     # output: a list of the contents of cells around the index (out of bounds returned as 0)
     rows, cols = len(mat), len(mat[0])
-    out = [] #out is a list of the neighbors
+    out = []  # out is a list of the neighbors
     for i in range(row - radius, row + radius + 1):
         row = []
         for j in range(col - radius, col + radius + 1):
@@ -60,6 +62,7 @@ def neighbors_base(mat, row, col, radius=1):
     del flat_list[4]
     return flat_list
 
+
 ###################################################
 #    Function for creating coffee arrays          #
 ###################################################
@@ -74,13 +77,14 @@ def MakeCoffee(raster_in):
 
     # Initialize infection
     coffee_zeros = numpy.where(coffee == 0)
-    randrow = random.randint(0, numpy.size(coffee_zeros, 1) - 1)
+    randrow = random.randint(0, numpy.size(coffee_zeros, 1))
 
     coffee[coffee_zeros[0][randrow], coffee_zeros[1][randrow]] = 1
 
     start = numpy.where(coffee == 1)
 
-    return(coffee, start)
+    return (coffee, start)
+
 
 ###################################################
 #        Creating landscape arrays                #
@@ -108,66 +112,68 @@ def MakeLand(raster_in):
     land[numpy.where(land == 4)] = numpy.random.uniform(0, 0.3, len(land[numpy.where(land == 4)]))
     land[numpy.where(land == 6)] = numpy.random.uniform(0, 0.3, len(land[numpy.where(land == 6)]))
 
-    return(land)
+    return (land)
+
 
 ###################################################################
 ##############    Cellular Automata    ############################
 ###################################################################
 
 def cellaut(mat, land):
-    #Create new array to store next time step
+    # Create new array to store next time step
     coffee_new = mat
 
     # Pull index of all coffee cells with value 0
     coffee_zeros = numpy.where(mat == 0)
 
     # Get neighborhood of that cell
-    neighbors_clean = numpy.empty(shape=(1,8))
+    neighbors_clean = numpy.empty(shape=(1, 8))
     neighbors_clean[:] = numpy.nan
 
     for i in range(0, numpy.size(coffee_zeros, 1)):
         clean_row = neighbors_base(mat=mat, row=coffee_zeros[0][i], col=coffee_zeros[1][i], radius=1)
         neighbors_clean = numpy.vstack([neighbors_clean, clean_row])
 
-    neighbors_clean = neighbors_clean[1:,:]
+    neighbors_clean = neighbors_clean[1:, :]
     neighbors_clean = neighbors_clean.astype(numpy.float64)
 
     # Sum the values of the neighborhood to get number of infected neighbors
     rowprobs = []
     for i in range(0, numpy.size(neighbors_clean, 0)):
-        row = neighbors_clean[i,:]
+        row = neighbors_clean[i, :]
         row = row[~numpy.isnan(row)]
         rowsums = row.sum()
         if rowsums > 0:
-            add_row = numpy.random.beta(a=rowsums+1, b=8-rowsums+1, size=1)
+            add_row = numpy.random.beta(a=rowsums + 1, b=8 - rowsums + 1, size=1)
             rowprobs.append(add_row)
         else:
             rowprobs.append(0)
 
     # Use number of infected neighbors to get success probability in a bernoulli trial
     bern_out = []
-    for i in range(0,len(rowprobs)):
-        out = numpy.random.binomial(n = 1, p = (0.1*rowprobs[i]))
+    for i in range(0, len(rowprobs)):
+        out = numpy.random.binomial(n=1, p=(0.1 * rowprobs[i]))
         bern_out.append(out)
 
     # If bern trial is a success, change focal cell to infected
     for i in range(0, len(coffee_zeros[1])):
         coffee_new[coffee_zeros[0][i], coffee_zeros[1][i]] = bern_out[i]
 
-    #Replace old array with new one
+    # Replace old array with new one
     mat = coffee_new
 
-    return(mat)
+    return (mat)
+
 
 ###################################################################
 ##############    Propagule Release    ############################
 ###################################################################
 
 def new_spore(mat, coord):
-    #Get coords for each infected cell
+    # Get coords for each infected cell
     coffee_inf = numpy.where(mat == 1)
 
-    #Get neighbors of infected cells
+    # Get neighbors of infected cells
     land_neighbors = numpy.empty(shape=(1, 8))
     land_neighbors[:] = numpy.nan
 
@@ -175,13 +181,13 @@ def new_spore(mat, coord):
         land_row = neighbors_base(mat=mat, row=coffee_inf[0][i], col=coffee_inf[1][i], radius=1)
         land_neighbors = numpy.vstack([land_neighbors, land_row])
 
-    land_neighbors = land_neighbors[1:,:]
+    land_neighbors = land_neighbors[1:, :]
 
-    #Get col numbers of landscape cells
+    # Get col numbers of landscape cells
     land_pos = []
     for i in range(0, len(land_neighbors)):
-        row = land_neighbors[i,:]
-        row = numpy.array(row, dtype = numpy.float64)
+        row = land_neighbors[i, :]
+        row = numpy.array(row, dtype=numpy.float64)
         if numpy.isnan(row).any():
             nans = numpy.isnan(row)
             pos = numpy.where(nans == True)
@@ -190,18 +196,19 @@ def new_spore(mat, coord):
         else:
             land_pos.append(None)
 
-    #Create sparse matrix of propagules
+    # Create sparse matrix of propagules
     spores = []
 
     for i in range(0, len(land_pos)):
         if land_pos[i] != None:
             place = random.choice(land_pos[i])
             release = coord[place]
-            new_coord = (coffee_inf[0][i]+release[0], coffee_inf[1][i]+release[1])
+            new_coord = (coffee_inf[0][i] + release[0], coffee_inf[1][i] + release[1])
             if (new_coord[0] < mat.shape[0]) and (new_coord[1] < mat.shape[1]):
                 spores.append(new_coord)
 
     return spores
+
 
 ###################################################################
 #################    Random Walk    ###############################
@@ -230,7 +237,7 @@ def spore_walk(spores, land, mat, coord):
             else:
                 # Get movement location and move spore
                 indices = numpy.where(land_neighbors != 0)
-                index = random.choices(indices[0], k = 1) # Shit this is so hacky
+                index = random.choices(indices[0], k=1)  # Shit this is so hacky
                 movement = coord[index[0]]
                 new_coords = (old_coords[0] + movement[0], old_coords[1] + movement[1])
 
@@ -238,7 +245,7 @@ def spore_walk(spores, land, mat, coord):
 
                 old_coords = new_coords
 
-                step_credit = step_credit-land[new_coords[0], new_coords[1]]
+                step_credit = step_credit - land[new_coords[0], new_coords[1]]
 
                 for i in range(0, len(spores)):
                     coords = list(spores[i])
@@ -268,7 +275,7 @@ t = 1000
 reps = 50
 
 # Write the full function
-def real_function(raster, t=t, rep = reps):
+def real_function(raster, t=t, rep=reps):
     # Create blank array to store results
     perc_inf = numpy.empty((t, 5, reps))
 
@@ -280,31 +287,33 @@ def real_function(raster, t=t, rep = reps):
                     (0, -1), (0, 1),
                     (1, -1), (1, 0), (1, 1)]
 
-    # Create landscape
-    (coffee, start) = MakeCoffee(raster_in=raster)
-    landscape = MakeLand(raster_in=raster)
+    for i in range(rep):
 
-    for i in range(reps):
+        # Create landscape
+        (coffee, start) = MakeCoffee(raster_in=copy.deepcopy(raster))
+        landscape = MakeLand(raster_in=copy.deepcopy(raster))
+
         for j in range(t):
-            coffee = cellaut(mat = coffee, land = landscape)
+            coffee = cellaut(mat=coffee, land=landscape)
             walkers = new_spore(mat=coffee, coord=coord_change)
             (coffee, walkers) = spore_walk(mat=coffee, land=landscape, spores=walkers, coord=coord_change)
 
             perc_inf[j, 0, i] = j
             perc_inf[j, 1, i] = numpy.count_nonzero(coffee == 1) / \
                                 (numpy.count_nonzero(coffee == 1) + numpy.count_nonzero(coffee == 0))
-            perc_inf[j, 2, i] = start[0];
+            perc_inf[j, 2, i] = start[0]
             perc_inf[j, 3, i] = start[1]
             perc_inf[j, 4, i] = i
             print("j = " + str(j))
 
         print("i = " + str(i))
 
+
     return perc_inf
 
-#out1 = real_function(raster = land1)
+# out1 = real_function(raster=land1)
 out2 = real_function(raster = land2)
 
 # Save results
 final = out2.transpose(2, 0, 1).reshape(-1, out2.shape[1])
-numpy.savetxt("land2", final, delimiter=",")
+numpy.savetxt("land2.csv", final, delimiter=",")

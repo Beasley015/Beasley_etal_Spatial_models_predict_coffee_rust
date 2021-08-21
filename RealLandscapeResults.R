@@ -42,3 +42,15 @@ land2[land2 == 0] <- NA
 # Calculate aggregation index -------------------
 lsm_l_ai(land1)
 lsm_l_ai(land2)
+
+# Load model results -----------------------
+# Smol landscape
+land1res <- read.table("land1", sep = ",")
+colnames(land1res) <- c("Time", "PercInf", "X", "Y", "Rep")
+land1res$Rep <- land1res$Rep+1
+
+# Large landscape
+land2res <- read.table("land2", sep = ",")
+colnames(land2res) <- c("Time", "PercInf", "X", "Y", "Rep")
+land2res$Rep <- land2res$Rep+1
+
