@@ -45,12 +45,28 @@ lsm_l_ai(land2)
 
 # Load model results -----------------------
 # Smol landscape
-land1res <- read.table("land1", sep = ",")
+land1res <- read.table("land1.csv", sep = ",")
 colnames(land1res) <- c("Time", "PercInf", "X", "Y", "Rep")
 land1res$Rep <- land1res$Rep+1
 
 # Large landscape
-land2res <- read.table("land2", sep = ",")
+land2res <- read.table("land2.csv", sep = ",")
 colnames(land2res) <- c("Time", "PercInf", "X", "Y", "Rep")
 land2res$Rep <- land2res$Rep+1
 
+# Clean data -------------------------------
+# Pull out data from final time step
+land1final <- subset(land1res, land1res$Time == 999)
+land2final <- subset(land2res, land2res$Time == 999)
+
+ggplot()+
+  geom_histogram(aes(x = land1final$PercInf, fill = "Landscape 1"),
+                 binwidth = 0.05, color = "black")+
+  geom_histogram(aes(x = land2final$PercInf, fill = "Landscape 2"),
+                 alpha = 0.5, binwidth = 0.05, color = "black")+
+  scale_fill_manual(values = c("darkgray", "limegreen"))+
+  labs(x = "Percent Infected", y = "Frequency")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank(), legend.title = element_blank())
+
+# ggsave(filename = "realdatahists.jpeg", dpi = 600)
