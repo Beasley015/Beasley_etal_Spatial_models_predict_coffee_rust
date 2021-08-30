@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55a2d6f5-294c-4839-8aa1-4a00d1e03966" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RealLandscape.py" beforeDir="false" afterPath="$PROJECT_DIR$/RealLandscape.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RealLandscapeResults.R" beforeDir="false" afterPath="$PROJECT_DIR$/RealLandscapeResults.R" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/land1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/land2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LandscapeSim.py" beforeDir="false" afterPath="$PROJECT_DIR$/LandscapeSim.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

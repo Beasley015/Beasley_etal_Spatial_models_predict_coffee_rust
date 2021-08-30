@@ -105,91 +105,103 @@ output.mat <- readRDS("outputmat.rds")
 # Pull out data from final time step
 step.final <- subset(output.mat, output.mat$Time == 999)
 
+# Get average rate of spread (new cells per time step)
+avg.coffee <- data.frame(coff = as.character(c(0.1, 0.2, 0.3)),
+                         ncells = c(3605, 3610, 3630))
+
+rates <- output.mat %>%
+  left_join(y = avg.coffee, by = "coff") %>%
+  group_by(replicate, deforest, dispersion, coff) %>%
+  mutate(inf.cells = PercInf/(1/ncells)) %>%
+  mutate(NewInf = inf.cells-lag(inf.cells)) %>%
+  summarise(mean.rate = mean(NewInf, na.rm = T))
+
 # Make 0's a ridiculously small number so functions work
 step.final$PercInf[which(step.final$PercInf == 0)] <- 0.00000001
+rates$mean.rate[which(rates$mean.rate == 0)] <- 0.000000000000001
 
 # Summary stats ---------------------------------------
 # Histogram of all outcomes
-hist.all <- ggplot(data = step.final)+
-  geom_histogram(aes(x = PercInf), fill = 'lightgray', color = 'black', 
+hist.all <- ggplot(data = rates)+
+  geom_histogram(aes(x = mean.rate), fill = 'lightgray', color = 'black', 
                  boundary = 0)+
   scale_x_continuous(expand = c(0,0))+
-  scale_y_continuous(expand = c(0,0), limits = c(0,750))+
-  labs(x = "Rust Prevalence", y = "Count")+
+  scale_y_continuous(expand = c(0,0), limits = c(0,650))+
+  labs(x = "Avg. Infections per Time Step", y = "Count")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
 # ggsave(hist.all, filename = 'histall.jpeg')
-  
+
 # Range of prevalence values
-range(step.final$PercInf)
+range(rates$mean.rate)
 
 # Get parameters of distribution across all parameter combinations
-beta.all <- fitdist(step.final$PercInf, "beta")
+gamma.all <- fitdist(rates$mean.rate, "gamma")
 
 # Calculate expected value
-betaexpec <- function(x){
+gammaexpec <- function(x){
   a <- x$estimate[1]
   b <- x$estimate[2]
   
-  expec <- (a)/(a+b)
+  expec <- a/b
   
   return(expec)
 }
 
-betaexpec(beta.all)
+gammaexpec(gamma.all)
 
 # Calculate skew
-betaskew <- function(x){
+gammaskew <- function(x){
   a <- x$estimate[1]
   b <- x$estimate[2]
   
-  skew <- (2*(b-a)*sqrt(a+b+1))/((a+b+2)*sqrt(a*b))
+  skew <- 2/sqrt(a)
   
   return(skew)
 }
 
-betaskew(beta.all)
+gammaskew(gamma.all)
 
-# Calculate concentration parameter
-betakappa <- function(x){
+# Calculate kurtosis
+gammakurtosis <- function(x){
   a <- x$estimate[1]
   b <- x$estimate[2]
   
-  kap <- a + b
+  k <- 6/a
   
-  return(kap)
+  return(k)
 }
 
-betakappa(beta.all)
+gammakurtosis(gamma.all)
 
 # Histograms -------------------------------------
 # histogram time steps
-histo3 <- ggplot(data = step.final[which(step.final$coff==0.3),], 
-                 aes(PercInf*100)) +
+histo3 <- ggplot(data = rates[which(rates$coff==0.3),], 
+                 aes(mean.rate)) +
   geom_histogram(fill = "darkgrey", bins = 15) +
+  lims(x = c(NA,2))+
   facet_grid(vars(deforest), vars(dispersion)) +
-  lims(x = c(NA,55))+
   theme_classic(base_size = 18) +
-  labs(x="% Rust Infection", y="Frequency")+
+  labs(x="New Infections per Time Step", y="Frequency")+
   theme(axis.text.y = element_blank())
 
-histo2 <- ggplot(data = step.final[which(step.final$coff==0.2),], 
-                 aes(PercInf*100)) +
+histo2 <- ggplot(data = rates[which(rates$coff==0.2),], 
+                 aes(mean.rate)) +
   geom_histogram(fill = "darkgrey", bins = 15) +
+  lims(x = c(NA,2))+
   facet_grid(vars(deforest), vars(dispersion)) +
-  lims(x = c(NA,55))+
   theme_classic(base_size = 18) +
-  labs(x="% Rust Infection", y="Frequency")+
+  labs(x="New Infections per Time Step", y="Frequency")+
   theme(axis.text.y = element_blank())
 
-histo1 <- ggplot(data = step.final[which(step.final$coff==0.1),], 
-                 aes(PercInf*100)) +
+histo1 <- ggplot(data = rates[which(rates$coff==0.1),], 
+                 aes(mean.rate)) +
   geom_histogram(fill = "darkgrey", bins = 15) +
+  lims(x = c(NA,2))+
   facet_grid(vars(deforest), vars(dispersion)) +
-  lims(x = c(NA,55))+
   theme_classic(base_size = 18) +
-  labs(x="% Rust Infection", y="Frequency")+
+  labs(x="New Infections per Time Step", y="Frequency")+
   theme(axis.text.y = element_blank())
 
 # ggsave(histo1, filename = "hist1.jpeg", width = 8.5, height = 6)
@@ -198,14 +210,14 @@ histo1 <- ggplot(data = step.final[which(step.final$coff==0.1),],
 
 # Boxplots for each clustering value --------------
 # Max infection
-step.final %>%
+rates %>%
   group_by(deforest, dispersion, coff) %>%
-  summarise(max = max(PercInf)) %>%
+  summarise(max = max(mean.rate)) %>%
   {. ->> max.final}
 
 maxbox <- ggplot(data = max.final, aes(x = factor(coff), y = max))+
   geom_boxplot(fill = 'lightgray')+
-  labs(x = "Coffee Clustering", y = "Maximum % Infected")+
+  labs(x = "Coffee Clustering", y = "Maximum Infection Rate")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
   theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
@@ -213,15 +225,15 @@ maxbox <- ggplot(data = max.final, aes(x = factor(coff), y = max))+
 # ggsave(maxbox, file = "MaxInfBoxes.jpeg")
 
 # Expected value of the distribution
-beta.final <- step.final %>%
+gamma.final <- rates %>%
   group_by(deforest, dispersion, coff) %>%
-  mutate(alpha = fitdist(PercInf, "beta")$estimate[1]) %>%
-  mutate(beta = fitdist(PercInf, "beta")$estimate[2]) %>%
+  mutate(alpha = fitdist(mean.rate, "gamma")$estimate[1]) %>%
+  mutate(beta = fitdist(mean.rate, "gamma")$estimate[2]) %>%
   dplyr::select(deforest:beta) %>%
   distinct()
 
-exp.final <- beta.final %>%
-  mutate(Expected.Value = (alpha)/(alpha+beta))
+exp.final <- gamma.final %>%
+  mutate(Expected.Value = alpha/beta)
   
 expected.boxes <- ggplot(exp.final, aes(x = coff, y = Expected.Value))+
   geom_boxplot(fill = 'lightgray')+
@@ -234,9 +246,8 @@ expected.boxes <- ggplot(exp.final, aes(x = coff, y = Expected.Value))+
 # ggsave(expected.boxes, filename = 'expecplot.jpeg')
 
 # Calculate skew
-skew.final <- beta.final %>%
-  mutate(skew=((2*(beta-alpha)*sqrt(alpha+beta+1))/
-                 ((alpha+beta+2)*sqrt(alpha*beta))))
+skew.final <- gamma.final %>%
+  mutate(skew= 2/sqrt(alpha))
 
 skew.plot <- ggplot(data = skew.final, aes(x = coff, y = skew))+
   geom_boxplot(fill = 'lightgray')+
@@ -247,24 +258,24 @@ skew.plot <- ggplot(data = skew.final, aes(x = coff, y = skew))+
 
 # ggsave(skew.plot, filename = 'skewplot.jpeg')
 
-# Concentration parameter
-conc.final <- beta.final %>%
-  mutate(kappa = alpha + beta)
+# Kurtosis parameter
+k.final <- gamma.final %>%
+  mutate(k=6/alpha)
 
-conc.plot <- ggplot(data = conc.final, aes(x = coff, y = kappa))+
+k.plot <- ggplot(data = k.final, aes(x = coff, y = k))+
   geom_boxplot(fill = 'lightgray')+
-  labs(x = "Coffee Clustering", y = "Precision (Kappa)")+
+  labs(x = "Coffee Clustering", y = "Kurtosis")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
   theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
-# ggsave(conc.plot, filename = "spreadplot.jpeg")
+# ggsave(k.plot, filename = "kurtosisplot.jpeg")
 
 # Put all boxplots together
 megabox <- expected.boxes+ggtitle("A)")+
   maxbox+ggtitle("B)")+
   skew.plot+ggtitle("C)")+
-  conc.plot+ggtitle("D)")
+  k.plot+ggtitle("D)")
 
 # ggsave(megabox, file = 'megabox.jpeg', width = 8, height = 6.5,
 #        units = 'in')
@@ -289,11 +300,10 @@ cor.test(x = as.numeric(exp.hi$deforest), y = exp.hi$Expected.Value,
 cor.test(x = as.numeric(exp.hi$dispersion), y = exp.hi$Expected.Value, 
          method = "spearman")
 
-# ggsave(exp.hi.plot, file = 'exphiplot.jpeg')
-
 # No clear patterns at mid clustering
-ggplot(data = exp.mid, aes(x = deforest, y = Expected.Value, color = dispersion))+
-  geom_jitter(size = 2)+
+ggplot(data = exp.mid, aes(x = deforest, y = Expected.Value, 
+                           color = dispersion))+
+  geom_point(size = 2)+
   labs(x = '% Deforestation', y = 'Expected Value')+
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
@@ -306,7 +316,7 @@ cor.test(x = as.numeric(exp.mid$dispersion), y = exp.mid$Expected.Value,
 
 # Ditto low clustering
 ggplot(data = exp.lo, aes(x = deforest, y = Expected.Value, color = dispersion))+
-  geom_jitter(size = 2)+
+  geom_point(size = 2)+
   labs(x = '% Deforestation', y = 'Expected Value')+
   scale_color_viridis_d(name = "Dispersion")+
   theme_bw(base_size = 18)+
@@ -356,7 +366,7 @@ max.hi.plot <- ggplot(data = max.hi, aes(x = dispersion, y = max,
 cor.test(x = as.numeric(max.hi$deforest), y = max.hi$max, method = "spearman")
 cor.test(x = as.numeric(max.hi$dispersion), y = max.hi$max, method = "spearman")
 
-ggsave(max.hi.plot, filename = "maxhiplot.jpeg")
+# ggsave(max.hi.plot, filename = "maxhiplot.jpeg")
 
 # Skew ##
 skew.hi <- filter(skew.final, coff == '0.3')
@@ -396,13 +406,13 @@ ggplot(data = skew.lo, aes(x = deforest, y = skew, color = dispersion))+
 cor.test(x = as.numeric(skew.lo$deforest), y = skew.lo$skew, method = "spearman")
 cor.test(x = as.numeric(skew.lo$dispersion), y = skew.lo$skew, method = "spearman")
 
-# Concentration param ##
-conc.hi <- filter(conc.final, coff == '0.3')
-conc.mid <- filter(conc.final, coff == '0.2')
-conc.lo <- filter(conc.final, coff == '0.1')
+# Kurtosis ##
+k.hi <- filter(k.final, coff == '0.3')
+k.mid <- filter(k.final, coff == '0.2')
+k.lo <- filter(k.final, coff == '0.1')
 
 # No clear patterns at high clustering
-ggplot(data = conc.hi, aes(x = as.numeric(dispersion), y = kappa,
+ggplot(data = k.hi, aes(x = as.numeric(dispersion), y = k,
                             color = deforest))+
   geom_point(size = 2)+
   labs(x = "Dispersion", y = "Precision (Kappa)")+
@@ -410,35 +420,33 @@ ggplot(data = conc.hi, aes(x = as.numeric(dispersion), y = kappa,
   theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
 
-cor.test(x = as.numeric(conc.hi$deforest), y = conc.hi$kappa, method = "spearman")
-cor.test(x = as.numeric(conc.hi$dispersion), y = conc.hi$kappa, method = "spearman")
+cor.test(x = as.numeric(k.hi$deforest), y = k.hi$k, method = "spearman")
+cor.test(x = as.numeric(k.hi$dispersion), y = k.hi$k, method = "spearman")
 
-# Slight pattern at mid clustering
-kappa.mid.plot <- ggplot(data = conc.mid, aes(x = as.numeric(dispersion), y = kappa, 
+# No at mid clustering
+ggplot(data = k.mid, aes(x = as.numeric(dispersion), y = k, 
                             color = deforest))+
   geom_point(size = 2)+
-  labs(x = "Dispersion", y = "Precision (Kappa)")+
+  labs(x = "Dispersion", y = "Kurtosis")+
   scale_color_viridis_d(name = "% Deforestation")+
   theme_bw(base_size = 18)+
   theme(panel.grid = element_blank())
 
-# ggsave(kappa.mid.plot, filename = "kappamidplot.jpeg")
-
-cor.test(x = as.numeric(conc.mid$deforest), y = conc.mid$kappa, method = "spearman")
-cor.test(x = as.numeric(conc.mid$dispersion), y = conc.mid$kappa, 
+cor.test(x = as.numeric(k.mid$deforest), y = k.mid$k, method = "spearman")
+cor.test(x = as.numeric(k.mid$dispersion), y = k.mid$k, 
          method = "spearman")
 
 # No clear patterns at low clustering
-ggplot(data = conc.lo, aes(x = as.numeric(deforest), y = kappa, 
+ggplot(data = k.lo, aes(x = as.numeric(deforest), y = k, 
                            color = dispersion))+
-  geom_point(size = 1.5)+
-  labs(x = "% Deforestation", y = "Kappa")+
+  geom_point(size = 2)+
+  labs(x = "% Deforestation", y = "Kurtosis")+
   scale_color_viridis_d(name = "Dispersion")+
-  theme_bw(base_size = 1)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
-cor.test(x = as.numeric(conc.lo$deforest), y = conc.lo$kappa, method = "spearman")
-cor.test(x = as.numeric(conc.lo$dispersion), y = conc.lo$kappa, method = "spearman")
+cor.test(x = as.numeric(k.lo$deforest), y = k.lo$k, method = "spearman")
+cor.test(x = as.numeric(k.lo$dispersion), y = k.lo$k, method = "spearman")
 
 # Does starting location matter -------------------------------
 all.loc <- step.final %>%

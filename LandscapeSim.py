@@ -2,6 +2,7 @@ import numpy
 import random
 #import matplotlib.pyplot as plt
 from nlmpy import nlmpy as nlm
+from statistics import mean
 
 ##############################################################################
 ################        Neighbors Function             #######################
@@ -67,6 +68,15 @@ def MakeLandscape(size, deforest, disp, cluster):
     start = numpy.where(coffee == 1)
 
     return(coffee, landscape, start)
+
+# Code for avg. number of coffee cells per landscape
+ncells = []
+for i in range(10):
+    (x, landscape, start) = MakeLandscape(120, 0.45, 3, 0.3)
+    sum = numpy.count_nonzero(~numpy.isnan(x))
+    ncells.append(sum)
+
+print(mean(ncells))
 
 ###################################################################
 ##############    Cellular Automata    ############################
