@@ -354,11 +354,11 @@ ggplot(data = max.mid, aes(x = deforest, y = max, color = dispersion))+
 cor.test(x = as.numeric(max.mid$deforest), y = max.mid$max, method = "spearman")
 cor.test(x = as.numeric(max.mid$dispersion), y = max.mid$max, method = "spearman")
 
-# High dispersion = hi max infection at high clustering
+# High dispersion = hi max rate at high clustering
 max.hi.plot <- ggplot(data = max.hi, aes(x = dispersion, y = max, 
                                          color = deforest))+
   geom_point(size = 2)+
-  labs(x = "Dispersion", y = "Maximum Infection")+
+  labs(x = "Dispersion", y = "Maximum Rate of Spread")+
   scale_color_viridis_d(name = "Deforestation")+
   theme_bw(base_size = 16)+
   theme(panel.grid = element_blank())
