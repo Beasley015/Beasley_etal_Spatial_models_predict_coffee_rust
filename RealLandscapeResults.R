@@ -11,6 +11,7 @@ library(rgdal)
 library(raster)
 library(tidyverse)
 library(effectsize)
+library(ggnewscale)
 
 # Raw raster data
 x <- new("GDALReadOnlyDataset", "./coffeeRust_landuses")
@@ -117,42 +118,55 @@ ggsave(filename = "RateNewInf.jpeg", dpi = 600)
   
 # Look at locations of outbreaks: small landscape ----------------------  
 # Get high and low quantiles
-land1highs <- rates %>%
+land1coord <- rates %>%
   filter(landscape == "Land1") %>%
-  filter(mean.rate >= quantile(mean.rate, 0.75)) %>%
-  mutate(Quant = "High")
-
-land1lows <- rates %>%
-  filter(landscape == "Land1") %>%
-  filter(mean.rate <= quantile(mean.rate, 0.25)) %>%
-  mutate(Quant = "Low")
-
-# Combine
-land1quants <- rbind(land1highs, land1lows)
+  mutate(Quant = case_when(mean.rate >= quantile(mean.rate, 0.75)~"High",
+                           mean.rate <= quantile(mean.rate, 0.25)~"Low",
+                           TRUE ~ "Mid"))
 
 # Get starting coords
-land1smol <- subset(land1final, Rep %in% land1quants$Rep)[,c(3:5)]
+land1smol <- subset(land1final, Rep %in% land1coord$Rep)[,c(3:5)]
 
 # Combine data frames
-land1coords <- full_join(land1quants, land1smol, by = "Rep")
+land1coords <- full_join(land1coord, land1smol, by = "Rep")
 
 # Look at locations of outbreaks: large landscape ----------------------  
-# Get high and low quantiles
-land2highs <- rates %>%
+# Assign to quantiles
+land2coord <- rates %>%
   filter(landscape == "Land2") %>%
-  filter(mean.rate >= quantile(mean.rate, 0.75)) %>%
-  mutate(Quant = "High")
-
-land2lows <- rates %>%
-  filter(landscape == "Land2") %>%
-  filter(mean.rate <= quantile(mean.rate, 0.25)) %>%
-  mutate(Quant = "Low")
-
-# Combine
-land2quants <- rbind(land2highs, land2lows)
+  mutate(Quant = case_when(mean.rate >= quantile(mean.rate, 0.75)~"High",
+                           mean.rate <= quantile(mean.rate, 0.25)~"Low",
+                           TRUE ~ "Mid"))
 
 # Get starting coords
-land2smol <- subset(land2final, Rep %in% land2quants$Rep)[,c(3:5)]
+land2smol <- subset(land2final, Rep %in% land2coord$Rep)[,c(3:5)]
 
 # Combine data frames
-land2coords <- full_join(land2quants, land2smol, by = "Rep")
+land2coords <- full_join(land2coord, land2smol, by = "Rep")
+
+# Plot on raster -------------------------
+# Quick glance
+qplot(data = land1coords, x = X, y = Y, color = Quant)
+qplot(data = land2coords, x = X, y = Y, color = Quant)
+
+# Convert to data frames
+land1df <- as.data.frame(land1raw, xy = T, long = T, na.rm = T) %>%
+  dplyr::select(-layer) %>%
+  mutate(row = colFromX(land1raw, x), col = rowFromY(land1raw, y),
+         value = factor(value))
+
+land2df <- as.data.frame(land2raw, xy = T, long = T, na.rm = T) %>%
+  dplyr::select(-layer) %>%
+  mutate(col = colFromX(land2raw, x), row = rowFromY(land2raw, y), 
+         value = factor(value))
+
+# Plot
+ggplot()+
+  geom_raster(data = land1df, mapping = aes(x = row, y = -col, 
+                                            fill = value))+
+  scale_fill_manual(values = gray.colors(n = length(levels(land1df$value))))+
+  geom_point(data = land1coords, mapping = aes(x = X, 
+                                               y = Y-max(land1df$col), 
+                                               color = Quant))
+# raster and points don't line up. Check raster trim
+  
