@@ -30,9 +30,11 @@ colNA <- which(colSums(rawmat) == nrow(bothlands))
 # Trim both rasters
 land1extent <- extent(bothlands, 1, nrow(rawmat), 1, colNA[1]-1)
 land1raw <- crop(bothlands, land1extent)
+land1raw <- trim(land1raw, values = NA)
 
 land2extent <- extent(bothlands, 1, nrow(rawmat), colNA[3]+1,ncol(rawmat))
 land2raw <- crop(bothlands, land2extent)
+land2raw <- trim(land2raw, values = NA)
 
 # Extract coffee values
 land1 <- land1raw == 5
@@ -41,20 +43,40 @@ land1[land1 == 0] <- NA
 land2 <- land2raw == 5
 land2[land2 == 0] <- NA
 
+# Get % coffee per landscape -------------------
+land1vals <- freq(land1raw)
+land1vals[5,2]/sum(land1vals[1:7,2])
+
+land2vals <- freq(land2raw)
+land2vals[5,2]/sum(land2vals[1:7,2])
+
+# Get % deforested per landscape -----------------
+sum(land1vals[c(2,4,6),2])/sum(land1vals[-c(5,7),2])
+sum(land2vals[c(2,4,6),2])/sum(land2vals[-c(5,7),2])
+
 # Calculate aggregation index -------------------
 lsm_l_ai(land1)
 lsm_l_ai(land2)
 
 # Load model results -----------------------
+# Read in raw numpy arrays
+land1mat <- read.table("land1raw.csv", sep = ",")
+colnames(land1mat) <- as.character(1:ncol(land1mat))
+
+land2mat <- read.table("land2raw.csv", sep = ",")
+colnames(land2mat) <- as.character(1:ncol(land2mat))
+
 # Smol landscape
 land1res <- read.table("land1.csv", sep = ",")
-colnames(land1res) <- c("Time", "PercInf", "X", "Y", "Rep")
-land1res$Rep <- land1res$Rep+1
+colnames(land1res) <- c("Time", "PercInf", "Y", "X", "Rep")
+land1res <- land1res %>%
+  mutate(Rep = Rep+1, X = X+1, Y = Y+1)
 
 # Large landscape
 land2res <- read.table("land2.csv", sep = ",")
 colnames(land2res) <- c("Time", "PercInf", "X", "Y", "Rep")
-land2res$Rep <- land2res$Rep+1
+land2res <- land2res %>%
+  mutate(Rep = Rep+1, X = X+1, Y=Y+1)
 
 # Clean data -------------------------------
 # Pull out data from final time step
@@ -111,10 +133,11 @@ ggplot(data = rates, aes(x = mean.rate, fill = landscape))+
 ggplot(data = rates, aes(x = landscape, y = mean.rate))+
   geom_boxplot(fill = "lightgray")+
   labs(x = "Landscape", y = "Avg. Infections per Time Step")+
+  scale_x_discrete(labels = c("Landscape1", "Landscape2"))+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
-ggsave(filename = "RateNewInf.jpeg", dpi = 600)
+# ggsave(filename = "RateNewInf.jpeg", dpi = 600)
   
 # Look at locations of outbreaks: small landscape ----------------------  
 # Get high and low quantiles
@@ -150,23 +173,116 @@ qplot(data = land1coords, x = X, y = Y, color = Quant)
 qplot(data = land2coords, x = X, y = Y, color = Quant)
 
 # Convert to data frames
-land1df <- as.data.frame(land1raw, xy = T, long = T, na.rm = T) %>%
-  dplyr::select(-layer) %>%
-  mutate(row = colFromX(land1raw, x), col = rowFromY(land1raw, y),
-         value = factor(value))
+land1df <- land1mat %>%
+  mutate(row = rownames(land1mat)) %>%
+  pivot_longer(!row, names_to = "col", values_to = "cover_type") %>%
+  filter(cover_type != "NaN") %>%
+  mutate(cover_type = factor(cover_type), row = as.numeric(row),
+         col = as.numeric(col))
 
-land2df <- as.data.frame(land2raw, xy = T, long = T, na.rm = T) %>%
-  dplyr::select(-layer) %>%
-  mutate(col = colFromX(land2raw, x), row = rowFromY(land2raw, y), 
-         value = factor(value))
+land2df <- land2mat %>%
+  mutate(row = rownames(land2mat)) %>%
+  pivot_longer(!row, names_to = "col", values_to = "cover_type") %>%
+  filter(cover_type != "NaN") %>%
+  mutate(cover_type = factor(cover_type), row = as.numeric(row),
+         col = as.numeric(col))
 
-# Plot
+# Plots
 ggplot()+
-  geom_raster(data = land1df, mapping = aes(x = row, y = -col, 
-                                            fill = value))+
-  scale_fill_manual(values = gray.colors(n = length(levels(land1df$value))))+
-  geom_point(data = land1coords, mapping = aes(x = X, 
-                                               y = Y-max(land1df$col), 
-                                               color = Quant))
-# raster and points don't line up. Check raster trim
+  geom_raster(data = land1df, mapping = aes(x = col, y = row,
+                                            fill = cover_type))+
+  scale_fill_manual(values = gray.colors(n = 8, start = 0.6))+
+  geom_point(data = land1coords, mapping = aes(x = X, y = Y,
+                                               color = Quant),
+             size = 2.5)+
+  scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"))+
+  scale_y_reverse()+
+  theme_bw()+
+  theme(axis.title = element_blank(), axis.text = element_blank(), 
+        panel.grid = element_blank())
+
+# ggsave("land1start.jpeg", dpi = 600)
+
+ggplot()+
+  geom_raster(data = land2df, mapping = aes(x = row, y = col, 
+                                            fill = cover_type))+
+  scale_fill_manual(values = gray.colors(n = 8, start = 0.6))+
+  geom_point(data = land2coords, mapping = aes(x = X, y = Y,
+                                               color = Quant),
+             size = 2.5)+
+  coord_flip()+
+  scale_x_reverse()+
+  scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"))+
+  theme_bw()+
+  theme(axis.title = element_blank(), axis.text = element_blank(), 
+        panel.grid = element_blank())
+
+# ggsave("land2start.jpeg", dpi = 600)
+
+# Draw "buffers" around points & get % cover --------------------------
+
+# Function to get % of each land cover around starting locations
+get_surroundings <- function(start_loc, lands){
+  vals <- list()
   
+  for(i in 1:nrow(start_loc)){
+    # Filter values from df
+    smol <- lands %>%
+      filter(row > start_loc$X[i]-15 & row < start_loc$X[i]+15) %>%
+      filter(col > start_loc$Y[i]-15 & col < start_loc$Y[i]+15)
+    
+    # Get counts of values and convert to % of total
+    vals[[i]] <- smol %>%
+      group_by(cover_type) %>%
+      summarise(count = n()) %>%
+      mutate(percent_cover = count/sum(count)) %>%
+      select(cover_type, percent_cover) %>%
+      pivot_wider(names_from = cover_type, values_from = percent_cover)
+  }
+  
+  # Convert list to data frame
+  vals.df <- bind_rows(vals)
+  
+  # Append to coords object
+  lands <- cbind(start_loc, vals.df)
+  
+  return(lands)
+}
+
+around.land1 <- get_surroundings(start_loc = land1coords, lands = land1df)
+around.land2 <- get_surroundings(start_loc = land2coords, lands = land2df)
+
+# Quick boxplots to look at how % coffee compares across categories
+qplot(data = around.land1, x = Quant, y = `5`, geom = "boxplot")
+qplot(data = around.land2, x = Quant, y = `5`, geom = "boxplot")
+
+# Boxplots to look at forest cover
+qplot(data = around.land1, x = Quant, y = `1`, geom = "boxplot")
+qplot(data = around.land2, x = Quant, y = `1`, geom = "boxplot")
+
+# Make nice box plots for landscape 2
+around.land2$Quant <- factor(around.land2$Quant, levels = c("Low", "Mid",
+                                                            "High"))
+
+ggplot(data = around.land2, aes(x = Quant, y = `5`))+
+  geom_boxplot(fill = "lightgray")+
+  scale_x_discrete(breaks = c("Low", "Mid", "High"))+
+  labs(x = "Rate of Spread", y = "% Coffee Cover")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+# ggsave(file = "surrounding_coffee.jpeg", dpi = 600)
+
+ggplot(data = around.land2, aes(x = Quant, y = `1`))+
+  geom_boxplot(fill = "lightgray")+
+  scale_x_discrete(breaks = c("Low", "Mid", "High"))+
+  labs(x = "Rate of Spread", y = "% Forest Cover")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+# ggsave(file = "surrounding_forest.jpeg", dpi = 600)
+
+# Look at domain effects in landscape 1 -----------------
+# Get distance from edge
+
+# Compare to rate of spread
