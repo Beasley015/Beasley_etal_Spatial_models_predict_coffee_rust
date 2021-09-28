@@ -284,5 +284,57 @@ ggplot(data = around.land2, aes(x = Quant, y = `1`))+
 
 # Look at domain effects in landscape 1 -----------------
 # Get distance from edge
+get.distance <- function(x){
+  min.dist <- logical()
+  
+  for(i in 1:nrow(x)){
+    test.loc <- x[i,]
+
+    boundaries <- which(land1mat == "NaN", arr.ind = T)
+
+    dist <- abs((test.loc$X-boundaries[,2]))+
+                         abs((test.loc$Y-boundaries[,1]))
+    
+    min.dist[i] <- min(dist)
+  }
+  
+  return(min.dist)
+}
+
+land1dist <- get.distance(land1coords)
+land2dist <- get.distance(land2coords)
 
 # Compare to rate of spread
+land1coords$dist <- land1dist
+land2coords$dist <- land2dist
+
+qplot(data = land1coords, x = dist, y = mean.rate)
+summary(lm(data = land1coords, mean.rate~dist))
+cor.test(land1coords$dist, land1coords$mean.rate, method = "spearman")
+
+qplot(data = land2coords, x = dist, y = mean.rate)
+summary(lm(data = land2coords, mean.rate~dist))
+cor.test(land2coords$dist, land2coords$mean.rate, method = "spearman")
+
+# distance doesn't seem to matter...
+
+# try Moran's i -------------------------
+# Landscape 1
+land1distmat <- as.matrix(dist(cbind(land1coords$X, land1coords$Y)))
+
+land1inv <- 1/land1distmat
+
+diag(land1inv) <- 0
+
+Moran.I(land1coords$mean.rate, land1inv)
+
+# Landscape 2
+land2distmat <- as.matrix(dist(cbind(land2coords$X, land2coords$Y)))
+
+land2inv <- 1/land2distmat
+
+diag(land2inv) <- 0
+
+Moran.I(land2coords$mean.rate, land2inv)
+
+#both landscapes autocorrelated
