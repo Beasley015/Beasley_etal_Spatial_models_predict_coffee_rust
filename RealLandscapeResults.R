@@ -11,6 +11,7 @@ library(rgdal)
 library(raster)
 library(tidyverse)
 library(effectsize)
+library(patchwork)
 library(ggnewscale)
 
 # Raw raster data
@@ -188,14 +189,16 @@ land2df <- land2mat %>%
          col = as.numeric(col))
 
 # Plots
-ggplot()+
+land1start <- ggplot()+
   geom_raster(data = land1df, mapping = aes(x = col, y = row,
                                             fill = cover_type))+
-  scale_fill_manual(values = gray.colors(n = 8, start = 0.6))+
+  scale_fill_manual(values = gray.colors(n = 8, start = 0.6),
+                    name = "Cover Type")+
   geom_point(data = land1coords, mapping = aes(x = X, y = Y,
                                                color = Quant),
              size = 2.5)+
-  scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"))+
+  scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"),
+                        name = "Quantile")+
   scale_y_reverse()+
   theme_bw()+
   theme(axis.title = element_blank(), axis.text = element_blank(), 
@@ -203,21 +206,30 @@ ggplot()+
 
 # ggsave("land1start.jpeg", dpi = 600)
 
-ggplot()+
+land2start <- ggplot()+
   geom_raster(data = land2df, mapping = aes(x = row, y = col, 
                                             fill = cover_type))+
-  scale_fill_manual(values = gray.colors(n = 8, start = 0.6))+
+  scale_fill_manual(values = gray.colors(n = 8, start = 0.6),
+                    name = "Cover Type")+
   geom_point(data = land2coords, mapping = aes(x = X, y = Y,
                                                color = Quant),
              size = 2.5)+
   coord_flip()+
   scale_x_reverse()+
-  scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"))+
+  scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"),
+                        name = "Quantile")+
   theme_bw()+
   theme(axis.title = element_blank(), axis.text = element_blank(), 
         panel.grid = element_blank())
 
 # ggsave("land2start.jpeg", dpi = 600)
+
+(land1start|land2start)+
+  guides(color = guide_legend(title = "Quantile"))+
+  plot_layout(guides = "collect")+
+  plot_annotation(tag_levels = "A")
+
+# ggsave("landstarts.jpeg", dpi = 600, width = 8, units = "in")
 
 # Draw "buffers" around points & get % cover --------------------------
 
@@ -228,8 +240,8 @@ get_surroundings <- function(start_loc, lands){
   for(i in 1:nrow(start_loc)){
     # Filter values from df
     smol <- lands %>%
-      filter(row > start_loc$X[i]-15 & row < start_loc$X[i]+15) %>%
-      filter(col > start_loc$Y[i]-15 & col < start_loc$Y[i]+15)
+      filter(row > start_loc$X[i]-50 & row < start_loc$X[i]+50) %>%
+      filter(col > start_loc$Y[i]-50 & col < start_loc$Y[i]+50)
     
     # Get counts of values and convert to % of total
     vals[[i]] <- smol %>%
@@ -252,35 +264,52 @@ get_surroundings <- function(start_loc, lands){
 around.land1 <- get_surroundings(start_loc = land1coords, lands = land1df)
 around.land2 <- get_surroundings(start_loc = land2coords, lands = land2df)
 
-# Quick boxplots to look at how % coffee compares across categories
+# Quick plots to look at how % coffee compares across categories
 qplot(data = around.land1, x = Quant, y = `5`, geom = "boxplot")
 qplot(data = around.land2, x = Quant, y = `5`, geom = "boxplot")
+qplot(data = around.land1, x = `5`, y = mean.rate)
+qplot(data = around.land2, x = `5`, y = mean.rate)
 
-# Boxplots to look at forest cover
+# Plots to look at forest cover
 qplot(data = around.land1, x = Quant, y = `1`, geom = "boxplot")
 qplot(data = around.land2, x = Quant, y = `1`, geom = "boxplot")
+qplot(data = around.land1, x = `1`, y = mean.rate)
+qplot(data = around.land2, x = `1`, y = mean.rate)
 
-# Make nice box plots for landscape 2
-around.land2$Quant <- factor(around.land2$Quant, levels = c("Low", "Mid",
-                                                            "High"))
+cor.test(around.land1$`1`, around.land1$mean.rate)
+cor.test(around.land2$`1`, around.land2$mean.rate)
 
-ggplot(data = around.land2, aes(x = Quant, y = `5`))+
-  geom_boxplot(fill = "lightgray")+
-  scale_x_discrete(breaks = c("Low", "Mid", "High"))+
-  labs(x = "Rate of Spread", y = "% Coffee Cover")+
+# Make nice plots
+local.coffee1 <- ggplot(data = around.land1, aes(x = `5`, y = mean.rate))+
+  geom_point()+
+  labs(x = "% Coffee Cover", y = "Mean Rate of Spread")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-# ggsave(file = "surrounding_coffee.jpeg", dpi = 600)
+cor.test(around.land1$`5`, around.land1$mean.rate)
 
-ggplot(data = around.land2, aes(x = Quant, y = `1`))+
-  geom_boxplot(fill = "lightgray")+
-  scale_x_discrete(breaks = c("Low", "Mid", "High"))+
-  labs(x = "Rate of Spread", y = "% Forest Cover")+
+local.coffee2 <- ggplot(data = around.land2, aes(x = `5`, y = mean.rate))+
+  geom_point()+
+  labs(x = "% Coffee Cover", y = "Mean Rate of Spread")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-# ggsave(file = "surrounding_forest.jpeg", dpi = 600)
+cor.test(around.land2$`5`, around.land2$mean.rate)
+
+local.coffee <- (local.coffee1|local.coffee2) +
+  plot_annotation(tag_levels = "A")
+
+# ggsave(file = "local_coffee.jpeg", dpi = 600, width = 7, units = "in")
+
+local.forest2 <- ggplot(data = around.land2, aes(x = `1`, y = mean.rate))+
+  geom_point()+
+  labs(x = "% Forest Cover", y = "Mean Rate of Spread")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+cor.test(around.land2$`1`, around.land2$mean.rate)
+
+# ggsave(file = "local_forest2.jpeg", dpi = 600)
 
 # Look at domain effects in landscape 1 -----------------
 # Get distance from edge
