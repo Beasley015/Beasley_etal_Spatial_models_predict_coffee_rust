@@ -240,8 +240,8 @@ get_surroundings <- function(start_loc, lands){
   for(i in 1:nrow(start_loc)){
     # Filter values from df
     smol <- lands %>%
-      filter(row > start_loc$X[i]-50 & row < start_loc$X[i]+50) %>%
-      filter(col > start_loc$Y[i]-50 & col < start_loc$Y[i]+50)
+      filter(col > start_loc$X[i]-50 & col < start_loc$X[i]+50) %>%
+      filter(row > start_loc$Y[i]-50 & row < start_loc$Y[i]+50)
     
     # Get counts of values and convert to % of total
     vals[[i]] <- smol %>%
@@ -263,6 +263,7 @@ get_surroundings <- function(start_loc, lands){
 
 around.land1 <- get_surroundings(start_loc = land1coords, lands = land1df)
 around.land2 <- get_surroundings(start_loc = land2coords, lands = land2df)
+# Weird error in 2, gonna ignore for now
 
 # Quick plots to look at how % coffee compares across categories
 qplot(data = around.land1, x = Quant, y = `5`, geom = "boxplot")
