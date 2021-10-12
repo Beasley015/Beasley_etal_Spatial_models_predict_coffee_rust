@@ -178,27 +178,32 @@ land1df <- land1mat %>%
   mutate(row = rownames(land1mat)) %>%
   pivot_longer(!row, names_to = "col", values_to = "cover_type") %>%
   filter(cover_type != "NaN") %>%
-  mutate(cover_type = factor(cover_type), row = as.numeric(row),
-         col = as.numeric(col))
+  mutate(cover_type = as.character(cover_type), row = as.numeric(row),
+         col = as.numeric(col)) %>%
+  mutate(cover_type = case_when(cover_type == "5" ~ "Coffee",
+                                TRUE ~ "Other"))
+  
 
 land2df <- land2mat %>%
   mutate(row = rownames(land2mat)) %>%
   pivot_longer(!row, names_to = "col", values_to = "cover_type") %>%
   filter(cover_type != "NaN") %>%
   mutate(cover_type = factor(cover_type), row = as.numeric(row),
-         col = as.numeric(col))
+         col = as.numeric(col)) %>%
+  mutate(cover_type = case_when(cover_type == "5" ~ "Coffee",
+                                TRUE ~ "Other"))
 
 # Plots
 land1start <- ggplot()+
   geom_raster(data = land1df, mapping = aes(x = col, y = row,
                                             fill = cover_type))+
-  scale_fill_manual(values = gray.colors(n = 8, start = 0.6),
+  scale_fill_manual(values = gray.colors(n = 8, start = 0.5),
                     name = "Cover Type")+
   geom_point(data = land1coords, mapping = aes(x = X, y = Y,
                                                color = Quant),
              size = 2.5)+
   scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"),
-                        name = "Quantile")+
+                        name = "Rate of Spread")+
   scale_y_reverse()+
   theme_bw()+
   theme(axis.title = element_blank(), axis.text = element_blank(), 
@@ -209,7 +214,7 @@ land1start <- ggplot()+
 land2start <- ggplot()+
   geom_raster(data = land2df, mapping = aes(x = row, y = col, 
                                             fill = cover_type))+
-  scale_fill_manual(values = gray.colors(n = 8, start = 0.6),
+  scale_fill_manual(values = gray.colors(n = 8, start = 0.5),
                     name = "Cover Type")+
   geom_point(data = land2coords, mapping = aes(x = X, y = Y,
                                                color = Quant),
@@ -217,7 +222,7 @@ land2start <- ggplot()+
   coord_flip()+
   scale_x_reverse()+
   scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"),
-                        name = "Quantile")+
+                        name = "Rate of Spread")+
   theme_bw()+
   theme(axis.title = element_blank(), axis.text = element_blank(), 
         panel.grid = element_blank())
@@ -225,7 +230,7 @@ land2start <- ggplot()+
 # ggsave("land2start.jpeg", dpi = 600)
 
 (land1start|land2start)+
-  guides(color = guide_legend(title = "Quantile"))+
+  guides(color = guide_legend(title = "Rate of Spread"))+
   plot_layout(guides = "collect")+
   plot_annotation(tag_levels = "A")
 
@@ -250,10 +255,16 @@ get_surroundings <- function(start_loc, lands){
       mutate(percent_cover = count/sum(count)) %>%
       select(cover_type, percent_cover) %>%
       pivot_wider(names_from = cover_type, values_from = percent_cover)
+    
+    if(nrow(vals[[i]]) == 0){
+      start_loc[i,] <- rep(NA, 6)
+    }
   }
   
   # Convert list to data frame
   vals.df <- bind_rows(vals)
+  
+  start_loc <- na.omit(start_loc)
   
   # Append to coords object
   lands <- cbind(start_loc, vals.df)
@@ -263,54 +274,36 @@ get_surroundings <- function(start_loc, lands){
 
 around.land1 <- get_surroundings(start_loc = land1coords, lands = land1df)
 around.land2 <- get_surroundings(start_loc = land2coords, lands = land2df)
-# Weird error in 2, gonna ignore for now
 
 # Quick plots to look at how % coffee compares across categories
-qplot(data = around.land1, x = Quant, y = `5`, geom = "boxplot")
-qplot(data = around.land2, x = Quant, y = `5`, geom = "boxplot")
-qplot(data = around.land1, x = `5`, y = mean.rate)
-qplot(data = around.land2, x = `5`, y = mean.rate)
-
-# Plots to look at forest cover
-qplot(data = around.land1, x = Quant, y = `1`, geom = "boxplot")
-qplot(data = around.land2, x = Quant, y = `1`, geom = "boxplot")
-qplot(data = around.land1, x = `1`, y = mean.rate)
-qplot(data = around.land2, x = `1`, y = mean.rate)
-
-cor.test(around.land1$`1`, around.land1$mean.rate)
-cor.test(around.land2$`1`, around.land2$mean.rate)
+qplot(data = around.land1, x = Quant, y = Coffee, geom = "boxplot")
+qplot(data = around.land2, x = Quant, y = Coffee, geom = "boxplot")
+qplot(data = around.land1, x = Coffee, y = mean.rate)
+qplot(data = around.land2, x = Coffee, y = mean.rate)
 
 # Make nice plots
-local.coffee1 <- ggplot(data = around.land1, aes(x = `5`, y = mean.rate))+
+local.coffee1 <- ggplot(data = around.land1, aes(x = Coffee, 
+                                                 y = mean.rate))+
   geom_point()+
   labs(x = "% Coffee Cover", y = "Mean Rate of Spread")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-cor.test(around.land1$`5`, around.land1$mean.rate)
+cor.test(around.land1$Coffee, around.land1$mean.rate)
 
-local.coffee2 <- ggplot(data = around.land2, aes(x = `5`, y = mean.rate))+
+local.coffee2 <- ggplot(data = around.land2, aes(x = Coffee,
+                                                 y = mean.rate))+
   geom_point()+
   labs(x = "% Coffee Cover", y = "Mean Rate of Spread")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-cor.test(around.land2$`5`, around.land2$mean.rate)
+cor.test(around.land2$Coffee, around.land2$mean.rate)
 
 local.coffee <- (local.coffee1|local.coffee2) +
   plot_annotation(tag_levels = "A")
 
 # ggsave(file = "local_coffee.jpeg", dpi = 600, width = 7, units = "in")
-
-local.forest2 <- ggplot(data = around.land2, aes(x = `1`, y = mean.rate))+
-  geom_point()+
-  labs(x = "% Forest Cover", y = "Mean Rate of Spread")+
-  theme_bw(base_size = 14)+
-  theme(panel.grid = element_blank())
-
-cor.test(around.land2$`1`, around.land2$mean.rate)
-
-# ggsave(file = "local_forest2.jpeg", dpi = 600)
 
 # Look at domain effects in landscape 1 -----------------
 # Get distance from edge
