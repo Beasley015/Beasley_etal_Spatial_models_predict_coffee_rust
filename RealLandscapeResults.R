@@ -181,6 +181,7 @@ land1df <- land1mat %>%
   mutate(cover_type = as.character(cover_type), row = as.numeric(row),
          col = as.numeric(col)) %>%
   mutate(cover_type = case_when(cover_type == "5" ~ "Coffee",
+                                cover_type == "1" ~ "Forest",
                                 TRUE ~ "Other"))
   
 
@@ -191,6 +192,7 @@ land2df <- land2mat %>%
   mutate(cover_type = factor(cover_type), row = as.numeric(row),
          col = as.numeric(col)) %>%
   mutate(cover_type = case_when(cover_type == "5" ~ "Coffee",
+                                cover_type == "1" ~ "Forest",
                                 TRUE ~ "Other"))
 
 # Plots
@@ -304,6 +306,32 @@ local.coffee <- (local.coffee1|local.coffee2) +
   plot_annotation(tag_levels = "A")
 
 # ggsave(file = "local_coffee.jpeg", dpi = 600, width = 7, units = "in")
+
+local.other1 <- ggplot(data = around.land1, aes(x = Other, 
+                                                 y = mean.rate))+
+  geom_point()+
+  labs(x = "% Other Land Cover", y = "Mean Rate of Spread")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+local.other2 <- ggplot(data = around.land2, aes(x = Other,
+                                                 y = mean.rate))+
+  geom_point()+
+  labs(x = "% Other Land Cover", y = "Mean Rate of Spread")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+local.other <- (local.other1|local.other2) +
+  plot_annotation(tag_levels = "A")
+
+cor.test(around.land1$Other, around.land1$mean.rate)
+cor.test(around.land2$Other, around.land2$mean.rate)
+
+# ggsave(local.other, filename = "LocalOther.jpeg", dpi = 600, width = 7,
+#        units = "in")
+
+cor.test(around.land1$Forest, around.land1$mean.rate)
+cor.test(around.land2$Forest, around.land2$mean.rate)
 
 # Look at domain effects in landscape 1 -----------------
 # Get distance from edge
