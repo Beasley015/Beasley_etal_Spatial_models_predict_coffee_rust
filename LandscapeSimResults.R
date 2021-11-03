@@ -128,10 +128,11 @@ hist.all <- ggplot(data = rates)+
   scale_x_continuous(expand = c(0,0))+
   scale_y_continuous(expand = c(0,0), limits = c(0,650))+
   labs(x = "Avg. Infections per Time Step", y = "Count")+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
-# ggsave(hist.all, filename = 'histall.jpeg')
+# ggsave(hist.all, filename = 'histall.jpeg', dpi = 1200, width = 84, 
+#        units = 'mm', height = 60)
 
 # Range of prevalence values
 range(rates$mean.rate)
@@ -219,7 +220,7 @@ maxbox <- ggplot(data = max.final, aes(x = factor(coff), y = max))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Coffee Clustering", y = "Maximum Infection Rate")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
-  theme_bw(base_size = 16)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 # ggsave(maxbox, file = "MaxInfBoxes.jpeg")
@@ -240,7 +241,7 @@ expected.boxes <- ggplot(exp.final, aes(x = coff, y = Expected.Value))+
   labs(y = "Expected Value", x = "Coffee Clustering")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", 
                               '0.3' = "High"))+
-  theme_bw(base_size = 16)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 # ggsave(expected.boxes, filename = 'expecplot.jpeg')
@@ -253,7 +254,7 @@ skew.plot <- ggplot(data = skew.final, aes(x = coff, y = skew))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Coffee Clustering", y = "Skew")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
-  theme_bw(base_size = 16)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 # ggsave(skew.plot, filename = 'skewplot.jpeg')
@@ -266,19 +267,19 @@ k.plot <- ggplot(data = k.final, aes(x = coff, y = k))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Coffee Clustering", y = "Kurtosis")+
   scale_x_discrete(labels = c('0.1' = "Low", '0.2' = "Mid", '0.3' = "High"))+
-  theme_bw(base_size = 16)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 # ggsave(k.plot, filename = "kurtosisplot.jpeg")
 
 # Put all boxplots together
-megabox <- expected.boxes+ggtitle("A)")+
-  maxbox+ggtitle("B)")+
-  skew.plot+ggtitle("C)")+
-  k.plot+ggtitle("D)")
+megabox <- expected.boxes+ggtitle("a)")+
+  maxbox+ggtitle("b)")+
+  skew.plot+ggtitle("c)")+
+  k.plot+ggtitle("d)")
 
-# ggsave(megabox, file = 'megabox.jpeg', width = 8, height = 6.5,
-#        units = 'in')
+ggsave(megabox, file = 'megabox.jpeg', width = 174, height = 130,
+       units = 'mm', dpi = 1200)
 
 # Closer look at deforestation/dispersion ----------------------
 # Expected values ##
@@ -357,16 +358,17 @@ cor.test(x = as.numeric(max.mid$dispersion), y = max.mid$max, method = "spearman
 # High dispersion = hi max rate at high clustering
 max.hi.plot <- ggplot(data = max.hi, aes(x = dispersion, y = max, 
                                          color = deforest))+
-  geom_point(size = 2)+
+  geom_point(size = 1.5)+
   labs(x = "Dispersion", y = "Maximum Rate of Spread")+
   scale_color_viridis_d(name = "Deforestation")+
-  theme_bw(base_size = 16)+
+  theme_bw(base_size = 10)+
   theme(panel.grid = element_blank())
 
 cor.test(x = as.numeric(max.hi$deforest), y = max.hi$max, method = "spearman")
 cor.test(x = as.numeric(max.hi$dispersion), y = max.hi$max, method = "spearman")
 
-# ggsave(max.hi.plot, filename = "maxhiplot.jpeg")
+# ggsave(max.hi.plot, filename = "maxhiplot.jpeg", width = 84, height = 60,
+#        units = 'mm', dpi = 1200)
 
 # Skew ##
 skew.hi <- filter(skew.final, coff == '0.3')

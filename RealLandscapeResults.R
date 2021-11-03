@@ -135,10 +135,11 @@ ggplot(data = rates, aes(x = landscape, y = mean.rate))+
   geom_boxplot(fill = "lightgray")+
   labs(x = "Landscape", y = "Avg. Infections per Time Step")+
   scale_x_discrete(labels = c("Landscape1", "Landscape2"))+
-  theme_bw(base_size = 12)+
+  theme_bw(base_size = 10)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "RateNewInf.jpeg", dpi = 600)
+ggsave(filename = "RateNewInf.jpeg", dpi = 1200, width = 84, height = 70,
+       units = "mm")
   
 # Look at locations of outbreaks: small landscape ----------------------  
 # Get high and low quantiles
@@ -203,11 +204,11 @@ land1start <- ggplot()+
                     name = "Cover Type")+
   geom_point(data = land1coords, mapping = aes(x = X, y = Y,
                                                color = Quant),
-             size = 2.5)+
+             size = 1.5)+
   scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"),
                         name = "Rate of Spread")+
   scale_y_reverse()+
-  theme_bw()+
+  theme_bw(base_size = 10)+
   theme(axis.title = element_blank(), axis.text = element_blank(), 
         panel.grid = element_blank())
 
@@ -220,23 +221,24 @@ land2start <- ggplot()+
                     name = "Cover Type")+
   geom_point(data = land2coords, mapping = aes(x = X, y = Y,
                                                color = Quant),
-             size = 2.5)+
+             size = 1.5)+
   coord_flip()+
   scale_x_reverse()+
   scale_color_viridis_d(begin = 0.5, breaks = c("Low", "Mid", "High"),
                         name = "Rate of Spread")+
-  theme_bw()+
+  theme_bw(base_size = 10)+
   theme(axis.title = element_blank(), axis.text = element_blank(), 
-        panel.grid = element_blank())
+        panel.grid = element_blank(), legend.position = 'none')
 
 # ggsave("land2start.jpeg", dpi = 600)
 
 (land1start|land2start)+
   guides(color = guide_legend(title = "Rate of Spread"))+
   plot_layout(guides = "collect")+
-  plot_annotation(tag_levels = "A")
+  plot_annotation(tag_levels = "a")
 
-# ggsave("landstarts.jpeg", dpi = 600, width = 8, units = "in")
+# ggsave("landstarts.jpeg", dpi = 1200, width = 174, height = 70, 
+#        units = "mm")
 
 # Draw "buffers" around points & get % cover --------------------------
 
@@ -288,7 +290,7 @@ local.coffee1 <- ggplot(data = around.land1, aes(x = Coffee,
                                                  y = mean.rate))+
   geom_point()+
   labs(x = "% Coffee Cover", y = "Mean Rate of Spread")+
-  theme_bw(base_size = 14)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 cor.test(around.land1$Coffee, around.land1$mean.rate)
@@ -297,38 +299,38 @@ local.coffee2 <- ggplot(data = around.land2, aes(x = Coffee,
                                                  y = mean.rate))+
   geom_point()+
   labs(x = "% Coffee Cover", y = "Mean Rate of Spread")+
-  theme_bw(base_size = 14)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 cor.test(around.land2$Coffee, around.land2$mean.rate)
 
 local.coffee <- (local.coffee1|local.coffee2) +
-  plot_annotation(tag_levels = "A")
+  plot_annotation(tag_levels = "a")
 
-# ggsave(file = "local_coffee.jpeg", dpi = 600, width = 7, units = "in")
+# ggsave(file = "local_coffee.jpeg", dpi = 1200, width = 174, units = "mm")
 
 local.other1 <- ggplot(data = around.land1, aes(x = Other, 
                                                  y = mean.rate))+
   geom_point()+
   labs(x = "% Other Land Cover", y = "Mean Rate of Spread")+
-  theme_bw(base_size = 14)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 local.other2 <- ggplot(data = around.land2, aes(x = Other,
                                                  y = mean.rate))+
   geom_point()+
   labs(x = "% Other Land Cover", y = "Mean Rate of Spread")+
-  theme_bw(base_size = 14)+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 local.other <- (local.other1|local.other2) +
-  plot_annotation(tag_levels = "A")
+  plot_annotation(tag_levels = "a")
 
 cor.test(around.land1$Other, around.land1$mean.rate)
 cor.test(around.land2$Other, around.land2$mean.rate)
 
-# ggsave(local.other, filename = "LocalOther.jpeg", dpi = 600, width = 7,
-#        units = "in")
+ggsave(local.other, filename = "LocalOther.jpeg", dpi = 1200, width = 174,
+       units = "mm")
 
 cor.test(around.land1$Forest, around.land1$mean.rate)
 cor.test(around.land2$Forest, around.land2$mean.rate)
