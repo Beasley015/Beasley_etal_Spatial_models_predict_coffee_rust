@@ -131,7 +131,7 @@ hist.all <- ggplot(data = rates)+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
-# ggsave(hist.all, filename = 'histall.jpeg', dpi = 1200, width = 84, 
+# ggsave(hist.all, filename = 'histall.tiff', dpi = 1200, width = 84,
 #        units = 'mm', height = 60)
 
 # Range of prevalence values
@@ -278,8 +278,8 @@ megabox <- expected.boxes+ggtitle("a)")+
   skew.plot+ggtitle("c)")+
   k.plot+ggtitle("d)")
 
-ggsave(megabox, file = 'megabox.jpeg', width = 174, height = 130,
-       units = 'mm', dpi = 1200)
+# ggsave(megabox, file = 'megabox.tiff', width = 174, height = 130,
+#        units = 'mm', dpi = 1200)
 
 # Closer look at deforestation/dispersion ----------------------
 # Expected values ##
@@ -367,7 +367,7 @@ max.hi.plot <- ggplot(data = max.hi, aes(x = dispersion, y = max,
 cor.test(x = as.numeric(max.hi$deforest), y = max.hi$max, method = "spearman")
 cor.test(x = as.numeric(max.hi$dispersion), y = max.hi$max, method = "spearman")
 
-# ggsave(max.hi.plot, filename = "maxhiplot.jpeg", width = 84, height = 60,
+# ggsave(max.hi.plot, filename = "maxhiplot.tiff", width = 84, height = 60,
 #        units = 'mm', dpi = 1200)
 
 # Skew ##

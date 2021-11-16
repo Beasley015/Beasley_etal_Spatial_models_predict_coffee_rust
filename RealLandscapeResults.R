@@ -138,8 +138,8 @@ ggplot(data = rates, aes(x = landscape, y = mean.rate))+
   theme_bw(base_size = 10)+
   theme(panel.grid = element_blank())
 
-ggsave(filename = "RateNewInf.jpeg", dpi = 1200, width = 84, height = 70,
-       units = "mm")
+# ggsave(filename = "RateNewInf.tiff", dpi = 1200, width = 84, height = 70,
+#        units = "mm")
   
 # Look at locations of outbreaks: small landscape ----------------------  
 # Get high and low quantiles
@@ -237,7 +237,7 @@ land2start <- ggplot()+
   plot_layout(guides = "collect")+
   plot_annotation(tag_levels = "a")
 
-# ggsave("landstarts.jpeg", dpi = 1200, width = 174, height = 70, 
+# ggsave("landstarts.tiff", dpi = 1200, width = 174, height = 70,
 #        units = "mm")
 
 # Draw "buffers" around points & get % cover --------------------------
@@ -307,7 +307,7 @@ cor.test(around.land2$Coffee, around.land2$mean.rate)
 local.coffee <- (local.coffee1|local.coffee2) +
   plot_annotation(tag_levels = "a")
 
-# ggsave(file = "local_coffee.jpeg", dpi = 1200, width = 174, units = "mm")
+# ggsave(file = "local_coffee.tiff", dpi = 1200, width = 174, units = "mm")
 
 local.other1 <- ggplot(data = around.land1, aes(x = Other, 
                                                  y = mean.rate))+
@@ -329,8 +329,8 @@ local.other <- (local.other1|local.other2) +
 cor.test(around.land1$Other, around.land1$mean.rate)
 cor.test(around.land2$Other, around.land2$mean.rate)
 
-ggsave(local.other, filename = "LocalOther.jpeg", dpi = 1200, width = 174,
-       units = "mm")
+# ggsave(local.other, filename = "LocalOther.tiff", dpi = 1200, width = 174,
+#        units = "mm")
 
 cor.test(around.land1$Forest, around.land1$mean.rate)
 cor.test(around.land2$Forest, around.land2$mean.rate)
