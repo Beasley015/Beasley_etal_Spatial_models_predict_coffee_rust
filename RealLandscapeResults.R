@@ -13,6 +13,7 @@ library(tidyverse)
 library(effectsize)
 library(patchwork)
 library(ggnewscale)
+library(ape)
 
 # Raw raster data
 x <- new("GDALReadOnlyDataset", "./coffeeRust_landuses")
@@ -141,7 +142,7 @@ ggplot(data = rates, aes(x = landscape, y = mean.rate))+
 # ggsave(filename = "RateNewInf.tiff", dpi = 1200, width = 84, height = 70,
 #        units = "mm")
   
-# Look at locations of outbreaks: small landscape ----------------------  
+# Look at locations of outbreaks: small landscape --------------- 
 # Get high and low quantiles
 land1coord <- rates %>%
   filter(landscape == "Land1") %>%
@@ -240,7 +241,7 @@ land2start <- ggplot()+
 # ggsave("landstarts.tiff", dpi = 1200, width = 174, height = 70,
 #        units = "mm")
 
-# Draw "buffers" around points & get % cover --------------------------
+# Draw "buffers" around points & get % cover ------------------
 
 # Function to get % of each land cover around starting locations
 get_surroundings <- function(start_loc, lands){

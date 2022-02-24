@@ -1,7 +1,7 @@
 #####################################################
 # Modeling coffee rust movement through a landscape #
 # N. Aristizabal, E. Beasley, E. Bueno, & E. White  #
-# Spring 2019- ????                                 #
+# Spring 2019-Fall 2021                             #
 #####################################################
 library(tidyverse)
 library(rcompanion)
