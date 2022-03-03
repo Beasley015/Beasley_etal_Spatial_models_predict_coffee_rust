@@ -22,6 +22,9 @@ getDriverLongName(getDriver(x))
 xx<-asSGDF_GROD(x)
 bothlands <- raster(xx)
 
+# Get raster cell sizes
+prod(res(bothlands))
+
 # Format rasters ------------------------------
 # Convert to matrix
 rawmat <- is.na(as.matrix(bothlands))
@@ -46,11 +49,17 @@ land2 <- land2raw == 5
 land2[land2 == 0] <- NA
 
 # Get % coffee per landscape -------------------
-land1vals <- freq(land1raw)
+land1vals <- as.data.frame(freq(land1raw))
 land1vals[5,2]/sum(land1vals[1:7,2])
 
-land2vals <- freq(land2raw)
+land1vals %>%
+  mutate(total = count/sum(count[1:7]))
+
+land2vals <- as.data.frame(freq(land2raw))
 land2vals[5,2]/sum(land2vals[1:7,2])
+
+land2vals %>%
+  mutate(total = count/sum(count[1:7]))
 
 # Get % deforested per landscape -----------------
 sum(land1vals[c(2,4,6),2])/sum(land1vals[-c(5,7),2])
