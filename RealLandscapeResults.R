@@ -295,6 +295,9 @@ qplot(data = around.land2, x = Quant, y = Coffee, geom = "boxplot")
 qplot(data = around.land1, x = Coffee, y = mean.rate)
 qplot(data = around.land2, x = Coffee, y = mean.rate)
 
+qplot(data = around.land1, x = Forest, y = mean.rate)
+qplot(data = around.land2, x = Forest, y = mean.rate)
+
 # Make nice plots
 local.coffee1 <- ggplot(data = around.land1, aes(x = Coffee, 
                                                  y = mean.rate))+
