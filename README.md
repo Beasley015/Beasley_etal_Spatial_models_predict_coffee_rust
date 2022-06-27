@@ -1,7 +1,7 @@
 # Spatially explicit models predict coffee rust spread in fragmented landscapes
-### Beasley, E.M., Aristiz&aacute;bal, N., Bueno, E., & White, E.R. 2022. 
+### Beasley, E.M., Aristiz&aacute;bal, N., Bueno, E., & White, E.R. 2022. Spatially explicit models predict coffee rust spread in fragmented landscapes. *Landscape ecology*. In press.
 
-For questions about data or code, please contact the corresponding author: Emily Beasley (ebeasley{at}uvm{dot}edu).
+For questions about data or code, please contact the corresponding author: Emily Beasley (ebeasley {at} uvm {dot} edu).
 
 ## Abstract
 *Context*. Landscape structure influences the spread of plant pathogens, including coffee leaf rust, a fungal disease affecting the coffee industry. Rust transmission is likely affected by landscape structure through the dispersal of wind-borne spores. Previous studies found positive associations between rust incidence and the proportion of pasture cover, suggesting deforestation may facilitate spore dispersal.
