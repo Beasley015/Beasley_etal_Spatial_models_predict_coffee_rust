@@ -15,13 +15,13 @@ For questions about data or code, please contact the corresponding author: Emily
 *Conclusions*. It is essential to consider landscape structure when managing the spread of crop diseases. Increasing the spacing between coffee farms and reducing forest fragmentation in coffee-growing regions can benefit biodiversity conservation and reduce the economic impacts of coffee rust.
 
 ## Code
-LandscapeSim.py - generates simulated landscapes and simulates rust spread
-RealLandscape.py - simulates rust spread on rasters representing real landscapes
+LandscapeSim.py - generates simulated landscapes and simulates rust spread  
+RealLandscape.py - simulates rust spread on rasters representing real landscapes  
 
-LandscapeSimResults.R - creates figures from results of simulated landscapes
-RealLandscapeResults.R - creates figures from results of real landscapes
+LandscapeSimResults.R - creates figures from results of simulated landscapes  
+RealLandscapeResults.R - creates figures from results of real landscapes  
 
 ## Data and outputs
-folder coffeeRust_landuses - contains raster data for real landscapes
-folder Outputs_buffered - model outputs for simulated landscapes
-land1raw.csv, land2raw.csv, land1.csv, land2.csv - model outputs for real landscapes
+folder coffeeRust_landuses - contains raster data for real landscapes  
+folder Outputs_buffered - model outputs for simulated landscapes  
+land1raw.csv, land2raw.csv, land1.csv, land2.csv - model outputs for real landscapes  
